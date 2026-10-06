@@ -10,8 +10,8 @@ Run deterministic checks:
 ```sh
 python3.14 -m unittest tests.test_issue_tracker_ops
 python3.14 -m unittest tests.test_agent_equipment_config
-python3.14 -m unittest tests.test_validate_armory_integrity
-python3.14 tools/validate_armory_integrity.py
+python3.14 -m unittest tests.test_validate_agentworks_integrity
+python3.14 tools/validate_agentworks_integrity.py
 ```
 
 Run dry-run adapter smokes:

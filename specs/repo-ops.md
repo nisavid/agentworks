@@ -133,7 +133,7 @@ paths = ["ops/runbook.md", "ops/*.md"]
 [repo_ops.extension.periodic_actions]
 enabled = true
 
-[repo_ops.repo.nisavid_agent_armory]
+[repo_ops.repo.nisavid_agentworks]
 policy_doc = "ops/repo-ops.md"
 
 [repo_ops.local.this_checkout]

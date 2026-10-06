@@ -10,7 +10,7 @@ validation before merge-readiness is:
 
 - `python3.14 -m unittest`
 - `python3.14 tools/harness_capability_profiles.py validate --json`
-- `python3.14 tools/validate_armory_integrity.py --final-closeout --json`
+- `python3.14 tools/validate_agentworks_integrity.py --final-closeout --json`
 - `git diff --check`
 
 The validation run must use scratch cache or bytecode paths outside committed

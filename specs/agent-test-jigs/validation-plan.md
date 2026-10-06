@@ -14,7 +14,7 @@ Run these checks before merge readiness:
 ```sh
 python3.14 -m unittest
 python3.14 tools/harness_capability_profiles.py validate --json
-python3.14 tools/validate_armory_integrity.py --final-closeout --json
+python3.14 tools/validate_agentworks_integrity.py --final-closeout --json
 git diff --check
 ```
 

@@ -12,7 +12,7 @@
 > Agentworks is under construction. The Forge has just come online, and
 > Agent Equipment Config has its first published runtime slice.
 
-![A candid scene inside Agentworks, with agents browsing equipment and working in the Forge.](docs/assets/agent-armory-hero.webp)
+![A candid scene inside Agentworks, with agents browsing equipment and working in the Forge.](docs/assets/agentworks-hero.png)
 
 Agentworks is being built as a harness-refit workshop: each agent should create
 or equip the equipment it needs for its assigned task, domain, and context.

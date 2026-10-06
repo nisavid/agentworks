@@ -36,16 +36,12 @@ applicable when the record states why the stage does not affect the evaluation.
 | source review | Collect first-party docs, source, schemas, examples, and release notes before accepting claims. |
 | live repository and issue review | Check current Works docs, issue graph, labels, blockers, and prior ledgers that already answer part of the question. |
 | evidence classification | Classify each durable claim before using it. |
-| Armory role mapping | Translate the external tool's vocabulary into current Works terms without adopting foreign terms as Works vocabulary. |
+| Works role mapping | Translate the external tool's vocabulary into current Works terms without adopting foreign terms as Works vocabulary. |
 | bounded prototype decision | Decide whether prototype results are needed, and keep prototype scope separate from source-backed conclusions. |
 | security and disclosure review | Classify credentials, local paths, raw logs, trajectories, transcripts, model outputs, external service usage, and provider/account state before publication. |
 | documentation closeout | Run Change Set Documentation Closeout on every affected human-facing and agent-facing doc. |
 | issue projection | Decide whether to update existing issues, create new issues, propose a PRD, propose an ADR, or defer projection. |
 | final disposition | Assign a finalized External Tool Evaluation Disposition value after the evidence is sufficient. |
-
-`Armory role mapping` remains the record field label for compatibility with
-existing evaluation records. The project identity is Agentworks; see the
-[identity decision](adr/0023-adopt-agentworks-identity.md).
 
 ## Evidence Classification
 

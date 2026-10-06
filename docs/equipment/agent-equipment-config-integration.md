@@ -256,7 +256,7 @@ gates. See [`config.apply`](../../specs/agent-equipment-config/mcp-tools.md#conf
 [`migrate.config_apply`](../../specs/agent-equipment-config/mcp-tools.md#migrateconfig_apply)
 and [Migration apply](agent-equipment-config.md#migration-apply) for the full
 contracts. Authoring MCP tools use typed changes for proposal and plan
-generation, reviewed `agent-armory.config.authoring-plan.v1` artifacts for
+generation, reviewed `agentworks.config.authoring-plan.v1` artifacts for
 apply, stable refusal codes, all-or-nothing local source mutation, and audit
 output that records durability classification, project-truth status, and
 rollback stance.
@@ -265,11 +265,13 @@ For Codex, use the repo-owned plugin under
 `plugins/agent-equipment-config/` when the surface should equip routing
 guidance, MCP launch configuration, and local-write hook friction together. The
 plugin source is exposed through `.agents/plugins/marketplace.json`; Codex
-installs local plugins into its cache, so the bundled MCP launcher starts only
-when `AGENT_ARMORY_ROOT` points at the trusted live Works checkout containing
-the server marker (`tools/agent_equipment_config_mcp_server.py`), inventory
-marker (`inventory/equipment.toml`), and repo marketplace marker
-(`.agents/plugins/marketplace.json`). It changes directory to that checkout
+installs local plugins into its cache. The bundled MCP launcher prefers
+`AGENTWORKS_ROOT` when it points at a trusted live Works checkout; otherwise,
+it checks the working directory and its parents. A matching checkout must
+contain the server marker (`tools/agent_equipment_config_mcp_server.py`),
+inventory marker (`inventory/equipment.toml`), and `agentworks` repo marketplace
+marker (`.agents/plugins/marketplace.json`). Use a trusted checkout for either
+discovery path. It changes directory to that checkout
 before executing the standalone MCP server. Keep behavior in the standalone
 runtime and MCP server; the plugin routes to those contracts instead of
 reimplementing them.

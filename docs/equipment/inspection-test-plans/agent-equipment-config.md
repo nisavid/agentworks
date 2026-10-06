@@ -32,7 +32,7 @@ bundle.
 
 ## Inspection Checklist
 
-- The stock record uses schema `agent-armory.equipment-stock.v1`.
+- The stock record uses schema `agentworks.equipment-stock.v1`.
 - The stock record keeps `promotion_state = "published"` and
   `delivery_compliance = "passed"`.
 - The stock record links this ITP, the shop card, and the closeout record.
@@ -44,10 +44,11 @@ bundle.
 - The Codex plugin manifest points to bundled skills, MCP config, and hooks
   with plugin-root-confined paths.
 - The bundled MCP config uses the local launcher, passes through only
-  `AGENT_ARMORY_ROOT`, and keeps prompt approval for local-write tools.
-- The plugin-local launcher finds the standalone repo server only from
-  `AGENT_ARMORY_ROOT`, changes directory to the resolved checkout root, and
-  fails closed otherwise.
+  `AGENTWORKS_ROOT`, and keeps prompt approval for local-write tools.
+- The plugin-local launcher prefers a valid `AGENTWORKS_ROOT`, then checks the
+  working directory and its parents for the server, inventory, and `agentworks`
+  marketplace markers. Either path must use a trusted checkout. It changes
+  directory to the resolved checkout root and fails closed if no match exists.
 - The `PreToolUse` guard hook ignores unrelated tools and denies Config
   local-write MCP calls missing `apply_authority = "operator"`.
 - The routing skill is thin and links to the runtime guide, integration guide,
@@ -68,7 +69,7 @@ bundle.
 - Run the published-equipment delivery regression tests:
 
   ```bash
-  python3.14 -m unittest tests.test_validate_armory_integrity.PublishedEquipmentDeliveryValidationTests
+  python3.14 -m unittest tests.test_validate_agentworks_integrity.PublishedEquipmentDeliveryValidationTests
   ```
 
 - Run the Codex plugin contract, launcher, hook, and routing skill tests:
@@ -80,13 +81,13 @@ bundle.
 - Run Works integrity validation:
 
   ```bash
-  python3.14 tools/validate_armory_integrity.py
+  python3.14 tools/validate_agentworks_integrity.py
   ```
 
 - Run final closeout validation before treating the story as merge-ready:
 
   ```bash
-  python3.14 tools/validate_armory_integrity.py --final-closeout
+  python3.14 tools/validate_agentworks_integrity.py --final-closeout
   ```
 
 - Run Config runtime and MCP parity smoke checks:
@@ -104,6 +105,10 @@ bundle.
 The Codex plugin launcher delegates to the existing standalone MCP server.
 
 ## Validation Evidence
+
+These results record the delivery retrofit before the Agentworks identity
+change. [PR #217](https://github.com/nisavid/agentworks/pull/217) carries the
+separate verification for the renamed identifiers and validator.
 
 - `python3.14 -m unittest tests.test_validate_armory_integrity.PublishedEquipmentDeliveryValidationTests`:
   passed with 40 tests.

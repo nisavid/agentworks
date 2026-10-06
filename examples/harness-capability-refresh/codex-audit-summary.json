@@ -273,7 +273,7 @@
   ],
   "validation_commands": [
     "python3.14 tools/harness_capability_profiles.py validate --json",
-    "python3.14 tools/validate_armory_integrity.py --json",
+    "python3.14 tools/validate_agentworks_integrity.py --json",
     "git diff --check"
   ],
   "validation_results": [

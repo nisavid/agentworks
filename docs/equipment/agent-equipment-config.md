@@ -82,7 +82,7 @@ friction before a mutation-capable call.
 
 The Codex plugin in `plugins/agent-equipment-config/` equips a thin routing
 skill, plugin-local MCP launcher, and `PreToolUse` guard hook. Its launcher
-prefers `AGENT_ARMORY_ROOT` when it points at this repository, then searches the
+prefers `AGENTWORKS_ROOT` when it points at this repository, then searches the
 current working directory and ancestors for the server marker
 (`tools/agent_equipment_config_mcp_server.py`), inventory marker
 (`inventory/equipment.toml`), and repo marketplace marker

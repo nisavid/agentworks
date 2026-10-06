@@ -700,7 +700,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
 
                 [issue_tracker_ops.tracker]
                 platform = "github-issues"
-                repo = "nisavid/agent-armory"
+                repo = "nisavid/agentworks"
 
                 [[issue_tracker_ops.label_axes]]
                 name = "category"
@@ -2920,7 +2920,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
 
         payload = json.loads(stdout)
         self.assertEqual(rewritten_text, original_text)
-        self.assertEqual(payload["schema"], "agent-armory.config.authoring-plan.v1")
+        self.assertEqual(payload["schema"], "agentworks.config.authoring-plan.v1")
         self.assertEqual(payload["operation"], "config patch")
         self.assertEqual(payload["plan_kind"], "patch-layer")
         self.assertEqual(payload["source_target"], str(layer))
@@ -3876,6 +3876,46 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertIn("[issue_tracker_ops]", applied_text)
         self.assertEqual(payload["audit_records"][-1]["source_artifact_durability"], "durable project evidence")
 
+    def test_cli_config_apply_refuses_obsolete_authoring_plan_schema_without_writing(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            layer = self.write_layer(root, "repo.toml", """
+                [agent_equipment_config.layer]
+                name = "repository policy"
+                category = "committed durable config"
+
+                [issue_tracker_ops]
+                mode = "dry-run"
+                external_disclosure = "blocked"
+            """)
+            original_text = layer.read_text(encoding="utf-8")
+            plan = json.loads(agent_equipment_config.run(
+                [
+                    "config", "patch", "--layer", str(layer),
+                    "--source-target", str(layer), "--issue-tracker-ops",
+                    "--set", "issue_tracker_ops.mode=execute",
+                    "--set", "issue_tracker_ops.external_disclosure=allowed",
+                    "--plan-authority", "operator",
+                ],
+                stdout_text=True,
+            ))
+            plan["schema"] = "agent-armory.config.authoring-plan.v1"
+            stdout = io.StringIO()
+
+            exit_code = agent_equipment_config.run(
+                ["config", "apply", "--plan", "-", "--apply-authority", "operator"],
+                stdin=io.StringIO(json.dumps(plan)),
+                stdout=stdout,
+            )
+
+            self.assertEqual(layer.read_text(encoding="utf-8"), original_text)
+
+        payload = json.loads(stdout.getvalue())
+        self.assertEqual(exit_code, 1)
+        self.assertFalse(payload["applied"])
+        self.assertIn("validation_failed", payload["refusal_codes"])
+        self.assertFalse(payload["audit_records"][-1]["write_performed"])
+
     def test_cli_config_apply_refuses_stale_patch_layer_precondition(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -4513,7 +4553,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
             plan_path.write_text(
                 json.dumps(
                     {
-                        "schema": "agent-armory.config.authoring-plan.v1",
+                        "schema": "agentworks.config.authoring-plan.v1",
                         "plan_surface": "reviewed-plan",
                         "plan_kind": "revise-layer",
                         "source_target": str(root / "repo.toml"),
@@ -4667,39 +4707,40 @@ class AgentEquipmentConfigTests(unittest.TestCase):
             self.assertEqual(tool["outputSchema"]["type"], "object")
             self.assertIn("description", tool)
             self.assertIn("annotations", tool)
-            self.assertIn("x-agent-armory", tool)
-            self.assertIn("read_write_classification", tool["x-agent-armory"])
-            self.assertIn("failure_modes", tool["x-agent-armory"])
+            self.assertIn("x-agentworks", tool)
+            self.assertNotIn("x-agent-armory", tool)
+            self.assertIn("read_write_classification", tool["x-agentworks"])
+            self.assertIn("failure_modes", tool["x-agentworks"])
 
         self.assertTrue(tools["config.resolve"]["annotations"]["readOnlyHint"])
-        self.assertEqual(tools["config.resolve"]["x-agent-armory"]["cli_operation"], "config resolve")
-        self.assertEqual(tools["config.validate"]["x-agent-armory"]["cli_operation"], "config validate")
-        self.assertEqual(tools["migrate.config_preview"]["x-agent-armory"]["side_effects"], [])
+        self.assertEqual(tools["config.resolve"]["x-agentworks"]["cli_operation"], "config resolve")
+        self.assertEqual(tools["config.validate"]["x-agentworks"]["cli_operation"], "config validate")
+        self.assertEqual(tools["migrate.config_preview"]["x-agentworks"]["side_effects"], [])
         self.assertFalse(tools["migrate.config_apply"]["annotations"]["readOnlyHint"])
         self.assertTrue(tools["migrate.config_apply"]["annotations"]["destructiveHint"])
         self.assertEqual(
-            tools["migrate.config_apply"]["x-agent-armory"]["approval_requirements"],
+            tools["migrate.config_apply"]["x-agentworks"]["approval_requirements"],
             ["per-call apply_authority"],
         )
         self.assertEqual(
-            tools["migrate.config_apply"]["x-agent-armory"]["auth_source"],
+            tools["migrate.config_apply"]["x-agentworks"]["auth_source"],
             "per-call apply_authority",
         )
         self.assertIn("apply_authority", tools["migrate.config_apply"]["inputSchema"]["required"])
         self.assertTrue(tools["config.propose"]["annotations"]["readOnlyHint"])
-        self.assertEqual(tools["config.propose"]["x-agent-armory"]["cli_operation"], "config propose")
-        self.assertEqual(tools["config.patch"]["x-agent-armory"]["read_write_classification"], "read-only policy decision")
+        self.assertEqual(tools["config.propose"]["x-agentworks"]["cli_operation"], "config propose")
+        self.assertEqual(tools["config.patch"]["x-agentworks"]["read_write_classification"], "read-only policy decision")
         self.assertTrue(tools["config.patch"]["annotations"]["readOnlyHint"])
-        self.assertEqual(tools["config.create_layer"]["x-agent-armory"]["cli_operation"], "create-layer")
+        self.assertEqual(tools["config.create_layer"]["x-agentworks"]["cli_operation"], "create-layer")
         self.assertTrue(tools["config.create_layer"]["annotations"]["readOnlyHint"])
         self.assertFalse(tools["config.apply"]["annotations"]["readOnlyHint"])
         self.assertTrue(tools["config.apply"]["annotations"]["destructiveHint"])
-        self.assertEqual(tools["config.apply"]["x-agent-armory"]["auth_source"], "per-call apply_authority")
+        self.assertEqual(tools["config.apply"]["x-agentworks"]["auth_source"], "per-call apply_authority")
         self.assertEqual(
-            tools["config.apply"]["x-agent-armory"]["approval_requirements"],
+            tools["config.apply"]["x-agentworks"]["approval_requirements"],
             ["explicit operator or host approval before mutation-capable call"],
         )
-        self.assertEqual(tools["config.apply"]["x-agent-armory"]["side_effects"], ["eligible local TOML source rewrite"])
+        self.assertEqual(tools["config.apply"]["x-agentworks"]["side_effects"], ["eligible local TOML source rewrite"])
         self.assertEqual(tools["config.apply"]["inputSchema"]["required"], ["plan", "apply_authority"])
         self.assertNotIn("layer_paths", tools["config.apply"]["inputSchema"]["properties"])
         self.assertIn("plan_schema", tools["config.apply"]["outputSchema"]["properties"]["result"]["properties"])
@@ -4821,7 +4862,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         malformed_plan = agent_equipment_config.call_mcp_tool(
             "config.apply",
             {
-                "plan": {"schema": "agent-armory.config.authoring-plan.v1"},
+                "plan": {"schema": "agentworks.config.authoring-plan.v1"},
                 "apply_authority": "operator",
             },
         )
@@ -4829,7 +4870,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
             "config.apply",
             {
                 "plan": {
-                    "schema": "agent-armory.config.authoring-plan.v1",
+                    "schema": "agentworks.config.authoring-plan.v1",
                     "operation": "config patch",
                     "plan_surface": "reviewed-plan",
                     "plan_kind": "patch-layer",
@@ -5016,7 +5057,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertEqual(result["structuredContent"]["cli_operation"], "config patch")
         self.assertEqual(result["structuredContent"]["read_write_classification"], "read-only policy decision")
         payload = result["structuredContent"]["result"]
-        self.assertEqual(payload["schema"], "agent-armory.config.authoring-plan.v1")
+        self.assertEqual(payload["schema"], "agentworks.config.authoring-plan.v1")
         self.assertEqual(payload["operation"], "config patch")
         self.assertEqual(payload["plan_kind"], "patch-layer")
         self.assertEqual(payload["source_target"], str(layer))
@@ -5052,7 +5093,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertEqual(result["structuredContent"]["cli_operation"], "create-layer")
         self.assertEqual(result["structuredContent"]["read_write_classification"], "read-only policy decision")
         payload = result["structuredContent"]["result"]
-        self.assertEqual(payload["schema"], "agent-armory.config.authoring-plan.v1")
+        self.assertEqual(payload["schema"], "agentworks.config.authoring-plan.v1")
         self.assertEqual(payload["operation"], "create-layer")
         self.assertEqual(payload["plan_kind"], "create-layer")
         self.assertEqual(payload["source_target"], str(destination))
@@ -5186,7 +5227,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertEqual(apply_result["structuredContent"]["read_write_classification"], "local write")
         payload = apply_result["structuredContent"]["result"]
         self.assertEqual(payload["operation"], "config apply")
-        self.assertEqual(payload["plan_schema"], "agent-armory.config.authoring-plan.v1")
+        self.assertEqual(payload["plan_schema"], "agentworks.config.authoring-plan.v1")
         self.assertEqual(payload["plan_kind"], "patch-layer")
         self.assertTrue(payload["applied"])
         self.assertEqual(payload["result"], "applied")
@@ -5288,7 +5329,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
 
         self.assertFalse(apply_result.get("isError", False))
         payload = apply_result["structuredContent"]["result"]
-        self.assertEqual(payload["plan_schema"], "agent-armory.config.authoring-plan.v1")
+        self.assertEqual(payload["plan_schema"], "agentworks.config.authoring-plan.v1")
         self.assertEqual(payload["plan_kind"], "create-layer")
         self.assertTrue(payload["applied"])
         self.assertEqual(payload["result"], "applied")

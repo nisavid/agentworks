@@ -6,14 +6,14 @@ plugin-local MCP launcher, and a guard hook for Config local-write MCP tools.
 ## Install
 
 The Works repository exposes this plugin through
-`.agents/plugins/marketplace.json` as the `agent-armory` repo marketplace, displayed
-as Agentworks. The marketplace key remains stable for installed consumers. Codex
+`.agents/plugins/marketplace.json` as the `agentworks` repo marketplace, displayed
+as Agentworks. Codex
 installs the source from `./plugins/agent-equipment-config` into its plugin
 cache, so the plugin-local launcher uses the configured live Works checkout at
 runtime.
 
 Do not copy secrets into plugin files. The MCP config passes through only
-`AGENT_ARMORY_ROOT`. The plugin manifest uses `mcpServers` to point at
+`AGENTWORKS_ROOT`. The plugin manifest uses `mcpServers` to point at
 `.mcp.json`; the referenced MCP config uses Codex's documented direct MCP
 server map.
 
@@ -21,7 +21,7 @@ server map.
 
 The plugin MCP entry runs from the installed plugin root and launches
 `./mcp/agent_equipment_config_launcher.py`. The launcher starts the standalone
-server only when `AGENT_ARMORY_ROOT` points at a checkout, or when the process
+server only when `AGENTWORKS_ROOT` points at a checkout, or when the process
 cwd is inside a checkout, containing:
 
 - `tools/agent_equipment_config_mcp_server.py`
@@ -54,7 +54,7 @@ Run these checks from the Works checkout:
 
 ```bash
 python3.14 -m unittest tests.test_agent_equipment_config_codex_plugin
-python3.14 tools/validate_armory_integrity.py
+python3.14 tools/validate_agentworks_integrity.py
 ```
 
 Use the routing skill for Smith, Wielder, and Outfitter workflows; use

@@ -34,7 +34,7 @@ In scope:
   and the related docs/specs.
 - Harness Capability Profile Manager Core and manual refresh workflow in
   `tools/harness_capability_profiles.py`.
-- Agentworks Integrity Validation in `tools/validate_armory_integrity.py`.
+- Agentworks Integrity Validation in `tools/validate_agentworks_integrity.py`.
 
 Out of scope for the current repository state:
 
@@ -150,7 +150,7 @@ equipment, and transient scan artifacts are instance-scoped evidence.
   `tools/harness_capability_profiles.py` migrates, validates, summarizes,
   scouts, analyzes, plans, diffs, applies, and audits source-backed Vanilla
   Harness Capability Profiles.
-- **Agentworks Integrity Validation**: `tools/validate_armory_integrity.py` checks
+- **Agentworks Integrity Validation**: `tools/validate_agentworks_integrity.py` checks
   required paths, docs, specs, templates, examples, link targets, source
   disposition, profile surfaces, and closeout readiness. It is a merge and
   external-projection gate.
@@ -282,7 +282,7 @@ delegation.
   archived handoff material as provenance.
 - `docs/story-closeout.md` requires security closeout, documentation closeout,
   projection checks, evidence durability classification, and review gates.
-- `tools/validate_armory_integrity.py` checks required paths, source
+- `tools/validate_agentworks_integrity.py` checks required paths, source
   disposition, source retirement, Markdown links, promotion-state boundaries,
   harness-profile surfaces, templates, examples, specs, and closeout surfaces.
 - The validator rejects symlinked required paths and repository-root escapes
@@ -342,7 +342,7 @@ projection of private or stale security evidence.
 
 | Surface | How reached | Trust boundary | Notes | Evidence |
 | --- | --- | --- | --- | --- |
-| Agentworks Integrity Validation | `python3.14 tools/validate_armory_integrity.py` | Reviewed repo files -> validation decision | Reads Markdown/TOML/Python/TypeScript structure and validates path/link/status boundaries. | `tools/validate_armory_integrity.py` |
+| Agentworks Integrity Validation | `python3.14 tools/validate_agentworks_integrity.py` | Reviewed repo files -> validation decision | Reads Markdown/TOML/Python/TypeScript structure and validates path/link/status boundaries. | `tools/validate_agentworks_integrity.py` |
 | Agent Equipment Config CLI/runtime | `tools/agent_equipment_config.py` CLI or Python import | Caller-supplied config paths/fragments/plans -> policy decision or local Config write | Explicit-load contract; no discovery; source writes are limited to migration apply and reviewed plan-artifact apply. | `tools/agent_equipment_config.py`, `docs/equipment/agent-equipment-config.md` |
 | Config MCP parity helpers | `mcp_tool_definitions()` and `call_mcp_tool()` | MCP caller arguments -> typed Config operation | Closed-world schemas and per-call apply authority govern local write operation. | `tools/agent_equipment_config.py`, `specs/agent-equipment-config/mcp-tools.md` |
 | Issue Tracker Ops | `tools/issue_tracker_ops.py` CLI | Local command -> authenticated GitHub API read or mutation; Config preflight gates mutation-capable operations. | Defaults reads and writes to dry-run; `--execute` crosses network/auth boundary. | `tools/issue_tracker_ops.py`, `docs/agents/issue-tracker.md` |
@@ -380,7 +380,7 @@ projection of private or stale security evidence.
 
 | Threat ID | Threat source | Prerequisites | Threat action | Impact | Impacted assets | Existing controls | Gaps | Recommended mitigations | Detection ideas | Likelihood | Impact severity | Priority |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TM-001 | Malicious or mistaken repo change | Contributor changes validation or canonical docs; reviewer relies on validation output. | Make incomplete, stale, or unsafe equipment appear validated or published. | Future agents may grant permissions or publish unsafe equipment. | Validator, Forge Canon, templates, closeout evidence | `tools/validate_armory_integrity.py`; `docs/story-closeout.md`; security and documentation closeout policy | Validator logic is itself trusted and must be reviewed when changed. | Treat validator changes as security-sensitive; require focused tests and review for path, status, and evidence checks. | Diff scans on validator changes; final-closeout count changes; suspicious status wording churn | Medium | High | High |
+| TM-001 | Malicious or mistaken repo change | Contributor changes validation or canonical docs; reviewer relies on validation output. | Make incomplete, stale, or unsafe equipment appear validated or published. | Future agents may grant permissions or publish unsafe equipment. | Validator, Forge Canon, templates, closeout evidence | `tools/validate_agentworks_integrity.py`; `docs/story-closeout.md`; security and documentation closeout policy | Validator logic is itself trusted and must be reviewed when changed. | Treat validator changes as security-sensitive; require focused tests and review for path, status, and evidence checks. | Diff scans on validator changes; final-closeout count changes; suspicious status wording churn | Medium | High | High |
 | TM-002 | Malicious Config input or unsafe local layer | Agent or operator passes attacker-influenced TOML/handoff paths or reviewed-plan artifacts to Config. | Authorize mutation with unsafe, stale, untrusted, conflicted, or secret-bearing Config. | Unauthorized local config writes or downstream mutation decisions. | Config layers, effective Config, secret references | Explicit-load contract; source categories; trust flags; `safety_status`; redaction; migration authority gates; closed-world MCP schemas; read-only authoring proposal and plan-generation refusals; reviewed plan-artifact apply gates | Future harness adapters must still decide which advisory or blocking Config evidence they enforce. | Keep Config writes constrained to migration apply or reviewed plan-artifact apply; require source preconditions, authority, validation, secret-boundary checks, all-or-nothing writes, and mutation audit records. | Config tests; secret-boundary diagnostics; authoring refusal codes; migration and authoring apply audit records | Medium | High | High |
 | TM-003 | Mistaken or compromised agent/operator | `gh` is authenticated and `--execute` is used on the wrong target or with incomplete policy. | Mutate public issue state, labels, comments, or dependencies incorrectly. | Incorrect delegation, public notifications, stale readiness, or dependency misrouting. | GitHub Issues tracker state | Dry-run default; Config preflight; `audit-labels`; JSON request summaries; triage comment policy | The current adapter cannot verify the human intent behind the authenticated account. | Keep execute explicit; include repo/issue in command summaries; prefer Config-backed mutation preflight for live runs. | Label-axis audit; issue dependency readback; unexpected issue comment or label churn | Medium | Medium | Medium |
 | TM-004 | Malicious profile refresh artifact | Agent consumes an adversarial scout, analysis, replacement, or plan path. | Write outside approved profile targets or certify unsupported harness capability claims. | Misleading harness capability profile or unauthorized local file write. | Vanilla profiles, profile manager audit evidence | Root-relative path checks; symlink rejection; allowed mutation paths; validation and audit commands | First-party harness source quality varies and may be stale. | Keep checked dates, evidence class, uncertainty, and source URLs visible; rerun manager validation after refresh. | Profile diff/audit artifacts; validation failure on unsupported write targets | Medium | Medium | Medium |
@@ -415,7 +415,7 @@ links or minor wording drift outside active policy paths.
 
 | Path | Why it matters | Related Threat IDs |
 | --- | --- | --- |
-| `tools/validate_armory_integrity.py` | Merge-readiness and final-closeout validator; path and status checks are root controls. | TM-001, TM-005, TM-006 |
+| `tools/validate_agentworks_integrity.py` | Merge-readiness and final-closeout validator; path and status checks are root controls. | TM-001, TM-005, TM-006 |
 | `tools/agent_equipment_config.py` | Config parser, merge engine, redaction boundary, MCP parity, and migration write gate. | TM-002 |
 | `tools/issue_tracker_ops.py` | Authenticated GitHub mutation boundary and Config preflight consumer. | TM-003 |
 | `tools/harness_capability_profiles.py` | Manual refresh path validation and canonical profile write boundary. | TM-004 |

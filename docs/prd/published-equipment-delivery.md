@@ -8,10 +8,12 @@ Published PRD Issue: #147
 
 Agentworks can design and implement useful Agent Equipment before the
 equipment is easy for Wielders and Outfitters to find, understand, equip,
-inspect, and trust. Agent Equipment Config shows the gap: its runtime slice and
-MCP parity are closed, but the Works does not yet present a clear shop card,
-stock inventory entry, Codex plugin, runnable MCP server, routing skill, or
-standard publication inspection record.
+inspect, and trust. Agent Equipment Config exposed the gap that prompted this
+delivery retrofit: its runtime slice and MCP parity were closed before a shop
+card, stock inventory entry, Codex plugin, runnable MCP server, routing skill,
+and standard publication inspection record were available. The current
+[Config shop card](../equipment/shop-cards/agent-equipment-config.md) points to
+the implemented delivery surfaces and their inspection evidence.
 
 The Forge already has Capability Cards, Equipment Design Bundles, promotion
 states, validation plans, and Story Closeout. Those surfaces help Smiths build

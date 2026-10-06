@@ -26,13 +26,13 @@ required CLI/MCP operation-surface parity.
 
 ## Current deterministic checks
 
-- `python3.14 -m unittest tests.test_validate_armory_integrity.SpecValidationTests`
+- `python3.14 -m unittest tests.test_validate_agentworks_integrity.SpecValidationTests`
 - `python3.14 -m unittest tests.test_agent_equipment_config`
 - `python3.14 -m unittest tests.test_agent_equipment_config_mcp_server`
-- `python3.14 -m unittest tests.test_validate_armory_integrity`
+- `python3.14 -m unittest tests.test_validate_agentworks_integrity`
 - `python3.14 -m unittest`
-- `python3.14 tools/validate_armory_integrity.py`
-- `python3.14 tools/validate_armory_integrity.py --final-closeout`
+- `python3.14 tools/validate_agentworks_integrity.py`
+- `python3.14 tools/validate_agentworks_integrity.py --final-closeout`
 - `git diff --check`
 
 ## Bundle validation

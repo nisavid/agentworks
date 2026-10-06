@@ -22,25 +22,31 @@ historical evidence. The Forge retains its established meaning. This identity
 increment does not implement Store, Bench, other domain architecture, or new
 self-outfitting capabilities; those contracts remain in #216.
 
-## Compatibility
+## Active Identifiers
 
-Keep machine-facing identifiers stable until a separately reviewed migration
-can preserve existing consumers:
+Use Agentworks names for current producers and consumers:
 
-- the `agent-armory` marketplace key and `agent-equipment-config@agent-armory`
+- the `agentworks` marketplace key and `agent-equipment-config@agentworks`
   installed-plugin identity;
-- `AGENT_ARMORY_ROOT` and existing launcher discovery behavior;
-- `agent-armory.equipment-stock.v1`,
-  `agent-armory.config.authoring-plan.v1`, and `x-agent-armory`;
-- `armory_integrity.validation_result.v1`, existing validation boundary keys,
-  and the `tools/validate_armory_integrity.py` executable and module path;
-- existing example plugin identifiers, Config namespace keys, and artwork
-  filenames;
-- the `Armory role mapping` evaluation-record field label.
+- `AGENTWORKS_ROOT` for explicit launcher discovery;
+- `agentworks.equipment-stock.v1`,
+  `agentworks.config.authoring-plan.v1`, and `x-agentworks`;
+- `agentworks_integrity.validation_result.v1`, the `agentworks_integrity`
+  validation boundary, and `tools/validate_agentworks_integrity.py`;
+- Agentworks example plugin identifiers, Config namespace keys, and current
+  artwork;
+- the `Works role mapping` evaluation-record field label.
 
-The marketplace display name and plugin author, developer, and repository
-metadata use Agentworks. Retaining the marketplace key lets the existing
-launcher recognize the same trusted checkout shape.
+Current source accepts these identifiers without old-name aliases. The
+launcher checks a valid `AGENTWORKS_ROOT`, then the current directory and its
+parents for the trusted checkout shape. It does not use or forward the old
+root environment variable. Obsolete marketplace markers, stock schemas, and
+authoring-plan schemas are refused.
+
+Update consumer configuration and prepare new plans through the owning
+workflow. A schema-name change does not requalify an old plan or receipt.
+Historical records, recorded source anchors, and archived assets retain their
+names; they are evidence, not active compatibility interfaces.
 
 ## Consequences
 
@@ -78,7 +84,7 @@ repositories carry the changes; the identity increment leaves them intact.
 
 | Repository | Surface | Disposition |
 | --- | --- | --- |
-| `nisavid/dotfiles` | `home/dot_agents/skills/triaging-agent-armory-issues/SKILL.md` and `PRESSURE-SCENARIOS.md` | Update current project mentions, canonical tracker commands, and trigger text; retain or alias the installed skill name. |
+| `nisavid/dotfiles` | `home/dot_agents/skills/triaging-agent-armory-issues/SKILL.md` and `PRESSURE-SCENARIOS.md` | Rename the installed skill and update current project mentions, canonical tracker commands, and trigger text through its owning workflow. |
 | `nisavid/fork-ops` | `CONTEXT.md` and `specs/fork-ops-foundation/interface-decision-record.md` | Update current generic-equipment and Issue Ops references to Agentworks. |
 | `nisavid/fork-ops` | `docs/agents/fork-ops-32-equipment-migration-case-study.md` | Review current interpretation text separately from the recorded migration evidence. |
 | `nisavid/provingkit` | `CONTEXT.md` | Already uses Agentworks; the old project name appears as vocabulary to avoid. |

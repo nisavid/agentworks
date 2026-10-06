@@ -22,7 +22,7 @@ Trace: [capability card](capability-card.md) -> [interface decision record](inte
 | Script | `scripts/map-deploys --window --json` | Deterministic deploy timeline. |
 | Agent Profile | `agents/latency-investigator.toml` | Read-only specialist profile. |
 | Config | `config/observability-investigation.toml` | Lookback, service allowlist, and escalation thresholds. |
-| Plugin | `agent-armory-observability` | Deferred portable bundle after validation. |
+| Plugin | `agentworks-observability` | Deferred portable bundle after validation. |
 
 ## Minimal Smith Path
 

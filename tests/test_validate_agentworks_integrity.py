@@ -10,7 +10,7 @@ from unittest import mock
 from pathlib import Path
 
 from tools import issue_tracker_core
-from tools.validate_armory_integrity import (
+from tools.validate_agentworks_integrity import (
     ACCEPTED_SOURCE_REQUIREMENTS,
     CheckResult,
     CANONICAL_DOC_STATUSES,
@@ -76,7 +76,7 @@ from tools.validate_armory_integrity import (
 
 class ValidationBoundaryTests(unittest.TestCase):
     def load_live_validator(self):
-        return importlib.import_module("tools.validate_armory_integrity")
+        return importlib.import_module("tools.validate_agentworks_integrity")
 
     def test_live_validator_exposes_boundary_inventory(self):
         validator = self.load_live_validator()
@@ -87,40 +87,40 @@ class ValidationBoundaryTests(unittest.TestCase):
         self.assertEqual(duplicate_keys, [])
         inventory = {item["check"]: item for item in inventory_items}
 
-        self.assertEqual(inventory["required_paths"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["python_runtime"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["required_paths"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["python_runtime"]["boundary"], "agentworks_integrity")
         self.assertEqual(inventory["forge_routes"]["boundary"], "forge_integrity")
         self.assertEqual(inventory["canonical_docs"]["boundary"], "forge_integrity")
-        self.assertEqual(inventory["threat_model"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["documentation_closeout"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["security_closeout"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["projection_drafts"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["threat_model"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["documentation_closeout"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["security_closeout"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["projection_drafts"]["boundary"], "agentworks_integrity")
         self.assertEqual(inventory["harness_catalog"]["boundary"], "forge_integrity")
         self.assertEqual(inventory["templates"]["boundary"], "equipment_candidate_shape")
-        self.assertEqual(inventory["published_equipment_delivery"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["agent_equipment_config_codex_plugin"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["published_equipment_inventory_view"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["published_equipment_delivery"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["agent_equipment_config_codex_plugin"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["published_equipment_inventory_view"]["boundary"], "agentworks_integrity")
         self.assertEqual(inventory["examples"]["boundary"], "equipment_candidate_shape")
         self.assertEqual(inventory["specs"]["boundary"], "equipment_candidate_shape")
         self.assertIn("issue_ops_workflow_executor", inventory)
         self.assertEqual(inventory["issue_ops_workflow_executor"]["boundary"], "equipment_candidate_shape")
-        self.assertEqual(inventory["markdown_links"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["source_disposition"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["harbor_jig_source_map"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["harbor_neighbor_tool_catalog"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["harbor_reward_kit_evaluation"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["harbor_agent_equipment_ab_prototype_results"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["markdown_links"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["source_disposition"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["harbor_jig_source_map"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["harbor_neighbor_tool_catalog"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["harbor_reward_kit_evaluation"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["harbor_agent_equipment_ab_prototype_results"]["boundary"], "agentworks_integrity")
         self.assertIn("harbor_atif_job_artifacts_evaluation", inventory)
-        self.assertEqual(inventory["harbor_atif_job_artifacts_evaluation"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["harbor_atif_job_artifacts_evaluation"]["boundary"], "agentworks_integrity")
         self.assertIn("harbor_driver_gate", inventory)
-        self.assertEqual(inventory["harbor_driver_gate"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["harbor_driver_gate"]["boundary"], "agentworks_integrity")
         self.assertIn("harbor_final_disposition", inventory)
-        self.assertEqual(inventory["harbor_final_disposition"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["external_tool_evaluation"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["harbor_external_tool_evaluation_record"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["skill_eval_methodology_source_intake"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["plugin_creator_source_intake"]["boundary"], "armory_integrity")
-        self.assertEqual(inventory["equipment_ingestion_delivery_alignment"]["boundary"], "armory_integrity")
+        self.assertEqual(inventory["harbor_final_disposition"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["external_tool_evaluation"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["harbor_external_tool_evaluation_record"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["skill_eval_methodology_source_intake"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["plugin_creator_source_intake"]["boundary"], "agentworks_integrity")
+        self.assertEqual(inventory["equipment_ingestion_delivery_alignment"]["boundary"], "agentworks_integrity")
         self.assertEqual(inventory["source_retired_tree"]["boundary"], "historical_seed_migration")
         self.assertEqual(inventory["final_source_retired_stamp"]["boundary"], "historical_seed_migration")
         self.assertEqual(
@@ -128,12 +128,12 @@ class ValidationBoundaryTests(unittest.TestCase):
             "Forge-scoped live integrity; detailed Vanilla Harness Capability Profile behavior belongs to the Manager Core validator.",
         )
 
-    def test_live_validator_json_uses_armory_integrity_envelope(self):
+    def test_live_validator_json_uses_agentworks_integrity_envelope(self):
         validator = self.load_live_validator()
 
         output = json.loads(validator.render_json([CheckResult("demo", True, "ok", "README.md")]))
 
-        self.assertEqual(output["schema"], "armory_integrity.validation_result.v1")
+        self.assertEqual(output["schema"], "agentworks_integrity.validation_result.v1")
         self.assertEqual(output["validation"], "Agentworks Integrity Validation")
         self.assertEqual(output["results"][0]["name"], "demo")
 
@@ -407,7 +407,7 @@ class ValidationBoundaryTests(unittest.TestCase):
 
     def test_live_validator_help_names_integrity_boundaries(self):
         completed = subprocess.run(
-            [sys.executable, "tools/validate_armory_integrity.py", "--help"],
+            [sys.executable, "tools/validate_agentworks_integrity.py", "--help"],
             cwd=Path(__file__).resolve().parents[1],
             check=False,
             stdout=subprocess.PIPE,
@@ -422,7 +422,7 @@ class ValidationBoundaryTests(unittest.TestCase):
 
     def test_live_validator_rejects_seed_compatibility_flags(self):
         completed = subprocess.run(
-            [sys.executable, "tools/validate_armory_integrity.py", "--source-bearing"],
+            [sys.executable, "tools/validate_agentworks_integrity.py", "--source-bearing"],
             cwd=Path(__file__).resolve().parents[1],
             check=False,
             stdout=subprocess.PIPE,
@@ -892,7 +892,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
         )
 
     def test_validate_harbor_atif_job_artifacts_evaluation_reports_missing_doc(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         self.assertTrue(
             hasattr(validator, "validate_harbor_atif_job_artifacts_evaluation")
         )
@@ -2991,7 +2991,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
             )
 
             for host_local_path in (
-                "/home/agent/work/agent-armory",
+                "/home/agent/work/agentworks",
                 r"C:\Users\agent\Documents\agent-armory",
             ):
                 with self.subTest(host_local_path=host_local_path):
@@ -3029,7 +3029,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     #5, #84, #85, #147, and #157.
 
                     ```text
-                    Scratch source: /home/agent/work/agent-armory
+                    Scratch source: /home/agent/work/agentworks
                     ```
 
                     ## Accepted Alignment
@@ -3269,7 +3269,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     ## Pipeline Stages
 
                     intake scope, source review, live repository and issue review,
-                    evidence classification, Armory role mapping, bounded prototype decision,
+                    evidence classification, Works role mapping, bounded prototype decision,
                     security and disclosure review, documentation closeout, issue projection,
                     and final disposition.
 
@@ -3338,7 +3338,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     ## Pipeline Stages
 
                     intake scope, source review, live repository and issue review,
-                    evidence classification, Armory role mapping, bounded prototype decision,
+                    evidence classification, Works role mapping, bounded prototype decision,
                     security and disclosure review, documentation closeout, issue projection,
                     and final disposition.
 
@@ -3403,7 +3403,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     ## Pipeline Stages
 
                     intake scope, source review, live repository and issue review,
-                    evidence classification, Armory role mapping, bounded prototype decision,
+                    evidence classification, Works role mapping, bounded prototype decision,
                     security and disclosure review, documentation closeout, issue projection,
                     and final disposition.
 
@@ -5837,7 +5837,7 @@ class SourceDispositionTests(unittest.TestCase):
             {
                 "source_id": "SYN001",
                 "source_kind": "synthetic",
-                "original_path": "tools/validate_armory_integrity.py",
+                "original_path": "tools/validate_agentworks_integrity.py",
                 "git_blob_id": "abc123",
                 "sha256": "def456",
                 "normalized_payload_digest": "789abc",
@@ -5889,7 +5889,7 @@ class SourceDispositionTests(unittest.TestCase):
 
                 | source_id | source_kind | original_path | git_blob_id | sha256 | normalized_payload_digest | durable_payload |
                 | --- | --- | --- | --- | --- | --- | --- |
-                | SYN001 | synthetic | tools/validate_armory_integrity.py | abc123 | def456 | 789abc | {synthetic_payload} |
+                | SYN001 | synthetic | tools/validate_agentworks_integrity.py | abc123 | def456 | 789abc | {synthetic_payload} |
 
                 ## Disposition Items
 
@@ -5955,7 +5955,7 @@ class SourceDispositionTests(unittest.TestCase):
             path = root / SOURCE_DISPOSITION_PATH
             path.write_text(
                 path.read_text(encoding="utf-8").replace(
-                    "| SYN001 | synthetic | tools/validate_armory_integrity.py | abc123 | def456 | 789abc | accepted requirement constants H001 H002 |",
+                    "| SYN001 | synthetic | tools/validate_agentworks_integrity.py | abc123 | def456 | 789abc | accepted requirement constants H001 H002 |",
                     "| SYN001 | file | docs/metasmith/source-projection.md |  | def456 | 789abc | retired source file |",
                 ),
                 encoding="utf-8",
@@ -8709,7 +8709,7 @@ class TemplateValidationTests(unittest.TestCase):
             root,
             "templates/equipment-stock-record.toml",
             """\
-            schema_version = "agent-armory.equipment-stock.v1"
+            schema_version = "agentworks.equipment-stock.v1"
 
             [[equipment]]
             id = "example-equipment"
@@ -13034,14 +13034,35 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
             for relative_path in paths:
                 self.assertTrue((repo_root / relative_path).exists(), relative_path)
 
+    def test_validate_published_equipment_delivery_rejects_obsolete_stock_schema(self):
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_inventory(
+                root,
+                'schema_version = "agent-armory.equipment-stock.v1"\nequipment = []\n',
+            )
+
+            results = validator.validate_published_equipment_delivery(root)
+
+        self.assertEqual(
+            results,
+            [CheckResult(
+                "published_equipment_delivery:inventory:schema_version",
+                False,
+                "schema_version must be agentworks.equipment-stock.v1",
+                "inventory/equipment.toml",
+            )],
+        )
+
     def test_validate_published_equipment_delivery_accepts_empty_stock_inventory(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
                 equipment = []
                 """,
             )
@@ -13061,7 +13082,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_inspection_test_plan(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             runtime = root / "tools/runtime.py"
@@ -13070,7 +13091,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13111,13 +13132,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_closeout_record(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13145,13 +13166,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_closeout_record_outside_closeout_directory(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13181,13 +13202,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_closeout_record_path_escape(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13216,13 +13237,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_closeout_record_missing_required_section(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13265,13 +13286,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_passed_delivery_without_completed_closeout(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13301,13 +13322,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_shop_card_missing_required_section(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13344,13 +13365,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_inspection_test_plan_outside_itp_directory(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13380,13 +13401,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_inspection_test_plan_missing_required_section(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13427,13 +13448,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_inspection_test_plan_file(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13462,13 +13483,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_passed_delivery_without_completed_itp(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13510,7 +13531,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_accepts_valid_stock_record_with_complete_itp(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             runtime = root / "tools/runtime.py"
@@ -13519,7 +13540,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13564,10 +13585,10 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_equipment_key(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
-            self.write_inventory(root, 'schema_version = "agent-armory.equipment-stock.v1"\n')
+            self.write_inventory(root, 'schema_version = "agentworks.equipment-stock.v1"\n')
 
             results = validator.validate_published_equipment_delivery(root)
 
@@ -13584,13 +13605,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_accepts_completion_decision_at_deeper_heading(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13636,13 +13657,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_passed_delivery_for_unpublished_equipment(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13670,13 +13691,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_required_component_without_paths(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13710,13 +13731,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_component_required_fields(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13785,13 +13806,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_unknown_component_kind(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13821,13 +13842,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_component_path(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13861,13 +13882,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_blank_component_path(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13901,7 +13922,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_component_path_escape(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             runtime = root / "tools/runtime.py"
@@ -13910,7 +13931,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13944,7 +13965,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_symlinked_component_path(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir, tempfile.TemporaryDirectory() as outside_tmpdir:
             root = Path(tmpdir)
             outside = Path(outside_tmpdir) / "outside-runtime.py"
@@ -13955,7 +13976,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -13989,13 +14010,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_planned_component_without_notes(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14029,13 +14050,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_shop_card_outside_shop_card_directory(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14063,13 +14084,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_required_record_field(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14096,13 +14117,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_delivery_rejects_missing_fields_without_duplicate_detail_errors(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14147,13 +14168,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
             self.assertNotIn(duplicate_error, results)
 
     def test_validate_published_equipment_inventory_view_accepts_empty_stock_projection(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
                 equipment = []
                 """,
             )
@@ -14166,7 +14187,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
 
                 The canonical stock authority is
                 [`inventory/equipment.toml`](../../inventory/equipment.toml).
-                The stock inventory uses schema `agent-armory.equipment-stock.v1`.
+                The stock inventory uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14197,13 +14218,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_requires_empty_stock_sentence(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
                 equipment = []
                 """,
             )
@@ -14215,7 +14236,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14240,13 +14261,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_requires_itp_index_link(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
                 equipment = []
                 """,
             )
@@ -14258,7 +14279,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14283,13 +14304,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_rejects_extra_empty_stock_text(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
                 equipment = []
                 """,
             )
@@ -14301,7 +14322,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14328,13 +14349,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_rejects_stale_stock_bullets_when_inventory_empty(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
                 equipment = []
                 """,
             )
@@ -14346,7 +14367,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14382,13 +14403,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_requires_non_empty_stock_record_bullets(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14408,7 +14429,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14441,13 +14462,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_rejects_non_empty_record_missing_field(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14467,7 +14488,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14492,13 +14513,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_rejects_stock_record_bullet_missing_itp(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14518,7 +14539,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14544,13 +14565,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_does_not_count_paragraph_after_bullet(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "example"
@@ -14570,7 +14591,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14597,13 +14618,13 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_view_rejects_substring_only_stock_record_bullet(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_inventory(
                 root,
                 """
-                schema_version = "agent-armory.equipment-stock.v1"
+                schema_version = "agentworks.equipment-stock.v1"
 
                 [[equipment]]
                 id = "kit"
@@ -14623,7 +14644,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
                 ## Stock Authority
 
                 [`inventory/equipment.toml`](../../inventory/equipment.toml)
-                uses schema `agent-armory.equipment-stock.v1`.
+                uses schema `agentworks.equipment-stock.v1`.
 
                 ## Stock Records
 
@@ -14652,7 +14673,7 @@ class PublishedEquipmentDeliveryValidationTests(unittest.TestCase):
         )
 
     def test_validate_published_equipment_inventory_routing_requires_reader_routes(self):
-        validator = importlib.import_module("tools.validate_armory_integrity")
+        validator = importlib.import_module("tools.validate_agentworks_integrity")
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_routing_docs(root, docs_link=False)
@@ -14728,7 +14749,7 @@ class ExampleValidationTests(unittest.TestCase):
 
                 ## Vision alignment
 
-                This example records why the interface keeps the Armory experience reliable.
+                This example records why the interface keeps the Works experience reliable.
 
                 This Forge Example is not Published Agent Equipment and is not installable.
                 Trace: [capability card](capability-card.md) -> interface decision record -> [projected components](projected-components.md).

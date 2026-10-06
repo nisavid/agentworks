@@ -30,7 +30,7 @@ completion decision behind a stockable delivery claim. Issue comments, PR
 bodies, release summaries, and handoff notes may project or summarize it, but
 they do not replace it.
 
-The inventory file uses schema version `agent-armory.equipment-stock.v1`. It
+The inventory file uses schema version `agentworks.equipment-stock.v1`. It
 may use `equipment = []` while the standard exists and before a stockable slice
 is recorded.
 

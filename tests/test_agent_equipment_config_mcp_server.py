@@ -44,7 +44,7 @@ class AgentEquipmentConfigMcpServerTests(unittest.TestCase):
                     "params": {
                         "protocolVersion": "2025-11-25",
                         "capabilities": {},
-                        "clientInfo": {"name": "agent-armory-test", "version": "0"},
+                        "clientInfo": {"name": "agentworks-test", "version": "0"},
                     },
                 },
                 {"jsonrpc": "2.0", "method": "notifications/initialized"},
@@ -126,14 +126,14 @@ class AgentEquipmentConfigMcpServerTests(unittest.TestCase):
         self.assertFalse(tools["config.apply"]["annotations"]["readOnlyHint"])
         self.assertTrue(tools["config.apply"]["annotations"]["destructiveHint"])
         self.assertEqual(
-            tools["config.apply"]["x-agent-armory"]["approval_requirements"],
+            tools["config.apply"]["x-agentworks"]["approval_requirements"],
             ["explicit operator or host approval before mutation-capable call"],
         )
-        self.assertEqual(tools["config.apply"]["x-agent-armory"]["auth_source"], "per-call apply_authority")
+        self.assertEqual(tools["config.apply"]["x-agentworks"]["auth_source"], "per-call apply_authority")
         self.assertFalse(tools["migrate.config_apply"]["annotations"]["readOnlyHint"])
         self.assertTrue(tools["migrate.config_apply"]["annotations"]["destructiveHint"])
         self.assertEqual(
-            tools["migrate.config_apply"]["x-agent-armory"]["approval_requirements"],
+            tools["migrate.config_apply"]["x-agentworks"]["approval_requirements"],
             ["per-call apply_authority"],
         )
         self.assertEqual(stderr, "")

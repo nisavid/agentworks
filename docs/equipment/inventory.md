@@ -7,7 +7,7 @@ projection of the canonical inventory, not a separate source of stock truth.
 
 The canonical stock authority is
 [`inventory/equipment.toml`](../../inventory/equipment.toml). The stock
-inventory uses schema `agent-armory.equipment-stock.v1`.
+inventory uses schema `agentworks.equipment-stock.v1`.
 
 ## Stock Records
 

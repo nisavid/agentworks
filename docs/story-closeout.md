@@ -27,7 +27,7 @@ Run closeout gates in this order:
    delivered.
 8. Run Cross-Boundary Coherence before Story Quality because quality review depends on coherent process evidence.
 9. Run Story Quality Ralph Review after coherence findings are fixed or soundly rejected.
-10. Run final validation and publication-readiness checks required by the active plan or repository policy. For current repository integrity, `.python-version` declares the Python 3.14 runtime and `python3.14 tools/validate_armory_integrity.py --final-closeout` is the branch-push and external-projection readiness check.
+10. Run final validation and publication-readiness checks required by the active plan or repository policy. For current repository integrity, `.python-version` declares the Python 3.14 runtime and `python3.14 tools/validate_agentworks_integrity.py --final-closeout` is the branch-push and external-projection readiness check.
 11. Push or otherwise publish the branch only when the active plan, operator direction, or issue-projection surface needs a pushed commit before PR creation. A stated operator pause point may occur here.
 12. Publish or update issue, PR, release, and handoff surfaces from the clean final story evidence.
 13. Perform publication actions that remain in scope, respecting repository policy and stated operator pause points.

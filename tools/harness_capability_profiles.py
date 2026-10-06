@@ -80,7 +80,7 @@ FAMILY_KEYWORDS = {
 MIGRATION_RESULT_SCHEMA = "harness_capability_profiles.migrate_result.v1"
 SUMMARY_RESULT_SCHEMA = "harness_capability_profiles.summary_result.v1"
 VALIDATION_RESULT_SCHEMA = "harness_capability_profiles.validation_result.v1"
-ARMORY_INTEGRITY_VALIDATION_SCHEMA = "armory_integrity.validation_result.v1"
+AGENTWORKS_INTEGRITY_VALIDATION_SCHEMA = "agentworks_integrity.validation_result.v1"
 REFRESH_SCOUT_INPUT_SCHEMA = "harness_capability_profiles.refresh_scout_input.v1"
 REFRESH_SCOUT_REPORT_SCHEMA = "harness_capability_profiles.refresh_scout_report.v1"
 REFRESH_ANALYSIS_REPORT_SCHEMA = "harness_capability_profiles.refresh_analysis_report.v1"
@@ -88,7 +88,7 @@ REFRESH_UPDATE_PLAN_SCHEMA = "harness_capability_profiles.refresh_update_plan.v1
 REFRESH_DIFF_SCHEMA = "harness_capability_profiles.refresh_diff.v1"
 REFRESH_APPLY_SCHEMA = "harness_capability_profiles.refresh_apply.v1"
 REFRESH_AUDIT_SCHEMA = "harness_capability_profiles.refresh_audit.v1"
-SUPPORTED_REFRESH_VALIDATION_SCHEMAS = {VALIDATION_RESULT_SCHEMA, ARMORY_INTEGRITY_VALIDATION_SCHEMA}
+SUPPORTED_REFRESH_VALIDATION_SCHEMAS = {VALIDATION_RESULT_SCHEMA, AGENTWORKS_INTEGRITY_VALIDATION_SCHEMA}
 VALIDATION_NAME = "Vanilla Harness Capability Profile Manager Core"
 SUMMARY_SOURCE_LIMIT = 6
 CLAIM_STATUSES = {"supported", "unsupported", "unknown", "not-applicable"}
@@ -2392,7 +2392,7 @@ def validation_result_passed(payload: dict[str, Any]) -> bool:
     )
     if schema == VALIDATION_RESULT_SCHEMA:
         return payload.get("result") == "passed" and results_ok
-    if schema == ARMORY_INTEGRITY_VALIDATION_SCHEMA:
+    if schema == AGENTWORKS_INTEGRITY_VALIDATION_SCHEMA:
         return payload.get("result") in {None, "passed"} and results_ok
     return False
 
@@ -2562,7 +2562,7 @@ def refresh_plan(
         "follow_up_issue_candidates": analysis.get("follow_up_issue_candidates", []),
         "validation_commands": [
             "python3.14 tools/harness_capability_profiles.py validate --json",
-            "python3.14 tools/validate_armory_integrity.py --json",
+            "python3.14 tools/validate_agentworks_integrity.py --json",
             "git diff --check",
         ],
     }

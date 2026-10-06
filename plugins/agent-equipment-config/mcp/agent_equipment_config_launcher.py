@@ -10,15 +10,15 @@ from pathlib import Path
 REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
 REPO_MARKER = Path("inventory/equipment.toml")
 MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
-SERVER_ENV_VAR_NAMES = ("AGENT_ARMORY_ROOT",)
+SERVER_ENV_VAR_NAMES = ("AGENTWORKS_ROOT",)
 
 
-def has_armory_marketplace(candidate: Path) -> bool:
+def has_agentworks_marketplace(candidate: Path) -> bool:
     try:
         data = json.loads((candidate / MARKETPLACE_MARKER).read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return False
-    if not isinstance(data, dict) or data.get("name") != "agent-armory":
+    if not isinstance(data, dict) or data.get("name") != "agentworks":
         return False
     plugins = data.get("plugins")
     if not isinstance(plugins, list):
@@ -33,24 +33,24 @@ def has_armory_marketplace(candidate: Path) -> bool:
     )
 
 
-def candidate_is_armory_root(candidate: Path) -> bool:
+def candidate_is_agentworks_root(candidate: Path) -> bool:
     return (
         (candidate / REPO_SERVER).is_file()
         and (candidate / REPO_MARKER).is_file()
-        and has_armory_marketplace(candidate)
+        and has_agentworks_marketplace(candidate)
     )
 
 
-def find_armory_root(*, env_root: str | None = None, start_dir: Path | None = None) -> Path | None:
+def find_agentworks_root(*, env_root: str | None = None, start_dir: Path | None = None) -> Path | None:
     if env_root:
         env_candidate = Path(env_root).expanduser()
-        if candidate_is_armory_root(env_candidate):
+        if candidate_is_agentworks_root(env_candidate):
             return env_candidate.resolve()
     current = (start_dir if start_dir is not None else Path.cwd()).expanduser().resolve()
-    if candidate_is_armory_root(current):
+    if candidate_is_agentworks_root(current):
         return current
     for candidate in current.parents:
-        if candidate_is_armory_root(candidate):
+        if candidate_is_agentworks_root(candidate):
             return candidate.resolve()
     return None
 
@@ -65,13 +65,13 @@ def server_environment() -> dict[str, str]:
 
 def launch(argv: list[str] | None = None) -> int:
     _argv = argv if argv is not None else sys.argv[1:]
-    root = find_armory_root(
-        env_root=os.environ.get("AGENT_ARMORY_ROOT"),
+    root = find_agentworks_root(
+        env_root=os.environ.get("AGENTWORKS_ROOT"),
     )
     if root is None:
         print(
             "Agent Equipment Config MCP launcher could not find an Agentworks "
-            "checkout. Set AGENT_ARMORY_ROOT to the checkout containing "
+            "checkout. Set AGENTWORKS_ROOT to the checkout containing "
             "tools/agent_equipment_config_mcp_server.py.",
             file=sys.stderr,
         )

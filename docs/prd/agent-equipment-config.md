@@ -134,7 +134,7 @@ comparison.
 - Validate deterministic runtime behavior with
   `python3.14 -m unittest tests.test_agent_equipment_config`.
 - Validate repository shape, links, and required Config surfaces with
-  `python3.14 tools/validate_armory_integrity.py --final-closeout`.
+  `python3.14 tools/validate_agentworks_integrity.py --final-closeout`.
 - Check MCP parity by mapping each MCP-covered CLI operation to one MCP tool
   and one underlying runtime behavior, including authoring proposal, plan, and
   reviewed plan-artifact apply surfaces.
