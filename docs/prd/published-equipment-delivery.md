@@ -15,10 +15,10 @@ and standard publication inspection record were available. The current
 [Config shop card](../equipment/shop-cards/agent-equipment-config.md) points to
 the implemented delivery surfaces and their inspection evidence.
 
-The Forge already has Capability Cards, Equipment Design Bundles, promotion
-states, validation plans, and Story Closeout. Those surfaces help Smiths build
-equipment, but they do not yet form a complete delivery system for published
-equipment. Published claims need stock records, Wielder and Outfitter
+At the start of this retrofit, the Forge had Capability Cards, Equipment
+Design Bundles, promotion states, validation plans, and Story Closeout. Those
+surfaces helped Smiths build equipment but did not yet form a complete delivery
+system for published equipment. Published claims need stock records, Wielder and Outfitter
 presentation, gear-up paths, component manifests, inspection criteria, and
 equipment-epic closeout gates that block publication until the advertised
 equipment can actually be equipped.
