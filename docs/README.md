@@ -48,7 +48,7 @@ and Agent Equipment Config has its first published runtime slice.
 - [Project context and language](../CONTEXT.md): glossary, relationships,
   precision rules, example dialogue, and ambiguity resolutions.
 - [Agentworks identity](adr/0023-adopt-agentworks-identity.md): the current
-  project name and retained compatibility identifiers.
+  project name, current identifiers, and consumer migration requirements.
 
 ## Tutorials and guided examples
 
