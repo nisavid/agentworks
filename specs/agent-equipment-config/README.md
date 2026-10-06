@@ -15,7 +15,7 @@ implement Agent Equipment.
 This spec describes desired behavior only. It does not implement Agent Equipment.
 The runtime guide names the currently published slice.
 
-Issue: [#23](https://github.com/nisavid/agent-armory/issues/23)
+Issue: [#23](https://github.com/nisavid/agentworks/issues/23)
 
 Product requirements:
 [docs/prd/agent-equipment-config.md](../../docs/prd/agent-equipment-config.md).

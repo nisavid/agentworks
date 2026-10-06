@@ -126,7 +126,7 @@ comparison.
   the fluent CLI operations.
 - GitHub Issues must carry blocker and follow-up issues for MVP CLI fluency,
   MCP parity, integration guides, and the Config Authoring Surfaces bucket.
-- Armory Integrity Validation must keep the Config PRD and Config bundle paths
+- Agentworks Integrity Validation must keep the Config PRD and Config bundle paths
   visible as required repository surfaces.
 
 **Evaluation Strategy**:

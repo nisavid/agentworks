@@ -5,13 +5,13 @@ Promotion state: specified
 
 ## Purpose
 
-Harness Capability Lifecycle Methodology gives the Armory a repeatable way to
+Harness Capability Lifecycle Methodology gives the Works a repeatable way to
 discover, define, reanalyze, refine, deprecate, remove, and project Harness
 Capability work after the first Vanilla Harness Capability Profiles exist.
 
 ## Vision alignment
 
-This capability supports the Armory vision by keeping current harness facts
+This capability supports the Works vision by keeping current harness facts
 evidence-backed, reviewable, and usable by Smiths and Outfitters without
 requiring each agent to rediscover every capability boundary from scratch. It
 keeps deterministic validation in Manager Core, judgment-heavy comparison in
@@ -123,7 +123,7 @@ Later implementation work may add:
 - Future Manager Core JSON output validation.
 - Future profile-diff and precondition-hash validation.
 - Current repository validation through unit tests, Harness Capability Profile
-  validation, Armory Integrity Validation, and `git diff --check`.
+  validation, Agentworks Integrity Validation, and `git diff --check`.
 
 ## Output contract
 
@@ -150,7 +150,7 @@ Jig-backed evidence integration.
 
 ## Evidence
 
-- Source-supported: current Armory docs, `CONTEXT.md`, Vanilla Harness
+- Source-supported: current Works docs, `CONTEXT.md`, Vanilla Harness
   Capability Profile specs, Capability Profiling Protocol, Agent Test Jigs
   design package, Story Closeout, and repository threat model.
 - Official documentation pressure: Codex config, hooks, matcher, transcript,

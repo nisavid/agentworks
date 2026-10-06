@@ -70,7 +70,7 @@ def launch(argv: list[str] | None = None) -> int:
     )
     if root is None:
         print(
-            "Agent Equipment Config MCP launcher could not find an Agent Armory "
+            "Agent Equipment Config MCP launcher could not find an Agentworks "
             "checkout. Set AGENT_ARMORY_ROOT to the checkout containing "
             "tools/agent_equipment_config_mcp_server.py.",
             file=sys.stderr,
@@ -81,7 +81,7 @@ def launch(argv: list[str] | None = None) -> int:
     if not server.is_file():
         print(
             "Agent Equipment Config MCP launcher could not find "
-            f"{REPO_SERVER} in the resolved Agent Armory checkout.",
+            f"{REPO_SERVER} in the resolved Agentworks checkout.",
             file=sys.stderr,
         )
         return 2

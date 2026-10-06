@@ -21,7 +21,7 @@ portable deterministic engine slice for the covered config behaviors.
 
 ## Vision alignment
 
-The Armory vision expects deterministic state, serialization, policy, and
+The Works vision expects deterministic state, serialization, policy, and
 side-effect boundaries to live outside model memory. Config should make
 equipment behavior adaptable without burying policy in long skills or hidden
 agent preference.

@@ -4,16 +4,16 @@ The Forge Tour is the plain-language introduction to the Forge.
 It explains what the Forge is for, how its agent roles fit together, and where
 to go next before asking you to read deeper technical details.
 
-## The Armory and the Forge
+## The Works and the Forge
 
-The Agent Armory is a home for agent equipment: reusable tooling, behavior,
+Agentworks is a home for agent equipment: reusable tooling, behavior,
 workflow, knowledge, and configuration that equips agents or agentic systems.
 
-The Forge is the Armory's construction system. It helps agents design, build,
+The Forge is the Works' construction system. It helps agents design, build,
 check, and care for equipment so the result is predictable, evidence-aware, and
 reviewable before anyone relies on it.
 
-The [Armory Vision](vision.md) describes the intended experience behind that
+The [Agentworks Vision](vision.md) describes the intended experience behind that
 construction system: Agents should be able to clarify underspecified intent,
 outfit themselves with the right equipment, use deterministic support where it
 belongs, and improve the equipment ecosystem when a task reveals a gap.
@@ -27,7 +27,7 @@ Config runtime slice they need to start manufacturing equipment.
 The Forge names agent roles directly:
 
 - **Wielders** use loadouts to perform work.
-- **Outfitters** select agent equipment from the Armory and assemble loadouts.
+- **Outfitters** select agent equipment from the Works and assemble loadouts.
 - **Smiths** create agent equipment with the Forge.
 - **Forgewrights** create and refine the Forge.
 
@@ -75,7 +75,7 @@ inventory record, shop card, component manifest, and delivery status that must
 be inspectable before a release is delivery-compliant.
 
 When equipment reaches the right readiness state, an outfitter will be able to
-select equipment from the Armory and assemble a loadout for a role, task,
+select equipment from the Works and assemble a loadout for a role, task,
 session, agent, or agentic system. A wielder will then use that loadout inside
 an agent harness.
 
@@ -97,7 +97,7 @@ equipment story. Future Reflection and cognition equipment will automate more
 of that loop: inspecting recent work, extracting reusable lessons, and routing
 the resulting equipment, policy, config, validator, or documentation candidates.
 
-The Agent Armory also keeps written notes for larger future work, including
+Agentworks also keeps written notes for larger future work, including
 portable workflow equipment, side-thread hand-back, and ephemeral workflow
 opportunity capture. These notes are not inventory items. They are source
 material for future equipment.
@@ -105,7 +105,7 @@ material for future equipment.
 ## Where to go next
 
 - [Documentation map](README.md): choose a path by goal.
-- [Armory Vision](vision.md): understand the experience the Armory, Forge, and
+- [Agentworks Vision](vision.md): understand the experience the Works, Forge, and
   Agent Equipment are meant to create.
 - [Forge Canon](agent-equipment-forge.md): the primary overview of the Forge.
 - [Smith runbook](smith-runbook.md): give this to an agent making equipment.
@@ -121,7 +121,7 @@ material for future equipment.
 - [Stocked equipment inventory](equipment/inventory.md): the current
   human-facing inventory view.
 - [Published Equipment Delivery](equipment-delivery.md): how published
-  equipment becomes inspectable Armory stock.
+  equipment becomes inspectable Works stock.
 
 ## Where this tour stops
 

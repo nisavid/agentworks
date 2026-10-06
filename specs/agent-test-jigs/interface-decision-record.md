@@ -49,10 +49,10 @@ implementation slices.
 
 ## Evidence category
 
-- Source-supported: current Armory docs, Capability Profiling Protocol, Harness
+- Source-supported: current Works docs, Capability Profiling Protocol, Harness
   Capability Profile Manager boundaries, and repository threat model.
 - Implementation inference: TOML is the preferred behavioral spec direction
-  because existing Armory and sibling-repo scenario surfaces use compact
+  because existing Works and sibling-repo scenario surfaces use compact
   human-authored TOML.
 - Hypothesis: a hybrid local driver may be the best first implementation
   candidate, pending ADR gate application.
@@ -77,7 +77,7 @@ implementation slices.
   while Jig Test Plans are executable input.
 - Put the design in `AGENTS.md`: rejected because #61 is equipment-specific
   design, not durable cross-repository agent policy.
-- Treat Learned Oracles as final judges: rejected because the Armory needs
+- Treat Learned Oracles as final judges: rejected because the Works needs
   auditable structured disagreement and weakest-reliable-oracle behavior.
 
 ## Risks

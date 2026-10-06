@@ -9,7 +9,7 @@ Use spec-driven TDD for the validation boundary refactor before Manager Core
 validation integrates with repository validation.
 
 1. Add failing tests that classify existing validation checks by live boundary.
-2. Add failing tests for Armory Integrity Validation and Forge Integrity
+2. Add failing tests for Agentworks Integrity Validation and Forge Integrity
    Validation command names, JSON output, and help text.
 3. Add failing tests for the absence of transient compatibility markers in
    live surfaces at story closeout.

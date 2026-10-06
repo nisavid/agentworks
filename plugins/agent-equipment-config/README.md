@@ -5,10 +5,11 @@ plugin-local MCP launcher, and a guard hook for Config local-write MCP tools.
 
 ## Install
 
-The Armory repository exposes this plugin through
-`.agents/plugins/marketplace.json` as the `agent-armory` repo marketplace. Codex
+The Works repository exposes this plugin through
+`.agents/plugins/marketplace.json` as the `agent-armory` repo marketplace, displayed
+as Agentworks. The marketplace key remains stable for installed consumers. Codex
 installs the source from `./plugins/agent-equipment-config` into its plugin
-cache, so the plugin-local launcher uses the configured live Armory checkout at
+cache, so the plugin-local launcher uses the configured live Works checkout at
 runtime.
 
 Do not copy secrets into plugin files. The MCP config passes through only
@@ -27,10 +28,10 @@ cwd is inside a checkout, containing:
 - `inventory/equipment.toml`
 - `.agents/plugins/marketplace.json`
 
-If neither source contains those Armory markers, the launcher exits closed with
+If neither source contains those Works markers, the launcher exits closed with
 install guidance instead of starting an unexpected process.
 
-After validation, the launcher changes directory to the live Armory checkout
+After validation, the launcher changes directory to the live Works checkout
 before executing the standalone MCP server so relative Config paths resolve
 against the repository, not the installed plugin cache.
 
@@ -49,7 +50,7 @@ plugin asks Codex to prompt by default and specifically prompt for
 
 ## Validate
 
-Run these checks from the Armory checkout:
+Run these checks from the Works checkout:
 
 ```bash
 python3.14 -m unittest tests.test_agent_equipment_config_codex_plugin

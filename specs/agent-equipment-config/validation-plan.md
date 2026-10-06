@@ -37,7 +37,7 @@ required CLI/MCP operation-surface parity.
 
 ## Bundle validation
 
-Armory Integrity Validation must require:
+Agentworks Integrity Validation must require:
 
 - `docs/prd/agent-equipment-config.md`
 - `specs/agent-equipment-config/README.md`

@@ -13,7 +13,7 @@ Issue Ops is accepted shorthand for Issue Tracker Ops.
 
 ## Vision alignment
 
-Issue Ops supports the Armory vision by keeping follow-up capture,
+Issue Ops supports the Works vision by keeping follow-up capture,
 dependencies, repair, enrichment, selection, orchestration, and Reflection
 Findings in a durable tracker instead of scattered through chat or in-tree
 fallback state. It lets agents route work systematically while deterministic
@@ -124,7 +124,7 @@ keep tracker mutations explicit and governable.
 - `python3.14 -m unittest tests.test_issue_tracker_ops`
 - `python3.14 -m unittest tests.test_validate_armory_integrity`
 - `python3.14 tools/issue_tracker_ops.py <command> ...` dry-run smoke checks.
-- `python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agent-armory --execute`
+- `python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agentworks --execute`
 - `python3.14 tools/validate_armory_integrity.py`
 - `python3.14 tools/validate_armory_integrity.py --final-closeout` before external
   projection or branch push.

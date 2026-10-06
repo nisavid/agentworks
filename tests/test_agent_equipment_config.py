@@ -88,7 +88,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertEqual(mutation_result["effective"]["issue_tracker_ops"]["mode"]["value"], "dry-run")
         self.assertEqual(mutation_result["effective"]["issue_tracker_ops"]["external_disclosure"]["value"], "blocked")
 
-    def test_committed_agent_armory_issue_ops_policy_layer_validates(self):
+    def test_committed_agentworks_issue_ops_policy_layer_validates(self):
         root = Path(__file__).parents[1]
         policy = root / "config/agent-equipment.toml"
 
@@ -102,7 +102,7 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertEqual(result["effective"]["issue_tracker_ops"]["mode"]["value"], "dry-run")
         self.assertEqual(result["effective"]["issue_tracker_ops"]["external_disclosure"]["value"], "blocked")
         self.assertEqual(result["effective"]["issue_tracker_ops"]["policy_profile_status"]["value"], "authoritative")
-        self.assertEqual(result["effective"]["issue_tracker_ops"]["tracker"]["value"]["repo"], "nisavid/agent-armory")
+        self.assertEqual(result["effective"]["issue_tracker_ops"]["tracker"]["value"]["repo"], "nisavid/agentworks")
         label_axes = result["effective"]["issue_tracker_ops"]["label_axes"]["value"]
         self.assertIn(
             {"name": "category", "cardinality": "exactly_one", "description": "coarse issue category role", "labels": ["bug", "enhancement"]},

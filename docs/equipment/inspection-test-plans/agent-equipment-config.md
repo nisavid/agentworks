@@ -77,7 +77,7 @@ bundle.
   python3.14 -m unittest tests.test_agent_equipment_config_codex_plugin
   ```
 
-- Run Armory integrity validation:
+- Run Works integrity validation:
 
   ```bash
   python3.14 tools/validate_armory_integrity.py
@@ -146,7 +146,7 @@ The Codex plugin launcher delegates to the existing standalone MCP server.
 
 - Test output for the published-equipment delivery regression test class.
 - Test output for the Codex plugin contract test module.
-- Armory integrity validation output.
+- Works integrity validation output.
 - Final closeout validation output.
 - Security review result for the changed docs, TOML, and test surfaces.
 - Documentation review result covering human-facing and agent-facing routing.

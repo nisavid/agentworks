@@ -25,21 +25,21 @@ No implementation issue should combine all of those responsibilities.
 
 The implementation projection created these follow-up issues:
 
-1. [#173 Implement Harness Capability lifecycle candidate records in Manager Core](https://github.com/nisavid/agent-armory/issues/173):
+1. [#173 Implement Harness Capability lifecycle candidate records in Manager Core](https://github.com/nisavid/agentworks/issues/173):
    unblocked first deterministic slice for candidate artifacts and JSON output.
-2. [#174 Implement Harness Capability lifecycle disposition and schema-pressure gates](https://github.com/nisavid/agent-armory/issues/174):
+2. [#174 Implement Harness Capability lifecycle disposition and schema-pressure gates](https://github.com/nisavid/agentworks/issues/174):
    blocked by #173 unless narrowed to an equivalent first slice.
-3. [#175 Update manual Harness Capability refresh workflow for lifecycle candidates](https://github.com/nisavid/agent-armory/issues/175):
+3. [#175 Update manual Harness Capability refresh workflow for lifecycle candidates](https://github.com/nisavid/agentworks/issues/175):
    blocked by #173 and #174 unless narrowed to a docs-only bridge.
-4. [#176 Route Harness Capability lifecycle findings through Issue Tracker Ops and Reflection Findings](https://github.com/nisavid/agent-armory/issues/176):
+4. [#176 Route Harness Capability lifecycle findings through Issue Tracker Ops and Reflection Findings](https://github.com/nisavid/agentworks/issues/176):
    blocked by #173 and #174; Reflection-specific routing may also depend on
    #25.
-5. [#177 Integrate Harness Test Suite results with Harness Capability lifecycle evidence](https://github.com/nisavid/agent-armory/issues/177):
-   blocked by [#164 Implement Agent Test Jig Runner CLI and structured results](https://github.com/nisavid/agent-armory/issues/164),
-   [#167 Integrate Harness Test Suites with Harness Capability lifecycle work](https://github.com/nisavid/agent-armory/issues/167),
+5. [#177 Integrate Harness Test Suite results with Harness Capability lifecycle evidence](https://github.com/nisavid/agentworks/issues/177):
+   blocked by [#164 Implement Agent Test Jig Runner CLI and structured results](https://github.com/nisavid/agentworks/issues/164),
+   [#167 Integrate Harness Test Suites with Harness Capability lifecycle work](https://github.com/nisavid/agentworks/issues/167),
    and any prerequisite Jig Test Plan, first Jig Driver, Assertion Provider, or
    adequacy-report work.
-6. [#178 Integrate Harness Capability lifecycle with Config and Periodic Actions](https://github.com/nisavid/agent-armory/issues/178):
+6. [#178 Integrate Harness Capability lifecycle with Config and Periodic Actions](https://github.com/nisavid/agentworks/issues/178):
    blocked by #23 and #3.
 
 The blocked dependency labels are intentional. Native issue dependencies remain

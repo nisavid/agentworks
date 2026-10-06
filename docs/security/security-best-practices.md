@@ -3,11 +3,11 @@
 Status: Security Best Practices
 Last refreshed: 2026-05-19
 
-This baseline records the current secure shape of Agent Armory's executable
+This baseline records the current secure shape of Agentworks's executable
 repository surfaces. It applies to the Python CLI tools, executable templates,
 and local evidence workflows that exist now.
 
-Agent Armory does not currently define a deployed web service, browser
+Agentworks does not currently define a deployed web service, browser
 frontend, authentication session runtime, or database query layer. Web, Django,
 FastAPI, Flask, JavaScript web-server, frontend, SQL, and ORM-specific guidance
 does not apply to the current runtime surface.
@@ -93,7 +93,7 @@ Smith copies them into future equipment.
 
 ## Refresh Triggers
 
-Refresh this baseline when Agent Armory adds or materially changes:
+Refresh this baseline when Agentworks adds or materially changes:
 
 - executable code, hooks, MCP/tool definitions, plugin manifests, scripts, or
   permissions;

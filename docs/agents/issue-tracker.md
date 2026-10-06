@@ -8,7 +8,7 @@ operation dispositions, fallback rules, and audit expectations. Use this
 document for readable workflow guidance over that Config authority. If these
 surfaces conflict, the Config layer is authoritative.
 
-Issues and PRDs for this repo live in GitHub Issues for `nisavid/agent-armory`.
+Issues and PRDs for this repo live in GitHub Issues for `nisavid/agentworks`.
 
 The current Issue Tracker Ops baseline is GitHub Issues without GitHub Projects
 custom-field support. In that baseline, labels represent custom predicates such
@@ -168,7 +168,7 @@ content.
 Create or update a GitHub issue when a reflection produces an actionable,
 publishable candidate. Route the finding to the narrowest owner issue when one
 is clear. When the finding informs generic Reflection or cognition equipment,
-link it to [#25](https://github.com/nisavid/agent-armory/issues/25).
+link it to [#25](https://github.com/nisavid/agentworks/issues/25).
 
 Capture:
 

@@ -140,10 +140,10 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             root = Path(tmpdir)
             self.write_valid_plugin_fixture(root)
             manifest = json.loads((root / PLUGIN_ROOT / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
-            manifest["author"] = "Agent Armory"
+            manifest["author"] = "Agentworks"
             manifest["repository"] = {
                 "type": "git",
-                "url": "https://github.com/nisavid/agent-armory",
+                "url": "https://github.com/nisavid/agentworks",
             }
             manifest["apps"] = "./.app.json"
             manifest["interface"]["description"] = "Duplicate install-surface copy."
@@ -164,7 +164,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:manifest:repository",
                 False,
-                "repository must be https://github.com/nisavid/agent-armory",
+                "repository must be https://github.com/nisavid/agentworks",
                 "plugins/agent-equipment-config/.codex-plugin/plugin.json",
             ),
             results,
@@ -293,7 +293,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -463,7 +463,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -513,7 +513,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -556,7 +556,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, wrong_marker_results)
@@ -584,7 +584,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -617,7 +617,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -840,7 +840,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -876,7 +876,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, root_guard_results)
@@ -899,7 +899,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -931,7 +931,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -954,7 +954,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -980,7 +980,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1077,7 +1077,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1110,7 +1110,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, relative_import_results)
@@ -1149,7 +1149,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1196,7 +1196,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1240,7 +1240,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1439,7 +1439,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         self.assertEqual(2, exit_code)
         chdir.assert_not_called()
         execve.assert_not_called()
-        self.assertIn("could not find", stderr.getvalue())
+        self.assertIn("Agentworks checkout", stderr.getvalue())
 
     def test_launcher_reports_exec_failure(self):
         with tempfile.TemporaryDirectory() as tmpdir:

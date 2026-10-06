@@ -68,7 +68,7 @@ class CheckResult:
 
 
 VALIDATION_SCHEMA = "armory_integrity.validation_result.v1"
-VALIDATION_NAME = "Armory Integrity Validation"
+VALIDATION_NAME = "Agentworks Integrity Validation"
 FORGE_VALIDATION_NAME = "Forge Integrity Validation"
 
 
@@ -3426,12 +3426,12 @@ def validate_external_tool_evaluation(root: Path) -> list[CheckResult]:
     nonblank_lines = [line.strip() for line in visible_markdown.splitlines() if line.strip()]
     headings = markdown_heading_texts(markdown)
     results: list[CheckResult] = []
-    if "Status: Armory Operating Contract" not in nonblank_lines[:8]:
+    if "Status: Agentworks Operating Contract" not in nonblank_lines[:8]:
         results.append(
             CheckResult(
                 "external_tool_evaluation:status",
                 False,
-                "status must be Armory Operating Contract",
+                "status must be Agentworks Operating Contract",
                 EXTERNAL_TOOL_EVALUATION_PATH,
             )
         )
@@ -3816,7 +3816,7 @@ def story_closeout_gate_order_valid(markdown: str) -> bool:
 
 
 CANONICAL_DOC_STATUSES = {
-    "docs/vision.md": "Armory Canon",
+    "docs/vision.md": "Agentworks Canon",
     "docs/agent-equipment-forge.md": "Forge Canon",
     "docs/smith-runbook.md": "Forge Core",
     "docs/forgewright-runbook.md": "Forge Core",
@@ -3827,7 +3827,7 @@ CANONICAL_DOC_STATUSES = {
     "docs/security-and-control.md": "Forge Canon",
     "docs/equipment-promotion.md": "Forge Canon",
     "docs/equipment-delivery.md": "Forge Canon",
-    "docs/story-closeout.md": "Armory Operating Contract",
+    "docs/story-closeout.md": "Agentworks Operating Contract",
 }
 
 
@@ -7980,7 +7980,7 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
         CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             AGENT_EQUIPMENT_CONFIG_PLUGIN_LAUNCHER_PATH,
         )
     ]
@@ -8682,7 +8682,7 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
             "name": "agent-equipment-config",
             "version": "0.1.0",
             "description": None,
-            "repository": "https://github.com/nisavid/agent-armory",
+            "repository": "https://github.com/nisavid/agentworks",
         }
         allowed_manifest_keys = {
             "name",
@@ -10189,8 +10189,8 @@ def run(root: Path, *, final_closeout: bool = False) -> list[CheckResult]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Validate Agent Armory Integrity.",
-        epilog="Armory Integrity Validation includes the Forge Integrity Validation suite and equipment-candidate shape checks. Equipment-specific behavior validation belongs to the named equipment validator.",
+        description="Validate Agentworks Integrity.",
+        epilog="Agentworks Integrity Validation includes the Forge Integrity Validation suite and equipment-candidate shape checks. Equipment-specific behavior validation belongs to the named equipment validator.",
     )
     parser.add_argument("--root", default=".", help="Repository root to validate.")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON.")

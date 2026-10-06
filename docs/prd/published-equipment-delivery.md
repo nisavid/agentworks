@@ -6,10 +6,10 @@ Published PRD Issue: #147
 
 ## Problem Statement
 
-Agent Armory can design and implement useful Agent Equipment before the
+Agentworks can design and implement useful Agent Equipment before the
 equipment is easy for Wielders and Outfitters to find, understand, equip,
 inspect, and trust. Agent Equipment Config shows the gap: its runtime slice and
-MCP parity are closed, but the Armory does not yet present a clear shop card,
+MCP parity are closed, but the Works does not yet present a clear shop card,
 stock inventory entry, Codex plugin, runnable MCP server, routing skill, or
 standard publication inspection record.
 

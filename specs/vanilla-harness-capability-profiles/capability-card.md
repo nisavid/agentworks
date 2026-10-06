@@ -11,7 +11,7 @@ surface of each supported Agent Harness.
 
 ## Vision alignment
 
-This capability supports the Armory's harness lifecycle and self-onboarding
+This capability supports the Works' harness lifecycle and self-onboarding
 goals. Smiths need current, evidence-backed harness facts before they can place
 Agent Equipment responsibilities into the right harness surfaces. The Manager
 Core keeps deterministic validation, migration, diffing, and audit behavior in

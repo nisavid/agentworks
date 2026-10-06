@@ -1,15 +1,15 @@
-# The Agent Armory Repository Threat Model
+# Agentworks Repository Threat Model
 
 Status: Repository Threat Model
 Last refreshed: 2026-05-19
 
-This threat model covers the Agent Armory repository, not one task or one diff.
+This threat model covers the Agentworks repository, not one task or one diff.
 It is the durable baseline for change-set security closeout and future
 repository or change-set scans.
 
 ## Executive summary
 
-Agent Armory is an agent-equipment repository, not a deployed web service. The
+Agentworks is an agent-equipment repository, not a deployed web service. The
 highest-risk areas are therefore not remote request handlers or tenant data
 planes; they are repository-trust surfaces that future agents may use to grant
 authority, mutate GitHub issues, generate hooks, expose MCP tools, apply
@@ -34,7 +34,7 @@ In scope:
   and the related docs/specs.
 - Harness Capability Profile Manager Core and manual refresh workflow in
   `tools/harness_capability_profiles.py`.
-- Armory Integrity Validation in `tools/validate_armory_integrity.py`.
+- Agentworks Integrity Validation in `tools/validate_armory_integrity.py`.
 
 Out of scope for the current repository state:
 
@@ -150,7 +150,7 @@ equipment, and transient scan artifacts are instance-scoped evidence.
   `tools/harness_capability_profiles.py` migrates, validates, summarizes,
   scouts, analyzes, plans, diffs, applies, and audits source-backed Vanilla
   Harness Capability Profiles.
-- **Armory Integrity Validation**: `tools/validate_armory_integrity.py` checks
+- **Agentworks Integrity Validation**: `tools/validate_armory_integrity.py` checks
   required paths, docs, specs, templates, examples, link targets, source
   disposition, profile surfaces, and closeout readiness. It is a merge and
   external-projection gate.
@@ -202,12 +202,12 @@ equipment, and transient scan artifacts are instance-scoped evidence.
 flowchart LR
   Operator["Human operator"]
   Agent["Agent session"]
-  Repo["Agent Armory repo"]
+  Repo["Agentworks repo"]
   Config["Config runtime"]
   IssueOps["Issue Tracker Ops"]
   GitHub["GitHub Issues"]
   Profiles["Profile manager"]
-  Validator["Armory validator"]
+  Validator["Works validator"]
   External["PRs issues handoffs"]
 
   Operator -->|prompts approvals| Agent
@@ -253,7 +253,7 @@ flowchart LR
 
 ### Non-capabilities
 
-- Directly call a deployed Agent Armory network service. None exists in the
+- Directly call a deployed Agentworks network service. None exists in the
   current repository.
 - Read secret provider values through Agent Equipment Config. The runtime
   records secret references but does not resolve providers.
@@ -342,7 +342,7 @@ projection of private or stale security evidence.
 
 | Surface | How reached | Trust boundary | Notes | Evidence |
 | --- | --- | --- | --- | --- |
-| Armory Integrity Validation | `python3.14 tools/validate_armory_integrity.py` | Reviewed repo files -> validation decision | Reads Markdown/TOML/Python/TypeScript structure and validates path/link/status boundaries. | `tools/validate_armory_integrity.py` |
+| Agentworks Integrity Validation | `python3.14 tools/validate_armory_integrity.py` | Reviewed repo files -> validation decision | Reads Markdown/TOML/Python/TypeScript structure and validates path/link/status boundaries. | `tools/validate_armory_integrity.py` |
 | Agent Equipment Config CLI/runtime | `tools/agent_equipment_config.py` CLI or Python import | Caller-supplied config paths/fragments/plans -> policy decision or local Config write | Explicit-load contract; no discovery; source writes are limited to migration apply and reviewed plan-artifact apply. | `tools/agent_equipment_config.py`, `docs/equipment/agent-equipment-config.md` |
 | Config MCP parity helpers | `mcp_tool_definitions()` and `call_mcp_tool()` | MCP caller arguments -> typed Config operation | Closed-world schemas and per-call apply authority govern local write operation. | `tools/agent_equipment_config.py`, `specs/agent-equipment-config/mcp-tools.md` |
 | Issue Tracker Ops | `tools/issue_tracker_ops.py` CLI | Local command -> authenticated GitHub API read or mutation; Config preflight gates mutation-capable operations. | Defaults reads and writes to dry-run; `--execute` crosses network/auth boundary. | `tools/issue_tracker_ops.py`, `docs/agents/issue-tracker.md` |

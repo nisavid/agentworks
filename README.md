@@ -1,30 +1,31 @@
 <div align="center">
 
-# Agent Armory
+# Agentworks
 
-*Equipment for agents*
+*A harness-refit workshop for agents*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
 </div>
 
 > [!NOTE]
-> The Agent Armory is under construction. The Forge has just come online, and
+> Agentworks is under construction. The Forge has just come online, and
 > Agent Equipment Config has its first published runtime slice.
 
-![A candid scene inside the Agent Armory, with agents browsing equipment and working in the Forge.](docs/assets/agent-armory-hero.webp)
+![A candid scene inside Agentworks, with agents browsing equipment and working in the Forge.](docs/assets/agent-armory-hero.webp)
 
-The Agent Armory is being built for people who want their agents to show up with
-better equipment.
+Agentworks is being built as a harness-refit workshop: each agent should create
+or equip the equipment it needs for its assigned task, domain, and context.
+The Works is shorthand for Agentworks.
 
 Good agent work is not only about the model. It also depends on the surrounding
 gear: the workflow an agent follows, the facts it can trust about a harness,
 the checks that keep it honest, the tools it can call, and the points where an
-operator stays in control. The Agent Armory is where that gear will live.
+operator stays in control. Agentworks is where that gear will live.
 
 ## Vision
 
-The Armory is not trying to make a bigger pile of skills. Its vision is a
+The Works is not trying to make a bigger pile of skills. Its vision is a
 coherent equipment layer for agents: skills, tools, hooks, config, validators,
 docs, profiles, plugins, policies, workflows, and typed data working together
 instead of sitting beside each other as disconnected helpers.
@@ -34,7 +35,7 @@ behavior automatically inside its harness. The operator should not need a
 special incantation for the agent to ask better questions, respect policy, find
 durable knowledge, run deterministic checks, or prepare for the next stage.
 
-The Armory and the Forge should add self-outfitting and self-onboarding to that
+The Works and the Forge should add self-outfitting and self-onboarding to that
 model. An agent should be able to clarify underspecified intent, choose or
 assemble the right loadout, route companion agents when needed, and use the
 Forge to create missing equipment before the missing capability becomes a
@@ -48,18 +49,18 @@ schedules and harness facts. The longer arc
 culminates in Head Gear: generic cognition equipment meant to turn vibes into
 bounded, evidence-backed outcomes instead of slop.
 
-The Armory's guiding doctrine is **Efficient Coherence**:
+The Works' guiding doctrine is **Efficient Coherence**:
 
 > _**Honor the underlying intent. Match rigor to unresolved uncertainty.
 > Minimize spend within that quality boundary.**_
 
-Read the full [Armory Vision](docs/vision.md) for more on the Armory's
+Read the full [Agentworks Vision](docs/vision.md) for more on the Works'
 foundation and its north star.
 
 ## Agent Equipment Forge
 
 The **Agent Equipment Forge** is the workshop and quality system that prepares
-equipment before it reaches the Armory. The
+equipment before it reaches the Works. The
 [stocked-equipment inventory](docs/equipment/inventory.md) now records the
 Agent Equipment Config runtime slice as current stock with delivery compliance
 pending.
@@ -95,7 +96,7 @@ policy decisions, and keep secret references unresolved. The
 shows how Smiths, Wielders, and Outfitters connect those surfaces to equipment
 and harness workflows.
 
-The [Markdown inventory view](docs/equipment/inventory.md) shows current Armory
+The [Markdown inventory view](docs/equipment/inventory.md) shows current Works
 stock and routes shop cards. The canonical stock authority is
 [`inventory/equipment.toml`](inventory/equipment.toml), which marks Config
 delivery compliance pending until Codex gear-up validation passes.
@@ -162,7 +163,7 @@ The current roadmap includes these equipment lines:
 - [Repo Ops](specs/repo-ops.md), for repository operations performed by agents.
   Repo Ops is the planned core repository-operations layer for repositories
   that are not forks.
-- [Fork Ops](https://github.com/nisavid/agent-armory/issues/87), as a planned
+- [Fork Ops](https://github.com/nisavid/agentworks/issues/87), as a planned
   Repo Ops add-on for fork-specific operations after Fork Ops source material
   and Repo Ops prerequisites are ready for intake.
 - [Periodic Actions](specs/periodic-actions.md), for recurring agent work with
@@ -171,13 +172,13 @@ The current roadmap includes these equipment lines:
   for source-backed descriptions of supported harness integration surfaces.
   Manual profile validation and refresh tooling is available; recurring
   refresh remains future work.
-- [Reflection and cognition equipment](https://github.com/nisavid/agent-armory/issues/25),
+- [Reflection and cognition equipment](https://github.com/nisavid/agentworks/issues/25),
   planned as Head Gear, for turning recent agent experience into durable
   insight, routed follow-up, and harness improvements after enough rudimentary
   engineering, operations, and tooling equipment exists.
 
 The active story structure lives in the
-[issue tracker](https://github.com/nisavid/agent-armory/issues). The projected
+[issue tracker](https://github.com/nisavid/agentworks/issues). The projected
 Forge Seed follow-up captures are retired in
 [Forge Seed Follow-Up Projection](docs/closeout/forge-seed-follow-up-projection.md)
 instead of remaining as parallel local trackers.

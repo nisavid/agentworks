@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "description": "Use Agent Equipment Config from Codex with routing guidance, MCP access, and a local-write guard hook.",
   "author": {
-    "name": "Agent Armory",
-    "url": "https://github.com/nisavid/agent-armory"
+    "name": "Agentworks",
+    "url": "https://github.com/nisavid/agentworks"
   },
-  "homepage": "https://github.com/nisavid/agent-armory",
-  "repository": "https://github.com/nisavid/agent-armory",
+  "homepage": "https://github.com/nisavid/agentworks",
+  "repository": "https://github.com/nisavid/agentworks",
   "license": "MIT",
   "keywords": [
     "agent-equipment",
@@ -20,13 +20,13 @@
   "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "Agent Equipment Config",
-    "developerName": "Agent Armory",
-    "shortDescription": "Route Agent Equipment Config work through Armory docs, MCP, and guards.",
-    "longDescription": "Agent Equipment Config helps Codex inspect effective Config layers, plan migrations, and apply reviewed local Config writes through the Armory runtime. The plugin bundles a routing skill, an AGENT_ARMORY_ROOT-based MCP launcher, and a PreToolUse guard for local-write MCP tools.",
+    "developerName": "Agentworks",
+    "shortDescription": "Route Agent Equipment Config work through Agentworks docs, MCP, and guards.",
+    "longDescription": "Agent Equipment Config helps Codex inspect effective Config layers, plan migrations, and apply reviewed local Config writes through the Agentworks runtime. The plugin bundles a routing skill, an AGENT_ARMORY_ROOT-based MCP launcher, and a PreToolUse guard for local-write MCP tools.",
     "category": "Productivity",
-    "websiteURL": "https://github.com/nisavid/agent-armory",
-    "privacyPolicyURL": "https://github.com/nisavid/agent-armory",
-    "termsOfServiceURL": "https://github.com/nisavid/agent-armory",
+    "websiteURL": "https://github.com/nisavid/agentworks",
+    "privacyPolicyURL": "https://github.com/nisavid/agentworks",
+    "termsOfServiceURL": "https://github.com/nisavid/agentworks",
     "capabilities": [
       "Read",
       "Write"

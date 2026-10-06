@@ -4,21 +4,21 @@ Status: Equipment Blueprint
 Promotion state: specified
 
 This Equipment Design Bundle records the accepted design package for issue
-[#62](https://github.com/nisavid/agent-armory/issues/62). It specifies how the
-Armory discovers, compares, reanalyzes, refines, deprecates, removes, and
+[#62](https://github.com/nisavid/agentworks/issues/62). It specifies how the
+Works discovers, compares, reanalyzes, refines, deprecates, removes, and
 projects Harness Capability work after the first Vanilla Harness Capability
 Profiles exist.
 
 The package closes the design scope of issues
-[#63](https://github.com/nisavid/agent-armory/issues/63),
-[#64](https://github.com/nisavid/agent-armory/issues/64),
-[#65](https://github.com/nisavid/agent-armory/issues/65),
-[#66](https://github.com/nisavid/agent-armory/issues/66), and
-[#67](https://github.com/nisavid/agent-armory/issues/67). It does not implement
+[#63](https://github.com/nisavid/agentworks/issues/63),
+[#64](https://github.com/nisavid/agentworks/issues/64),
+[#65](https://github.com/nisavid/agentworks/issues/65),
+[#66](https://github.com/nisavid/agentworks/issues/66), and
+[#67](https://github.com/nisavid/agentworks/issues/67). It does not implement
 new CLI commands, profile schema fields, validators, automation, Manager Core
 behavior, or Jig Runner integration.
 
-Issue [#61](https://github.com/nisavid/agent-armory/issues/61) is accepted
+Issue [#61](https://github.com/nisavid/agentworks/issues/61) is accepted
 design input. Agent Test Jigs and Harness Test Suites are future evidence paths
 for this lifecycle, not implemented capabilities in this package.
 
@@ -37,29 +37,29 @@ for this lifecycle, not implemented capabilities in this package.
 
 ## Issue projection
 
-- Epic: [#62 Harness Capability lifecycle methodology](https://github.com/nisavid/agent-armory/issues/62)
-- [#63 Design new capability discovery and onboarding methodology](https://github.com/nisavid/agent-armory/issues/63)
-- [#64 Design cross-harness capability definition methodology](https://github.com/nisavid/agent-armory/issues/64)
-- [#65 Design capability reanalysis and schema refinement methodology](https://github.com/nisavid/agent-armory/issues/65)
-- [#66 Design capability deprecation and removal methodology](https://github.com/nisavid/agent-armory/issues/66)
-- [#67 Project Harness Capability lifecycle methodology into Manager Core and Forge workflows](https://github.com/nisavid/agent-armory/issues/67)
+- Epic: [#62 Harness Capability lifecycle methodology](https://github.com/nisavid/agentworks/issues/62)
+- [#63 Design new capability discovery and onboarding methodology](https://github.com/nisavid/agentworks/issues/63)
+- [#64 Design cross-harness capability definition methodology](https://github.com/nisavid/agentworks/issues/64)
+- [#65 Design capability reanalysis and schema refinement methodology](https://github.com/nisavid/agentworks/issues/65)
+- [#66 Design capability deprecation and removal methodology](https://github.com/nisavid/agentworks/issues/66)
+- [#67 Project Harness Capability lifecycle methodology into Manager Core and Forge workflows](https://github.com/nisavid/agentworks/issues/67)
 
 Related design inputs and downstream surfaces:
 
-- [#4 Replace harness catalog with Vanilla Harness Capability Profiles](https://github.com/nisavid/agent-armory/issues/4)
+- [#4 Replace harness catalog with Vanilla Harness Capability Profiles](https://github.com/nisavid/agentworks/issues/4)
   and child issues #42 through #49 provide the current profile, Manager Core,
   protocol, refresh, and closeout baseline.
-- [#61 Design Agent Test Jigs and Harness Testing System](https://github.com/nisavid/agent-armory/issues/61)
+- [#61 Design Agent Test Jigs and Harness Testing System](https://github.com/nisavid/agentworks/issues/61)
   provides the future controlled validation path.
-- [#23 Agent Equipment Config](https://github.com/nisavid/agent-armory/issues/23)
-  and [#3 Periodic Actions](https://github.com/nisavid/agent-armory/issues/3)
+- [#23 Agent Equipment Config](https://github.com/nisavid/agentworks/issues/23)
+  and [#3 Periodic Actions](https://github.com/nisavid/agentworks/issues/3)
   own future configurable and recurring lifecycle execution.
-- [#25 Reflection and Head Gear](https://github.com/nisavid/agent-armory/issues/25)
+- [#25 Reflection and Head Gear](https://github.com/nisavid/agentworks/issues/25)
   is a future source for reflection findings, not a substitute for this
   lifecycle.
-- [#36 Project Config enforcement into Smith workflows](https://github.com/nisavid/agent-armory/issues/36)
+- [#36 Project Config enforcement into Smith workflows](https://github.com/nisavid/agentworks/issues/36)
   is a consumer of reliable harness/config capability facts.
-- [#59 Reanalyze Codex hook and command routing after Jig design lands](https://github.com/nisavid/agent-armory/issues/59)
+- [#59 Reanalyze Codex hook and command routing after Jig design lands](https://github.com/nisavid/agentworks/issues/59)
   is an early pressure case for reanalysis and future jig-backed evidence.
 
 Native GitHub dependencies and labels remain authoritative for blocked state.
@@ -215,7 +215,7 @@ Use these workflow dispositions when routing candidates:
 - defer: create a follow-up issue because the decision depends on future
   schema, Manager Core, Config, Periodic Actions, jig, or workflow work;
 - reject: do not route further because the candidate is out of scope,
-  duplicate, or unsupported by the Armory's current purpose.
+  duplicate, or unsupported by the Works' current purpose.
 
 Every disposition records the evidence class, affected harnesses, affected
 profile claims or workflow surfaces, security impact, and projection decision.

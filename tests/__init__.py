@@ -1,1 +1,1 @@
-"""Test package for Agent Armory validation tests."""
+"""Test package for Agentworks validation tests."""

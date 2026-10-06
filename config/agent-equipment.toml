@@ -30,7 +30,7 @@ policy_profile_status = "authoritative"
 
 [issue_tracker_ops.tracker]
 platform = "github-issues"
-repo = "nisavid/agent-armory"
+repo = "nisavid/agentworks"
 system_of_record = "GitHub Issues"
 baseline = "github-issues-labels"
 projects_custom_fields = "not adopted"

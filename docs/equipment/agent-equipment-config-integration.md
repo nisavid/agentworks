@@ -266,7 +266,7 @@ For Codex, use the repo-owned plugin under
 guidance, MCP launch configuration, and local-write hook friction together. The
 plugin source is exposed through `.agents/plugins/marketplace.json`; Codex
 installs local plugins into its cache, so the bundled MCP launcher starts only
-when `AGENT_ARMORY_ROOT` points at the trusted live Armory checkout containing
+when `AGENT_ARMORY_ROOT` points at the trusted live Works checkout containing
 the server marker (`tools/agent_equipment_config_mcp_server.py`), inventory
 marker (`inventory/equipment.toml`), and repo marketplace marker
 (`.agents/plugins/marketplace.json`). It changes directory to that checkout

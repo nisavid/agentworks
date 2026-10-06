@@ -1,6 +1,9 @@
-# Agent Armory
+# Agentworks
 
-The Agent Armory defines a shared language for creating, cataloging, and maintaining reusable equipment for agents. This context keeps domain terms stable while the Forge is designed and refined.
+Agentworks is a harness-refit workshop for agents. Its direction is to let each
+Agent create or equip the equipment it needs for its assigned task, domain, and
+context. This context keeps domain terms stable while the Forge is designed
+and refined.
 
 ## Language
 
@@ -14,10 +17,6 @@ _Avoid_: Shadow Mode, Operational Continuity
 **Agent**:
 The causal stream of reasoning, actions, tool calls, messages, and content mediated by an Agent Harness.
 _Avoid_: bot, model, profile when precision matters
-
-**Agent Armory**:
-A home for Agent Equipment.
-_Avoid_: narrowing this term to one methodology, content model, directory structure, or toolchain
 
 **Agent Engineering**:
 The engineering of Agents, agentic systems, agent roles, and agent workflows.
@@ -35,7 +34,7 @@ _Avoid_: treating it as a component of Repo Ops or any other higher-level
 equipment
 
 **Agent Equipment Forge**:
-The Armory's method and supporting artifacts for designing, building, validating, and maintaining Agent Equipment.
+The Works' method and supporting artifacts for designing, building, validating, and maintaining Agent Equipment.
 _Avoid_: the Forge when the referent is unclear; Forge when the full name is needed for disambiguation
 
 **Agent Harness**:
@@ -80,24 +79,30 @@ obligations, validation routing, issue and PR projection, evidence durability,
 and how Agents discover, reference, and update those rules.
 _Avoid_: Forge Domain Model Review, ad hoc process reminder
 
-**Armory Equipment Core**:
-The minimal Agent Equipment necessary for agents to autonomously operate Armory
+**Agentworks**:
+The generic Agent Equipment ecosystem and harness-refit workshop for equipping
+Agents for their assigned task, domain, and context. The Works is unambiguous
+shorthand.
+_Avoid_: narrowing this term to one content model, directory structure, or toolchain
+
+**Agentworks Equipment Core**:
+The minimal Agent Equipment necessary for agents to autonomously operate Works
 functions outside the Forge. It may share equipment with the Forge Equipment
 Core.
-_Avoid_: Forge Equipment Core when the function is outside the Forge; Armory
+_Avoid_: Forge Equipment Core when the function is outside the Forge; Agentworks
 Operating Contract when the surface is policy or process rather than equipment
 
-**Armory Integrity Validation**:
-The top-level live repository validation umbrella for checking current Armory
+**Agentworks Integrity Validation**:
+The top-level live repository validation umbrella for checking current Works
 surfaces, contracts, evidence, routing, and publication-readiness invariants.
-It may include Forge-scoped validation suites and other Armory-scoped suites.
+It may include Forge-scoped validation suites and other Works-scoped suites.
 _Avoid_: Seed Validation, equipment-specific behavior validation
 
-**Armory Operating Contract**:
+**Agentworks Operating Contract**:
 A durable rule surface that governs Agentic Engineering or repository
-operations across the Agent Armory, rather than a specific Forge function or
+operations across Agentworks, rather than a specific Forge function or
 Equipment Candidate.
-_Avoid_: Forge Core when the rule applies across the Armory; Armory Equipment
+_Avoid_: Forge Core when the rule applies across the Works; Agentworks Equipment
 Core when the surface is a process contract rather than Agent Equipment
 
 **Assembly**:
@@ -223,7 +228,7 @@ The Intent actually imposed by ADRs, PRDs, specs, plans, acceptance criteria, re
 _Avoid_: assuming declarations always capture the operator's full purpose
 
 **Efficient Coherence**:
-The Agent Armory's guiding doctrine: honor the Underlying Intent, match the
+Agentworks's guiding doctrine: honor the Underlying Intent, match the
 rigor to the unresolved uncertainty, and minimize spend within that quality
 boundary.
 _Avoid_: treating economy as prior to intent alignment, or treating rigor as
@@ -335,7 +340,7 @@ _Avoid_: capability report only, chat memory
 
 **Foreign Policy Compatibility Surface**:
 A kept Foreign Policy Surface that remains usable while its policy or behavior
-is anchored in the Armory's preferred encoding. The compatibility mechanism may
+is anchored in the Works' preferred encoding. The compatibility mechanism may
 be indirection, generation, adapter behavior, or a mixed strategy, depending on
 what the foreign surface can faithfully support.
 _Avoid_: Compatibility Surface when the point is specifically migrated foreign
@@ -343,8 +348,8 @@ policy; exposing mechanism-specific choices before the surface has been
 classified
 
 **Foreign Policy Surface**:
-A non-Armory skill, doc, config file, hook, script, or integration that carries
-policy or behavior an Armory equipment migration may discover, preserve,
+A non-Works skill, doc, config file, hook, script, or integration that carries
+policy or behavior a Works equipment migration may discover, preserve,
 ingest, discard, or leave untouched.
 _Avoid_: legacy surface when the point is external origin rather than age;
 treating a whole surface as indivisible when only some functions should migrate
@@ -362,7 +367,7 @@ _Avoid_: requiring repo-wide search, relying only on README discovery
 The materialized and enacted Forge processes, contracts, components, and
 deterministic tools that implement the core features and functions of the
 Forge.
-_Avoid_: Forge Canon, Forge Equipment Core, Armory Operating Contract
+_Avoid_: Forge Canon, Forge Equipment Core, Agentworks Operating Contract
 
 **Forge Equipment Core**:
 The minimal Agent Equipment necessary for agents to autonomously operate Forge
@@ -374,10 +379,10 @@ An annotated demonstration of the Forge's decision method using realistic but no
 _Avoid_: production package, installable equipment unless promoted through the full workflow
 
 **Forge Integrity Validation**:
-The Forge-scoped suite within Armory Integrity Validation that checks current
+The Forge-scoped suite within Agentworks Integrity Validation that checks current
 Forge Canon, Forge Core, Forge Equipment Core, Forge routes, Forge design
 surfaces, and Forge closeout invariants.
-_Avoid_: Armory-wide validation when the scope is only Forge; downstream
+_Avoid_: Works-wide validation when the scope is only Forge; downstream
 equipment behavior validation
 
 **Forge Seed**:
@@ -408,7 +413,7 @@ _Avoid_: storing every project plan, review transcript, or implementation checkl
 A planned Repo Ops add-on for fork-specific operations, including upstream,
 downstream, divergence, sync, publication, and selective-upstreaming behavior.
 _Avoid_: treating it as a replacement for Repo Ops, treating current
-non-Forge-built Fork Ops source material as published Armory equipment
+non-Forge-built Fork Ops source material as published Works equipment
 
 **Harness Capability Catalog**:
 The human-facing front door and collection boundary for Vanilla Harness
@@ -476,7 +481,7 @@ one or more Agent Harnesses.
 _Avoid_: Agent Test Jig, Capability Profiling Protocol, generic test suite
 
 **Head Gear**:
-The planned name for the Armory's generic Cognition Enhancement Equipment for
+The planned name for the Works' generic Cognition Enhancement Equipment for
 translating underspecified but realizable operator intent into high-quality
 outcomes by inducing reflection, imagination, questioning, bookkeeping,
 knowledge retrieval, capability prediction, and self-outfitting.
@@ -649,7 +654,7 @@ _Avoid_: assuming every Operator is human; use human operator or stakeholder
 when human authority specifically matters
 
 **Outfitter**:
-An Agent that selects and assembles Agent Equipment from the Agent Armory into a Loadout for a role, task, session, Agent, or agentic system.
+An Agent that selects and assembles Agent Equipment from Agentworks into a Loadout for a role, task, session, Agent, or agentic system.
 _Avoid_: Smith, Forgewright, Equipment creator
 
 **Per-Harness Clean-Room Jig**:
@@ -725,11 +730,11 @@ _Avoid_: placeholder directories without seed responsibilities
 Historical runnable checks that verified the Forge Seed's own repository shape,
 documentation links, provenance, accepted-handoff projection or explicit
 deferment, and structured catalog fields.
-_Avoid_: Armory Integrity Validation, Forge Integrity Validation, harness integration validation, production equipment validation
+_Avoid_: Agentworks Integrity Validation, Forge Integrity Validation, harness integration validation, production equipment validation
 
 **Seed Validation Tool**:
 A historical standard-library Python script shape for completed Forge Seed
-checks. Current live checks run through Armory Integrity Validation tooling.
+checks. Current live checks run through Agentworks Integrity Validation tooling.
 _Avoid_: package-manager-dependent validator, harness-specific validator
 
 **Shadow Mode**:
@@ -751,7 +756,7 @@ _Avoid_: vague note, unstructured context dump
 
 **Stock Inventory Record**:
 The canonical structured record for one stockable equipment release or slice in
-the Armory stock inventory, including links to its shop card, inspection and
+the Works stock inventory, including links to its shop card, inspection and
 test plan, and closeout record.
 _Avoid_: shop card, Capability Card, promotion state, issue comment
 
@@ -856,7 +861,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 
 ## Relationships
 
-- The **Agent Armory** contains **Agent Equipment** and the **Agent Equipment Forge**.
+- **Agentworks** contains **Agent Equipment** and the **Agent Equipment Forge**.
 - **Agentic Engineering** is software engineering performed agentically, while
   **Agent Engineering** is the engineering of Agents and agentic systems.
 - **Agent Meta-Engineering** is Agent Engineering focused on engineering work;
@@ -867,7 +872,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - An **Equipment Design Bundle** gathers the early design and
   validation-planning surfaces for one **Equipment Candidate** before the
   interface decision projects implemented components into their chosen paths.
-- **Outfitters** select **Agent Equipment** from the Armory and assemble
+- **Outfitters** select **Agent Equipment** from the Works and assemble
   **Loadouts**.
 - **Wielders** use **Loadouts** to perform work.
 - **Equipment Candidates** may become **Published Agent Equipment** after validation and publication.
@@ -902,7 +907,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - A **Source Handoff** can inform **Forge Canon**, but it is not itself the live Forge surface.
 - The **Forge Seed** specifies future **Agent Equipment** but does not implement that downstream equipment.
 - **Seed Validation** checks the completed **Forge Seed**; live repository
-  integrity belongs to **Armory Integrity Validation** and Forge-scoped live
+  integrity belongs to **Agentworks Integrity Validation** and Forge-scoped live
   integrity belongs to **Forge Integrity Validation**.
 - The **Harness Capability Catalog** is a **Forge Canon** front door backed by
   validated **Vanilla Harness Capability Profiles** and maintained through the
@@ -930,7 +935,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - **Fork Ops** is planned as a **Repo Ops** add-on after Repo Ops and its
   prerequisites are ready for intake.
 - Portable Agentic Engineering workflow equipment is downstream of repo-local
-  **Armory Operating Contracts** until the rules are coherent and
+  **Agentworks Operating Contracts** until the rules are coherent and
   pressure-tested enough to package.
 - In an **Agent-Operated Repository**, **Initiative Authority** stays with the human operator while agents drive assigned execution.
 - A **Repo Draft PRD** can become the source for a **Published PRD Issue** after review.
@@ -940,15 +945,15 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - **Head Gear** is the planned generic **Cognition Enhancement Equipment** line;
   it is intended to prepare the Agent to clarify, equip, execute, and reflect
   before domain-specific equipment takes over.
-- **Efficient Coherence** guides Armory strategy: preserve **Underlying Intent**
+- **Efficient Coherence** guides Works strategy: preserve **Underlying Intent**
   and quality first, choose rigor according to unresolved uncertainty, then
   minimize spend within that quality boundary.
 - A **Forgewright Runbook** guides Forge maintenance without replacing ADRs, PRDs, implementation plans, or Smith runbooks.
 - A **Target Structure** can guide a PRD, but the **Forge Seed** creates only **Seed Surfaces**.
 - Historical **Seed Validation** used a standard-library tool without
-  runtime dependencies. Current live validation tooling belongs under **Armory
+  runtime dependencies. Current live validation tooling belongs under **Agentworks
   Integrity Validation** and its scoped validation suites.
-- **Armory Operating Contracts** state cross-Armory operating rules in readable
+- **Agentworks Operating Contracts** state cross-Works operating rules in readable
   form; deterministic validators enforce selected machine-checkable slices of
   those rules.
 - A **Harness Fact Refresh** follows the **Harness Evidence Source Policy**
@@ -958,14 +963,14 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - A **Skill Template** can guide future skill creation but is not **Published Agent Equipment**.
 - A repo-local skill needs **Pressure Scenario Validation** before promotion to **Published Agent Equipment**.
 - The **Forge Seed** exposes a **Forge Conveyor** for Smiths and a **Forge Tour** for readers.
-- Live **Armory Integrity Validation** and **Forge Integrity Validation** may
+- Live **Agentworks Integrity Validation** and **Forge Integrity Validation** may
   check the **Source Disposition Ledger** when accepted source material and
   retired raw source files remain active integrity evidence.
 - A **Change Set Security Closeout** uses the **Repository Threat Model** when deciding which security analyses and fixes are required before merge-readiness.
 - A **Change Set Documentation Closeout** updates affected **Forge Canon**, agent-facing policy, and human-facing orientation so established precedents and remaining ambiguities are represented accurately.
 - **Story Closeout** depends on current change-set validation, **Change Set Security Closeout**, **Change Set Documentation Closeout**, **Cross-Boundary Coherence Ralph Review**, and **Story Quality Ralph Review**.
-- **Story Closeout** is an **Armory Operating Contract** because it governs
-  cohesive change sets across the Armory rather than a specific Forge function.
+- **Story Closeout** is an **Agentworks Operating Contract** because it governs
+  cohesive change sets across the Works rather than a specific Forge function.
 - **Intent Model Refresh** is the first **Story Closeout** gate so every downstream closeout check uses the current model of **Underlying Intent**.
 - **Cross-Boundary Coherence Ralph Review** precedes **Story Quality Ralph Review** because quality review depends on coherent process evidence.
 - A **Story Quality Ralph Review** includes an **Intent Alignment Check** that compares **Effective Intent** with the refreshed model of **Underlying Intent** before final Story Closeout.
@@ -1047,7 +1052,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - "Agent-operated" can mean guided autonomous execution or unsupervised initiative selection. Resolution: **Initiative Authority** remains human, while agents drive assigned work inside active sessions.
 - "Validation" can mean checking live repository or Forge integrity, proving
   historical seed migration, or proving harness-specific behavior. Resolution:
-  use **Armory Integrity Validation** for live repository integrity, **Forge
+  use **Agentworks Integrity Validation** for live repository integrity, **Forge
   Integrity Validation** for Forge-scoped live integrity, **Seed Validation**
   for completed seed-migration scope, and named harness or equipment validation
   for behavior-specific proof.
@@ -1063,7 +1068,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
   for the reviewed decision, **Operational Continuity** for safe ongoing
   operation, **Replacement Coverage** for target-equipment ownership, and
   **Foreign Policy Surface** only when the prior surface is external to the
-  Armory's preferred equipment model.
+  Works' preferred equipment model.
 - "PRD tracking" can mean worktree drafting or issue-tracker publication. Resolution: use **Repo Draft PRD** for reviewable drafts, **Published PRD Issue** for tracking, and re-project material draft changes into the issue.
 - "Issue projection" can mean publication timing or synchronization mechanics. Resolution: use **Issue Projection** for post-review publication and closeout synchronization.
 - "Reflection" can mean private thinking, a closeout habit, a durable finding, or future equipment. Resolution: use **Reflection Finding** when the output should be tracked, and **Cognition Enhancement Equipment** when the capability itself is being engineered.
@@ -1071,7 +1076,7 @@ _Avoid_: Outfitter, Loadout, Agent Profile
 - "Review until clean" can mean a general quality gate or a named imported skill. Resolution: use **Review Until Clean** for the repo concept and invoke named review skills only when requested or adopted by repo policy.
 - "Repository structure" can mean an intended architecture or files to create now. Resolution: use **Target Structure** for the PRD-level architecture and **Seed Surface** for files created in the Forge Seed.
 - "Validation tooling" can mean live integrity checks, historical seed checks,
-  or harness behavior tests. Resolution: use live **Armory Integrity
+  or harness behavior tests. Resolution: use live **Agentworks Integrity
   Validation** and **Forge Integrity Validation** tooling for current integrity
   checks, reserve **Seed Validation** for historical seed scope, and leave
   harness behavior tests to downstream equipment.

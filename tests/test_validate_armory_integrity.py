@@ -134,7 +134,7 @@ class ValidationBoundaryTests(unittest.TestCase):
         output = json.loads(validator.render_json([CheckResult("demo", True, "ok", "README.md")]))
 
         self.assertEqual(output["schema"], "armory_integrity.validation_result.v1")
-        self.assertEqual(output["validation"], "Armory Integrity Validation")
+        self.assertEqual(output["validation"], "Agentworks Integrity Validation")
         self.assertEqual(output["results"][0]["name"], "demo")
 
     def test_live_validator_run_includes_plugin_creator_source_intake(self):
@@ -416,7 +416,7 @@ class ValidationBoundaryTests(unittest.TestCase):
         )
 
         self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertIn("Validate Agent Armory Integrity.", completed.stdout)
+        self.assertIn("Validate Agentworks Integrity.", completed.stdout)
         self.assertIn("Forge Integrity Validation", completed.stdout)
         self.assertNotIn("Forge Seed", completed.stdout)
 
@@ -3170,7 +3170,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
             CheckResult(
                 name="external_tool_evaluation:status",
                 ok=False,
-                detail="status must be Armory Operating Contract",
+                detail="status must be Agentworks Operating Contract",
                 path=EXTERNAL_TOOL_EVALUATION_PATH,
             ),
             results,
@@ -3195,7 +3195,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     """\
                     # External-Tool Evaluation
 
-                    Status: Armory Operating Contract
+                    Status: Agentworks Operating Contract
 
                     ## Purpose
 
@@ -3260,7 +3260,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     """\
                     # External-Tool Evaluation
 
-                    Status: Armory Operating Contract
+                    Status: Agentworks Operating Contract
 
                     ## Purpose
 
@@ -3329,7 +3329,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                 """\
                     # External-Tool Evaluation
 
-                    Status: Armory Operating Contract
+                    Status: Agentworks Operating Contract
 
                     ## Purpose
 
@@ -3394,7 +3394,7 @@ class ValidatorPrimitiveTests(unittest.TestCase):
                     """\
                     # External-Tool Evaluation
 
-                    Status: Armory Operating Contract
+                    Status: Agentworks Operating Contract
 
                     ## Purpose
 
@@ -7034,7 +7034,7 @@ class CanonicalDocTests(unittest.TestCase):
 class ContextDocTests(unittest.TestCase):
     def valid_context(self) -> str:
         sections = "\n".join(f"## {section}\n\nContent.\n" for section in CONTEXT_REQUIRED_SECTIONS)
-        return f"# Agent Armory\n\n{sections}"
+        return f"# Agentworks\n\n{sections}"
 
     def test_validate_context_accepts_required_sections(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -7053,7 +7053,7 @@ class ContextDocTests(unittest.TestCase):
                     sections = [
                         section for section in CONTEXT_REQUIRED_SECTIONS if section != missing_section
                     ]
-                    markdown = "# Agent Armory\n\n" + "\n".join(
+                    markdown = "# Agentworks\n\n" + "\n".join(
                         f"## {section}\n\nContent.\n" for section in sections
                     )
                     (root / "CONTEXT.md").write_text(markdown, encoding="utf-8")
@@ -7085,7 +7085,7 @@ class ThreatModelValidationTests(unittest.TestCase):
 
     def valid_threat_model(self) -> str:
         sections = "\n".join(f"## {section}\n\nContent.\n" for section in self.required_sections)
-        return f"# Agent Armory Repository Threat Model\n\nStatus: Repository Threat Model\n\n{sections}"
+        return f"# Agentworks Repository Threat Model\n\nStatus: Repository Threat Model\n\n{sections}"
 
     def write_valid_threat_model_surface(self, root: Path) -> None:
         threat_model = root / self.threat_model_path

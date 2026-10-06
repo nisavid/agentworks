@@ -1,15 +1,17 @@
-# Armory Vision
+# Agentworks Vision
 
-Status: Armory Canon
+Status: Agentworks Canon
 
 ## Experience
 
-The Agent Armory is being built to make a more coherent agent and operator
-experience possible.
+Agentworks is being built as a harness-refit workshop. Each Agent should create
+or equip the equipment it needs for its assigned task, domain, and context.
+The Works is shorthand for Agentworks. This direction guides the intended
+agent and operator experience as the equipment ecosystem develops.
 
 The intended experience starts with intent. An operator can express what they
 want before every criterion, tool, risk, stakeholder constraint, or success
-measure is known. The Armory's hypothesis is that the right generic equipment
+measure is known. The Works' hypothesis is that the right generic equipment
 can let an Agent translate underspecified but realizable intent into a
 high-quality outcome.
 
@@ -17,7 +19,7 @@ That is not a better-prompting claim. It is an equipment claim.
 
 ## Efficient Coherence
 
-The Armory's guiding doctrine is **Efficient Coherence**:
+The Works' guiding doctrine is **Efficient Coherence**:
 
 > Honor the Underlying Intent. Match the rigor to the unresolved uncertainty.
 > Minimize spend within that quality boundary.
@@ -62,7 +64,7 @@ burden.
 
 ## Equipment
 
-The Armory is not a catalog of disconnected skills. Skills matter, but they are
+The Works is not a catalog of disconnected skills. Skills matter, but they are
 only one kind of Agent Equipment.
 
 Agent Equipment includes skills, MCP/tools, hooks, workflows, Harness Plugins,
@@ -78,7 +80,7 @@ adaptation while giving deterministic responsibilities to software surfaces
 that can perform them more reliably and efficiently.
 
 That is the first departure from the common "bundle of skills" pattern. A
-useful Armory item is not just another instruction file. It is part of a
+useful Works item is not just another instruction file. It is part of a
 harnessed system that can teach, constrain, inspect, validate, remember, route,
 configure, and act.
 
@@ -169,7 +171,7 @@ boundary requires operator input.
 
 ## Primitive Operations Equipment
 
-The Armory's higher-level experience depends on lower-level equipment.
+The Works' higher-level experience depends on lower-level equipment.
 
 Agent Equipment Config is the shared configuration primitive. It should let
 equipment declare typed schema fragments, compose layered policy, report
@@ -196,7 +198,7 @@ when fork state matters.
 
 Periodic Actions and Harness Capability Refresh add time and drift awareness.
 Recurring work needs local approval and auditable state. Harness facts need
-source-backed refresh because equipment can only be reliable when the Armory
+source-backed refresh because equipment can only be reliable when the Works
 knows what each harness can actually enforce.
 
 These primitives make later equipment adaptable. They let behavior vary by
@@ -222,7 +224,7 @@ with better evidence and boundaries.
 
 ## Head Gear
 
-Head Gear is the planned name for the Armory's generic Cognition Enhancement
+Head Gear is the planned name for the Works' generic Cognition Enhancement
 Equipment.
 
 Its ambition is the universal deslopifier: generic equipment that helps an
@@ -238,13 +240,13 @@ follow-up, Repo Ops for repository-operational context, Harness Capability
 Refresh for current harness facts, and the Forge for manufacturing any missing
 capability it discovers.
 
-The Armory's hypothesis is that this stack can solve the slop problem by making
+The Works' hypothesis is that this stack can solve the slop problem by making
 agent work productive, reliable, observable, controllable, accessible, and
 enjoyable.
 
 ## Deterministic boundaries
 
-The Armory treats probabilistic reasoning and deterministic software as
+The Works treats probabilistic reasoning and deterministic software as
 complementary parts of one harnessed experience.
 
 Agents should do what they do best: infer intent, reason across context,
@@ -264,7 +266,7 @@ instructions.
 
 ## Reflection
 
-The Armory expects agents and harnesses to learn from recent experience.
+The Works expects agents and harnesses to learn from recent experience.
 
 Reflection is the equipment-level counterpart to closeout. An Agent should
 regularly inspect what happened, extract lessons, and act on them by improving
@@ -307,7 +309,7 @@ Use this vision as an input throughout the engineering lifecycle.
 - Maintenance asks what drift, repeated failures, stale assumptions, or awkward
   handoffs reveal about missing equipment or missing Forge support.
 
-The Armory succeeds when this layered equipment system can move an Agent from
+The Works succeeds when this layered equipment system can move an Agent from
 underspecified but realizable intent to high-quality outcome by clarifying the
 solution space, outfitting the work, using deterministic support where it
 belongs, and improving the equipment ecosystem when the work reveals a gap.

@@ -21,7 +21,7 @@ Equipment Design Bundle.
 
 ## Vision alignment
 
-Use the [Armory Vision](vision.md) as the experience north star for Forge work.
+Use the [Agentworks Vision](vision.md) as the experience north star for Forge work.
 Equipment should help Agents outfit work before execution, right-size model
 cognition, clarify underspecified intent, keep deterministic operations in
 deterministic surfaces, enforce policy through reliable boundaries, preserve

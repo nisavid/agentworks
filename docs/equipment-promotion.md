@@ -5,7 +5,7 @@ Status: Forge Canon
 The Equipment Promotion Path prevents examples, specs, plans, implementations, validations, and published equipment from being treated as the same thing.
 
 Promotion state changes also preserve alignment with the
-[Armory Vision](vision.md). A candidate moves forward only when the evidence
+[Agentworks Vision](vision.md). A candidate moves forward only when the evidence
 supports the intended agent and human experience, not merely the existence of
 files or instructions.
 
@@ -95,7 +95,7 @@ Entry criteria:
 - the equipment is validated;
 - installation or equipping instructions are clear;
 - usage guidance explains where the equipment fits in the intended Loadout,
-  Assembly, or Armory experience;
+  Assembly, or Works experience;
 - support, maintenance, refresh, rollback, and deprecation expectations are documented;
 - publication does not expose secrets, private host assumptions, or unapproved mutation authority.
 

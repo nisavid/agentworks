@@ -24,20 +24,20 @@ python3.14 tools/issue_tracker_ops.py plan-operation --adapter github-issues-bas
 python3.14 tools/issue_tracker_ops.py plan-operation --adapter github-issues-baseline --operation issue.read
 python3.14 tools/issue_tracker_ops.py plan-operation --adapter github-issues-baseline --operation subissue.add
 python3.14 tools/issue_tracker_ops.py plan-workflow --adapter github-issues-baseline --workflow issue.review
-python3.14 tools/issue_tracker_ops.py read-issue --repo nisavid/agent-armory --issue-number 15
-python3.14 tools/issue_tracker_ops.py list-issues --repo nisavid/agent-armory --issue-state open --label ready-for-agent --paginate
-python3.14 tools/issue_tracker_ops.py create-issue --repo nisavid/agent-armory --title "Dry-run issue" --body "Dry-run body" --label ready-for-agent
-python3.14 tools/issue_tracker_ops.py update-issue --repo nisavid/agent-armory --issue-number 11 --body "Dry-run update"
-python3.14 tools/issue_tracker_ops.py comment --repo nisavid/agent-armory --issue-number 11 --body "Dry-run comment"
-python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agent-armory
-python3.14 tools/issue_tracker_ops.py add-blocked-by --repo nisavid/agent-armory --issue-number 10 --blocking-issue-number 11
-python3.14 tools/issue_tracker_ops.py get-parent-issue --repo nisavid/agent-armory --issue-number 15
-python3.14 tools/issue_tracker_ops.py list-sub-issues --repo nisavid/agent-armory --issue-number 11 --paginate
-python3.14 tools/issue_tracker_ops.py add-sub-issue --repo nisavid/agent-armory --issue-number 11 --sub-issue-number 15
-python3.14 tools/issue_tracker_ops.py remove-sub-issue --repo nisavid/agent-armory --issue-number 11 --sub-issue-number 15
-python3.14 tools/issue_tracker_ops.py reprioritize-sub-issue --repo nisavid/agent-armory --issue-number 11 --sub-issue-number 15 --after-issue-number 14
-python3.14 tools/issue_tracker_ops.py comment --repo nisavid/agent-armory --issue-number 11 --body "Config-aware dry-run comment" --config-layer templates/config/agent-equipment-config-example.toml
-python3.14 tools/issue_tracker_ops.py reconcile-fallback --repo nisavid/agent-armory --fallback-record-file fallback-record.json
+python3.14 tools/issue_tracker_ops.py read-issue --repo nisavid/agentworks --issue-number 15
+python3.14 tools/issue_tracker_ops.py list-issues --repo nisavid/agentworks --issue-state open --label ready-for-agent --paginate
+python3.14 tools/issue_tracker_ops.py create-issue --repo nisavid/agentworks --title "Dry-run issue" --body "Dry-run body" --label ready-for-agent
+python3.14 tools/issue_tracker_ops.py update-issue --repo nisavid/agentworks --issue-number 11 --body "Dry-run update"
+python3.14 tools/issue_tracker_ops.py comment --repo nisavid/agentworks --issue-number 11 --body "Dry-run comment"
+python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agentworks
+python3.14 tools/issue_tracker_ops.py add-blocked-by --repo nisavid/agentworks --issue-number 10 --blocking-issue-number 11
+python3.14 tools/issue_tracker_ops.py get-parent-issue --repo nisavid/agentworks --issue-number 15
+python3.14 tools/issue_tracker_ops.py list-sub-issues --repo nisavid/agentworks --issue-number 11 --paginate
+python3.14 tools/issue_tracker_ops.py add-sub-issue --repo nisavid/agentworks --issue-number 11 --sub-issue-number 15
+python3.14 tools/issue_tracker_ops.py remove-sub-issue --repo nisavid/agentworks --issue-number 11 --sub-issue-number 15
+python3.14 tools/issue_tracker_ops.py reprioritize-sub-issue --repo nisavid/agentworks --issue-number 11 --sub-issue-number 15 --after-issue-number 14
+python3.14 tools/issue_tracker_ops.py comment --repo nisavid/agentworks --issue-number 11 --body "Config-aware dry-run comment" --config-layer templates/config/agent-equipment-config-example.toml
+python3.14 tools/issue_tracker_ops.py reconcile-fallback --repo nisavid/agentworks --fallback-record-file fallback-record.json
 ```
 
 Run live validation only after dry-run output is inspected and the active session
