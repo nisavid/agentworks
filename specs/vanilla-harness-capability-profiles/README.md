@@ -33,23 +33,23 @@ Smiths consume profile facts when crafting Agent Equipment.
 
 ## Issue projection
 
-- Epic: [#4 Replace harness catalog with Vanilla Harness Capability Profiles](https://github.com/nisavid/agent-armory/issues/4)
-- [#42 Refactor live Forge validation boundaries](https://github.com/nisavid/agent-armory/issues/42)
-- [#43 Implement Harness Capability Profile Manager core migration](https://github.com/nisavid/agent-armory/issues/43)
-- [#44 Research harness surfaces and schema pressure](https://github.com/nisavid/agent-armory/issues/44)
-- [#45 Refresh six Vanilla Harness Capability Profiles](https://github.com/nisavid/agent-armory/issues/45)
-- [#46 Define the Capability Profiling Protocol](https://github.com/nisavid/agent-armory/issues/46)
-- [#47 Review the Agentic Engineering Operating Model](https://github.com/nisavid/agent-armory/issues/47)
-- [#48 Implement manual Harness Capability Profile refresh](https://github.com/nisavid/agent-armory/issues/48)
-- [#49 Close out Harness Capability Profiles issue projection](https://github.com/nisavid/agent-armory/issues/49)
+- Epic: [#4 Replace harness catalog with Vanilla Harness Capability Profiles](https://github.com/nisavid/agentworks/issues/4)
+- [#42 Refactor live Forge validation boundaries](https://github.com/nisavid/agentworks/issues/42)
+- [#43 Implement Harness Capability Profile Manager core migration](https://github.com/nisavid/agentworks/issues/43)
+- [#44 Research harness surfaces and schema pressure](https://github.com/nisavid/agentworks/issues/44)
+- [#45 Refresh six Vanilla Harness Capability Profiles](https://github.com/nisavid/agentworks/issues/45)
+- [#46 Define the Capability Profiling Protocol](https://github.com/nisavid/agentworks/issues/46)
+- [#47 Review the Agentic Engineering Operating Model](https://github.com/nisavid/agentworks/issues/47)
+- [#48 Implement manual Harness Capability Profile refresh](https://github.com/nisavid/agentworks/issues/48)
+- [#49 Close out Harness Capability Profiles issue projection](https://github.com/nisavid/agentworks/issues/49)
 
 The projected issues are native sub-issues of #4 in story order. Issues #42
 through #48 have delivered the pre-Config manual profile surface. Issue #49
 owns final projection and closeout reconciliation. After
 that closeout lands, Agent Equipment Config can resume against the current
 Vanilla Harness Capability Profiles. Periodic refresh remains deferred until
-[#23 Agent Equipment Config](https://github.com/nisavid/agent-armory/issues/23)
-and [#3 Periodic Actions](https://github.com/nisavid/agent-armory/issues/3)
+[#23 Agent Equipment Config](https://github.com/nisavid/agentworks/issues/23)
+and [#3 Periodic Actions](https://github.com/nisavid/agentworks/issues/3)
 provide the required configuration and scheduled-action surfaces.
 
 ## Purpose
@@ -177,13 +177,13 @@ source research may happen while the migration core is implemented, but
 schema/profile changes wait until the migration substrate exists.
 
 Issue #49 verifies the child-story acceptance criteria, issue projection, and
-delivered artifacts through Ralph Review. The review considers the Armory and
+delivered artifacts through Ralph Review. The review considers the Works and
 Forge vision, core requirements, current status, this bundle's specs and ADRs,
 the design decisions from the grill, and downstream issues that depend on the
 profile outcomes.
 
 The Forge Domain Model Review inventories core concepts and domains, verifies
-the split between Forge Canon, Forge Core, Forge Equipment Core, and Armory
+the split between Forge Canon, Forge Core, Forge Equipment Core, and Agentworks
 Equipment Core, identifies Seed-era names still carrying live responsibilities,
 and records required renames, reparenting, validator splits, or follow-up
 tasks.
@@ -199,15 +199,15 @@ The validation-boundary story refactors the live validation boundary before the
 Harness Capability Profile Manager integrates with repository validation. It is
 scoped around classifying and renaming the validation surface:
 
-- define Armory Integrity Validation as the top-level live repository
+- define Agentworks Integrity Validation as the top-level live repository
   validation umbrella;
-- define Forge Integrity Validation as the Forge-scoped suite within Armory
+- define Forge Integrity Validation as the Forge-scoped suite within Agentworks
   Integrity Validation;
 - define the relationship between those validation scopes and
   equipment-specific behavioral validation;
-- inventory every current `tools/validate_armory_integrity.py` check and supporting
+- inventory every current `tools/validate_agentworks_integrity.py` check and supporting
   test;
-- classify each check as Armory Integrity, Forge Integrity,
+- classify each check as Works Integrity, Forge Integrity,
   equipment-candidate shape validation, equipment-specific behavioral
   validation, historical Seed migration validation, or other;
 - remove checks whose only purpose is proving the completed Forge Seed
@@ -566,7 +566,7 @@ The story is accepted when:
   validation-boundary, Seed-era naming, and reparenting decisions are applied
   or explicitly issue-tracked;
 - the initial child-story acceptance criteria have received a Ralph Review that
-  considers the Armory and Forge vision, current repo status, this Equipment
+  considers the Works and Forge vision, current repo status, this Equipment
   Design Bundle, ADRs, downstream dependent issues, and closeout obligations;
 - each projected child issue has a title, problem statement, non-goals,
   dependencies, acceptance criteria, expected artifacts, verification commands,
@@ -580,7 +580,7 @@ The story is accepted when:
   refresh completion unblocks returning to Agent Equipment Config;
 - active docs and specs agree on Equipment Design Bundle, Capability Surface,
   Capability Profile, Vanilla and Effective Harness Capability Profile,
-  Harness Capability Profile Manager, Armory Integrity Validation, Forge
+  Harness Capability Profile Manager, Agentworks Integrity Validation, Forge
   Integrity Validation, Capability Profiling Protocol, Capability State Graph,
   Capability Analysis Angle, and Capability Claim Triage;
 - historical Seed records remain historically accurate while live guidance
@@ -844,10 +844,10 @@ them:
   Agent Equipment. Tooling for this Effective Harness Capability Surface is
   deferred, but the Harness Capability Profile schema should support future
   composition.
-- The Armory should later help evaluate memory-system options for Codex and
+- The Works should later help evaluate memory-system options for Codex and
   OpenClaw harness instances by using the deeper harness-surface model that
   emerges from this epic.
-- The Armory role taxonomy should later be reviewed for end-user stories that
+- The Works role taxonomy should later be reviewed for end-user stories that
   are not cleanly Smith, Outfitter, or Wielder stories, including
   pre-outfitter evaluation and selection scenarios.
 

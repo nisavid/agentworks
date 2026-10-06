@@ -2,7 +2,8 @@
 
 ## Project Role
 
-Agent Armory is a home for equipment for agents.
+Agentworks is a harness-refit workshop for agents: a home for creating and
+equipping the equipment needed for an assigned task, domain, and context.
 
 Do not narrow that purpose into a specific content model, methodology, directory structure, or toolchain before the repository itself does.
 
@@ -46,21 +47,21 @@ doctrine.
 - "Equipment for agents" means skills, MCPs, plugins, scripts, policy frameworks, workflows, agent roles, and other tools that an agent or agentic system can equip.
 - Treat future terms of art as project vocabulary only after they appear in committed content or the user defines them.
 
-## Armory Operating Contracts
+## Agentworks Operating Contracts
 
-- Use root `AGENTS.md` as the repo-local agent policy entrypoint. Keep detailed cross-Armory operating-model rules in named Armory Operating Contract docs.
-- Use `docs/story-closeout.md` for cross-Armory closeout gate order, interdependency rules, review sequencing, and rerun rules.
+- Use root `AGENTS.md` as the repo-local agent policy entrypoint. Keep detailed cross-Works operating-model rules in named Agentworks Operating Contract docs.
+- Use `docs/story-closeout.md` for cross-Works closeout gate order, interdependency rules, review sequencing, and rerun rules.
 - Use `docs/external-tool-evaluation.md` when an outside tool, framework,
-  harness, service, dataset, or adjacent project may influence Armory
+  harness, service, dataset, or adjacent project may influence Works
   architecture, issue projection, documentation, security posture, or adoption
   decisions.
-- Add or revise named Armory Operating Contract docs when cross-Armory rules need more detail than `AGENTS.md` can carry durably.
+- Add or revise named Agentworks Operating Contract docs when cross-Works rules need more detail than `AGENTS.md` can carry durably.
 
 ## Forge Conveyor
 
 Smiths creating or modifying Agent Equipment should start with:
 
-- `docs/vision.md` for the Armory, Forge, and Equipment experience goals that should guide ideation, architecture, design, strategy, validation, and maintenance.
+- `docs/vision.md` for the Works, Forge, and Equipment experience goals that should guide ideation, architecture, design, strategy, validation, and maintenance.
 - `docs/agent-equipment-forge.md` for the Forge overview.
 - `docs/smith-runbook.md` for the equipment creation workflow.
 - `docs/story-closeout.md` for closeout gate order, review sequencing, and rerun rules.
@@ -77,7 +78,7 @@ Smiths creating or modifying Agent Equipment should start with:
 
 ### Issue tracker
 
-Issues and PRDs are tracked in GitHub Issues for `nisavid/agent-armory`. See `docs/agents/issue-tracker.md`.
+Issues and PRDs are tracked in GitHub Issues for `nisavid/agentworks`. See `docs/agents/issue-tracker.md`.
 
 ### Reflection findings
 

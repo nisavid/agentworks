@@ -23,7 +23,7 @@ Each Config MCP tool definition includes:
 - `name`, `title`, `description`, `inputSchema`, and `outputSchema`;
 - MCP `annotations` for read-only, destructive, idempotent, and open-world
   hints;
-- `x-agent-armory` metadata for CLI parity, read/write classification, auth
+- `x-agentworks` metadata for CLI parity, read/write classification, auth
   source, side effects, approval requirements, mutation gate, and failure
   modes.
 
@@ -172,7 +172,7 @@ The MCP authoring tools mirror the CLI/runtime authoring contract:
 - plan-generation tools never write sources;
 - every output is structured, redacted, and stable enough for machine routing;
 - `config.patch` and `config.create_layer` emit reviewed plan artifacts with
-  schema `agent-armory.config.authoring-plan.v1`;
+  schema `agentworks.config.authoring-plan.v1`;
 - `config.apply` accepts only a reviewed plan artifact, not ad hoc source
   changes;
 - apply rechecks precondition fingerprints, authority, source eligibility,
@@ -275,7 +275,7 @@ artifact appears as `$defs.authoringPlanArtifact`:
     "durability_classification"
   ],
   "properties": {
-    "schema": {"const": "agent-armory.config.authoring-plan.v1"},
+    "schema": {"const": "agentworks.config.authoring-plan.v1"},
     "operation": {"enum": ["config patch", "create-layer"]},
     "plan_surface": {"const": "reviewed-plan"},
     "plan_kind": {"enum": ["patch-layer", "create-layer"]},
@@ -514,7 +514,7 @@ Input schema:
   "properties": {
     "plan": {
       "$ref": "#/$defs/authoringPlanArtifact",
-      "description": "A reviewed agent-armory.config.authoring-plan.v1 artifact."
+      "description": "A reviewed agentworks.config.authoring-plan.v1 artifact."
     },
     "apply_authority": {"enum": ["operator"]}
   },
@@ -539,7 +539,7 @@ Output schema:
   ],
   "properties": {
     "operation": {"const": "config apply"},
-    "plan_schema": {"const": "agent-armory.config.authoring-plan.v1"},
+    "plan_schema": {"const": "agentworks.config.authoring-plan.v1"},
     "plan_kind": {"enum": ["patch-layer", "create-layer"]},
     "source_target": {"type": "string"},
     "applied": {

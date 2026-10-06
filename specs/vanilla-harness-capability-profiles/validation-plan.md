@@ -9,7 +9,7 @@ Use spec-driven TDD for the validation boundary refactor before Manager Core
 validation integrates with repository validation.
 
 1. Add failing tests that classify existing validation checks by live boundary.
-2. Add failing tests for Armory Integrity Validation and Forge Integrity
+2. Add failing tests for Agentworks Integrity Validation and Forge Integrity
    Validation command names, JSON output, and help text.
 3. Add failing tests for the absence of transient compatibility markers in
    live surfaces at story closeout.
@@ -208,7 +208,7 @@ python3.14 tools/harness_capability_profiles.py plan --analysis-report <analysis
 python3.14 tools/harness_capability_profiles.py diff --plan <update-plan.json> --json
 python3.14 tools/harness_capability_profiles.py apply --plan <update-plan.json> --allow-effect profile_mutation --security-ref <ref> --approval-ref <ref> --json
 python3.14 tools/harness_capability_profiles.py audit --scout-report <scout-report.json> --analysis-report <analysis-report.json> --plan <update-plan.json> --apply-result <apply-result.json> --validation-result <validation-result.json> --json
-python3.14 tools/validate_armory_integrity.py --final-closeout --json
+python3.14 tools/validate_agentworks_integrity.py --final-closeout --json
 git diff --check
 ```
 

@@ -61,17 +61,17 @@ boundaries.
 
 Created follow-up issues:
 
-- [#173](https://github.com/nisavid/agent-armory/issues/173): Manager Core
+- [#173](https://github.com/nisavid/agentworks/issues/173): Manager Core
   lifecycle candidate records and JSON output.
-- [#174](https://github.com/nisavid/agent-armory/issues/174): lifecycle
+- [#174](https://github.com/nisavid/agentworks/issues/174): lifecycle
   disposition, schema pressure, and profile mutation gates.
-- [#175](https://github.com/nisavid/agent-armory/issues/175): manual refresh
+- [#175](https://github.com/nisavid/agentworks/issues/175): manual refresh
   workflow updates for lifecycle candidate handling.
-- [#176](https://github.com/nisavid/agent-armory/issues/176): Issue Tracker
+- [#176](https://github.com/nisavid/agentworks/issues/176): Issue Tracker
   Ops and Reflection Finding routing.
-- [#177](https://github.com/nisavid/agent-armory/issues/177): Harness Test
+- [#177](https://github.com/nisavid/agentworks/issues/177): Harness Test
   Suite result consumption after jig work exists.
-- [#178](https://github.com/nisavid/agent-armory/issues/178): Config and
+- [#178](https://github.com/nisavid/agentworks/issues/178): Config and
   Periodic Actions integration after #23 and #3 provide their required
   surfaces.
 

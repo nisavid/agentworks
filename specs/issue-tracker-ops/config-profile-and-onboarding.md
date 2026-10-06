@@ -5,7 +5,7 @@ Promotion state: planned
 
 This spec describes desired behavior only. It does not implement Agent Equipment.
 
-Issue: [#13](https://github.com/nisavid/agent-armory/issues/13)
+Issue: [#13](https://github.com/nisavid/agentworks/issues/13)
 Product requirements:
 [Issue Tracker Ops PRD](../../docs/prd/issue-tracker-ops.md).
 
@@ -125,7 +125,7 @@ Each discovered Foreign Policy Surface receives a reviewed migration fate:
 - split.
 
 `keep and establish compatibility` preserves a surface for active consumers
-while anchoring its policy in the Armory preferred encoding. `remove and ingest
+while anchoring its policy in the Works preferred encoding. `remove and ingest
 policy` converts useful policy into Issue Ops Config and retires the foreign
 surface when its consumers no longer require it. `remove and discard policy`
 removes a surface whose policy should not continue. `ignore` leaves a surface

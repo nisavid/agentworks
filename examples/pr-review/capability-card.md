@@ -14,7 +14,7 @@ Review pull requests, local diffs, and branches for defects, regressions, securi
 
 This example shows how a review Assembly keeps judgment in an Agent while
 moving changed-file selection, disclosure checks, mutation gates, evidence, and
-repo policy into deterministic or durable surfaces. It protects the Armory
+repo policy into deterministic or durable surfaces. It protects the Works
 experience in which an Agent reviews methodically instead of improvising from a
 raw diff.
 

@@ -18,7 +18,7 @@ Trace: [capability card](capability-card.md) -> [interface decision record](inte
 | Hook | `hooks/docs-evidence-gate` | Flags uncited version-sensitive claims where enforceable. |
 | Agent Profile | `agents/docs-researcher.toml` | Read-only researcher profile with narrow external tools. |
 | Config | `config/docs-research.toml` | Provider order and disclosure limits. |
-| Plugin | `agent-armory-docs-research` | Deferred portable bundle after validation. |
+| Plugin | `agentworks-docs-research` | Deferred portable bundle after validation. |
 
 ## Minimal Smith Path
 

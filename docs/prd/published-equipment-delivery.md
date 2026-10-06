@@ -6,17 +6,19 @@ Published PRD Issue: #147
 
 ## Problem Statement
 
-Agent Armory can design and implement useful Agent Equipment before the
+Agentworks can design and implement useful Agent Equipment before the
 equipment is easy for Wielders and Outfitters to find, understand, equip,
-inspect, and trust. Agent Equipment Config shows the gap: its runtime slice and
-MCP parity are closed, but the Armory does not yet present a clear shop card,
-stock inventory entry, Codex plugin, runnable MCP server, routing skill, or
-standard publication inspection record.
+inspect, and trust. Agent Equipment Config exposed the gap that prompted this
+delivery retrofit: its runtime slice and MCP parity were closed before a shop
+card, stock inventory entry, Codex plugin, runnable MCP server, routing skill,
+and standard publication inspection record were available. The current
+[Config shop card](../equipment/shop-cards/agent-equipment-config.md) points to
+the implemented delivery surfaces and their inspection evidence.
 
-The Forge already has Capability Cards, Equipment Design Bundles, promotion
-states, validation plans, and Story Closeout. Those surfaces help Smiths build
-equipment, but they do not yet form a complete delivery system for published
-equipment. Published claims need stock records, Wielder and Outfitter
+At the start of this retrofit, the Forge had Capability Cards, Equipment
+Design Bundles, promotion states, validation plans, and Story Closeout. Those
+surfaces helped Smiths build equipment but did not yet form a complete delivery
+system for published equipment. Published claims need stock records, Wielder and Outfitter
 presentation, gear-up paths, component manifests, inspection criteria, and
 equipment-epic closeout gates that block publication until the advertised
 equipment can actually be equipped.

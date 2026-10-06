@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import NoReturn
 from unittest import mock
 
-from tools import validate_armory_integrity as validator
-from tools.validate_armory_integrity import CheckResult, load_toml
+from tools import validate_agentworks_integrity as validator
+from tools.validate_agentworks_integrity import CheckResult, load_toml
 
 
 PLUGIN_ROOT = Path("plugins/agent-equipment-config")
@@ -45,7 +45,7 @@ def write_launcher_repo_markers(root: Path) -> None:
     marketplace.write_text(
         json.dumps(
             {
-                "name": "agent-armory",
+                "name": "agentworks",
                 "plugins": [
                     {
                         "name": "agent-equipment-config",
@@ -140,10 +140,10 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             root = Path(tmpdir)
             self.write_valid_plugin_fixture(root)
             manifest = json.loads((root / PLUGIN_ROOT / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
-            manifest["author"] = "Agent Armory"
+            manifest["author"] = "Agentworks"
             manifest["repository"] = {
                 "type": "git",
-                "url": "https://github.com/nisavid/agent-armory",
+                "url": "https://github.com/nisavid/agentworks",
             }
             manifest["apps"] = "./.app.json"
             manifest["interface"]["description"] = "Duplicate install-surface copy."
@@ -164,7 +164,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:manifest:repository",
                 False,
-                "repository must be https://github.com/nisavid/agent-armory",
+                "repository must be https://github.com/nisavid/agentworks",
                 "plugins/agent-equipment-config/.codex-plugin/plugin.json",
             ),
             results,
@@ -267,7 +267,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 LAUNCHER_PATH,
                 """
                 # REPO_SERVER tools/agent_equipment_config_mcp_server.py
-                # MARKETPLACE_MARKER find_armory_root os.chdir(root) os.execve return 2
+                # MARKETPLACE_MARKER find_agentworks_root os.chdir(root) os.execve return 2
                 def launch():
                     return 0
                 """,
@@ -293,7 +293,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -463,7 +463,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -513,7 +513,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -556,7 +556,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, wrong_marker_results)
@@ -584,7 +584,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -617,7 +617,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -821,10 +821,10 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 from pathlib import Path
                 REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
                 MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
-                def find_armory_root():
+                def find_agentworks_root():
                     return Path.cwd()
                 def launch():
-                    root = find_armory_root()
+                    root = find_agentworks_root()
                     if root is None:
                         return 2
                     server = root / REPO_SERVER
@@ -840,7 +840,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -876,7 +876,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, root_guard_results)
@@ -899,7 +899,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -931,7 +931,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -954,7 +954,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -980,7 +980,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1050,7 +1050,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 and not result.ok
                 and result.path == "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py"
                 and result.detail.startswith("launcher discovery probe resolved unexpected roots:")
-                and "'server_environment_missing': {'AGENT_ARMORY_ROOT': None}" in result.detail
+                and "'server_environment_missing': {'AGENTWORKS_ROOT': None}" in result.detail
                 for result in results
             ),
             results,
@@ -1077,7 +1077,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1098,8 +1098,8 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
 
             launcher_path.write_text(
                 launcher_text.replace(
-                    "def candidate_is_armory_root(candidate: Path) -> bool:\n",
-                    "def candidate_is_armory_root(candidate: Path) -> bool:\n"
+                    "def candidate_is_agentworks_root(candidate: Path) -> bool:\n",
+                    "def candidate_is_agentworks_root(candidate: Path) -> bool:\n"
                     "    python_executable = str(Path(sys.executable).resolve())\n"
                     "    os.execve(python_executable, [python_executable, str(candidate / REPO_SERVER)], server_environment())\n",
                 ),
@@ -1110,7 +1110,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, relative_import_results)
@@ -1129,11 +1129,11 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 from pathlib import Path
                 REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
                 MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
-                def find_armory_root():
+                def find_agentworks_root():
                     return Path.cwd()
                 def launch():
                     return 0
-                    root = find_armory_root()
+                    root = find_agentworks_root()
                     if root is None:
                         return 2
                     server = root / REPO_SERVER
@@ -1149,7 +1149,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1169,11 +1169,11 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
                 REPO_MARKER = Path("inventory/equipment.toml")
                 MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
-                def find_armory_root(*, env_root=None, start_dir=None):
+                def find_agentworks_root(*, env_root=None, start_dir=None):
                     return Path.cwd()
                 def launch():
-                    root = find_armory_root(
-                        env_root=os.environ.get("AGENT_ARMORY_ROOT"),
+                    root = find_agentworks_root(
+                        env_root=os.environ.get("AGENTWORKS_ROOT"),
                         start_dir=os.environ.get("PWD") or os.getcwd(),
                     )
                     if root is None:
@@ -1196,7 +1196,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1215,10 +1215,10 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 from pathlib import Path
                 REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
                 MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
-                def find_armory_root():
+                def find_agentworks_root():
                     return Path.cwd()
                 def launch():
-                    root = find_armory_root()
+                    root = find_agentworks_root()
                     if root is None:
                         return 2
                     server = root / REPO_SERVER
@@ -1240,7 +1240,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Armory checkout and exec the standalone MCP server",
+                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1286,7 +1286,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
 
 
 class AgentEquipmentConfigLauncherTests(unittest.TestCase):
-    def test_launcher_server_environment_allows_only_agent_armory_root(self):
+    def test_launcher_server_environment_allows_only_agentworks_root(self):
         launcher = load_module(
             Path(__file__).resolve().parents[1] / LAUNCHER_PATH,
             "config_launcher_server_environment",
@@ -1295,7 +1295,8 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         with mock.patch.dict(
             launcher.os.environ,
             {
-                "AGENT_ARMORY_ROOT": "/tmp/armory",
+                "AGENTWORKS_ROOT": "/tmp/agentworks",
+                "AGENT_ARMORY_ROOT": "/tmp/obsolete-armory",
                 "PATH": "/tmp/controlled",
                 "SECRET_TOKEN": "secret",
             },
@@ -1303,7 +1304,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         ):
             env = launcher.server_environment()
 
-        self.assertEqual({"AGENT_ARMORY_ROOT": "/tmp/armory"}, env)
+        self.assertEqual({"AGENTWORKS_ROOT": "/tmp/agentworks"}, env)
 
     def test_launcher_prefers_valid_env_root_and_finds_server(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1313,11 +1314,11 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
             outside.mkdir()
             launcher = load_module(Path(__file__).resolve().parents[1] / LAUNCHER_PATH, "config_launcher")
 
-            found = launcher.find_armory_root(env_root=str(root), start_dir=outside)
+            found = launcher.find_agentworks_root(env_root=str(root), start_dir=outside)
 
         self.assertEqual(root.resolve(), found)
 
-    def test_launcher_uses_cwd_ancestor_fallback_and_ignores_spoofed_pwd(self):
+    def test_launcher_uses_cwd_ancestor_fallback_and_ignores_obsolete_env_and_spoofed_pwd(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             write_launcher_repo_markers(root)
@@ -1325,6 +1326,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
             nested.mkdir(parents=True)
             spoofed = Path(tmpdir) / "spoofed"
             spoofed.mkdir()
+            write_launcher_repo_markers(spoofed)
             launcher = load_module(
                 Path(__file__).resolve().parents[1] / LAUNCHER_PATH,
                 "config_launcher_cwd_fallback",
@@ -1337,8 +1339,8 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
                 exec_call["env"] = env
                 raise RuntimeError("stop before exec")
 
-            found = launcher.find_armory_root(env_root=None, start_dir=nested)
-            with mock.patch.dict(launcher.os.environ, {"PWD": str(spoofed)}, clear=True):
+            found = launcher.find_agentworks_root(env_root=None, start_dir=nested)
+            with mock.patch.dict(launcher.os.environ, {"PWD": str(spoofed), "AGENT_ARMORY_ROOT": str(spoofed)}, clear=True):
                 with mock.patch.object(launcher.Path, "cwd", return_value=nested):
                     with mock.patch.object(launcher.os, "chdir") as chdir:
                         with mock.patch.object(launcher.os, "execve", side_effect=fake_execve):
@@ -1370,11 +1372,28 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
                 "config_launcher_lookalike",
             )
 
-            found = launcher.find_armory_root(env_root=str(root), start_dir=nested)
+            found = launcher.find_agentworks_root(env_root=str(root), start_dir=nested)
 
         self.assertIsNone(found)
 
-    def test_launcher_uses_configured_env_root_and_execs_from_armory_root(self):
+    def test_launcher_rejects_obsolete_marketplace_marker(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            write_launcher_repo_markers(root)
+            marketplace = root / ".agents/plugins/marketplace.json"
+            payload = json.loads(marketplace.read_text(encoding="utf-8"))
+            payload["name"] = "agent-armory"
+            marketplace.write_text(json.dumps(payload), encoding="utf-8")
+            launcher = load_module(
+                Path(__file__).resolve().parents[1] / LAUNCHER_PATH,
+                "config_launcher_obsolete_marker",
+            )
+
+            found = launcher.find_agentworks_root(env_root=str(root), start_dir=root)
+
+        self.assertIsNone(found)
+
+    def test_launcher_uses_configured_env_root_and_execs_from_agentworks_root(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             write_launcher_repo_markers(root)
@@ -1395,7 +1414,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
             with mock.patch.dict(
                 launcher.os.environ,
                 {
-                    "AGENT_ARMORY_ROOT": str(root),
+                    "AGENTWORKS_ROOT": str(root),
                     "PATH": str(Path(tmpdir) / "spoofed-bin"),
                     "SECRET_TOKEN": "secret",
                 },
@@ -1413,7 +1432,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
             [python_executable, str(root.resolve() / "tools/agent_equipment_config_mcp_server.py"), "--stdio"],
             exec_call["args"],
         )
-        self.assertEqual({"AGENT_ARMORY_ROOT": str(root)}, exec_call["env"])
+        self.assertEqual({"AGENTWORKS_ROOT": str(root)}, exec_call["env"])
 
     def test_launcher_rechecks_server_before_exec(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1426,11 +1445,11 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
             )
             stderr = io.StringIO()
 
-            def fake_find_armory_root(*, env_root, start_dir=None):
+            def fake_find_agentworks_root(*, env_root, start_dir=None):
                 server.unlink()
                 return root.resolve()
 
-            with mock.patch.object(launcher, "find_armory_root", side_effect=fake_find_armory_root):
+            with mock.patch.object(launcher, "find_agentworks_root", side_effect=fake_find_agentworks_root):
                 with mock.patch.object(launcher.os, "chdir") as chdir:
                     with mock.patch.object(launcher.os, "execve") as execve:
                         with mock.patch.object(launcher.sys, "stderr", stderr):
@@ -1439,7 +1458,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         self.assertEqual(2, exit_code)
         chdir.assert_not_called()
         execve.assert_not_called()
-        self.assertIn("could not find", stderr.getvalue())
+        self.assertIn("Agentworks checkout", stderr.getvalue())
 
     def test_launcher_reports_exec_failure(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1453,7 +1472,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
             )
             stderr = io.StringIO()
 
-            with mock.patch.dict(launcher.os.environ, {"AGENT_ARMORY_ROOT": str(root)}, clear=True):
+            with mock.patch.dict(launcher.os.environ, {"AGENTWORKS_ROOT": str(root)}, clear=True):
                 with mock.patch.object(launcher.os, "chdir"):
                     with mock.patch.object(launcher.os, "execve", side_effect=FileNotFoundError("python")):
                         with mock.patch.object(launcher.sys, "stderr", stderr):

@@ -527,6 +527,7 @@ class HarnessCapabilityProfileManagerTests(unittest.TestCase):
             self.assertEqual(plan_payload["mutations"][0]["path"], "docs/harness-capabilities/vanilla/codex.toml")
             self.assertEqual(plan_payload["mutations"][0]["claim_change_summary"]["changed"], 0)
             self.assertIn("python3.14 tools/harness_capability_profiles.py validate --json", plan_payload["validation_commands"])
+            self.assertIn("python3.14 tools/validate_agentworks_integrity.py --json", plan_payload["validation_commands"])
 
             diff = self.run_manager(root, "diff", "--plan", str(plan_path), "--json")
             self.assertEqual(diff.returncode, 0, diff.stderr)
@@ -558,7 +559,7 @@ class HarnessCapabilityProfileManagerTests(unittest.TestCase):
             integrity_validation_result.write_text(
                 json.dumps(
                     {
-                        "schema": "armory_integrity.validation_result.v1",
+                        "schema": "agentworks_integrity.validation_result.v1",
                         "results": [{"name": "fixture", "ok": True, "detail": "passed", "path": "."}],
                     },
                     indent=2,
@@ -604,7 +605,7 @@ class HarnessCapabilityProfileManagerTests(unittest.TestCase):
             )
             self.assertTrue(audit_payload["claim_triage_summary"])
             self.assertEqual(audit_payload["validation_results"][0]["result"], "passed")
-            self.assertEqual(audit_payload["validation_results"][1]["schema"], "armory_integrity.validation_result.v1")
+            self.assertEqual(audit_payload["validation_results"][1]["schema"], "agentworks_integrity.validation_result.v1")
             self.assertEqual(audit_payload["validation_results"][1]["result"], "passed")
             self.assertEqual(audit_payload["scratch_evidence_disposition"], scout_payload["scratch_disposition"])
             self.assertTrue(audit_payload["selected_rigor_deviations"])
@@ -940,6 +941,30 @@ class HarnessCapabilityProfileManagerTests(unittest.TestCase):
             self.assertNotEqual(audit.returncode, 0)
             self.assertIn("refresh audit artifacts must share harness_id", json.loads(audit.stdout)["error"])
 
+    def test_manual_refresh_audit_rejects_obsolete_integrity_result_schema(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_canonical_validation_root(root)
+            _scout, scout_report, analysis_report, plan_path, _replacement = self.prepare_refresh_artifacts(root)
+            plan = json.loads(plan_path.read_text(encoding="utf-8"))
+            plan["mutations"] = []
+            plan["effect_requirements"] = []
+            plan_path.write_text(json.dumps(plan), encoding="utf-8")
+            obsolete_result = root / "scratch/obsolete-integrity-result.json"
+            obsolete_result.write_text(json.dumps({
+                "schema": "armory_integrity.validation_result.v1",
+                "results": [{"name": "fixture", "ok": True, "detail": "passed", "path": "."}],
+            }), encoding="utf-8")
+
+            audit = self.run_manager(
+                root, "audit", "--scout-report", str(scout_report),
+                "--analysis-report", str(analysis_report), "--plan", str(plan_path),
+                "--validation-result", str(obsolete_result), "--json",
+            )
+
+        self.assertNotEqual(audit.returncode, 0)
+        self.assertIn("validation result did not pass", json.loads(audit.stdout)["error"])
+
     def test_manual_refresh_audit_requires_apply_and_passing_validation_for_mutations(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -1052,7 +1077,7 @@ class HarnessCapabilityProfileManagerTests(unittest.TestCase):
             integrity_only_validation.write_text(
                 json.dumps(
                     {
-                        "schema": "armory_integrity.validation_result.v1",
+                        "schema": "agentworks_integrity.validation_result.v1",
                         "result": "passed",
                         "results": [{"name": "fixture", "ok": True, "detail": "passed", "path": "."}],
                     },

@@ -263,7 +263,7 @@ evidence_basis = "current_first_party_source"
 claim_triage = "changed"
 triage_rationale = "The migrated profile lacked a dedicated MCP claim even though plugin-bundled MCP is now source-backed."
 install_activation = "MCP servers attach through plugin bundles and Codex configuration."
-configuration_surface = "Plugin manifests and .mcp.json direct server maps decide which MCP servers are available for the locally verified plugin-install path. Plugin-scoped mcp_servers config appears in current documentation but needs separate verification before Armory relies on it."
+configuration_surface = "Plugin manifests and .mcp.json direct server maps decide which MCP servers are available for the locally verified plugin-install path. Plugin-scoped mcp_servers config appears in current documentation but needs separate verification before Agentworks relies on it."
 reload_update_behavior = "MCP availability follows plugin and runtime reload behavior; exact server event taxonomy remains schema pressure."
 limitations = "Plugin, hook, MCP, app-server, and marketplace behavior is component-specific. Plugin-bundled hooks require trust review, unattended runs still need sandbox and approval controls, and no checked source proves native import of another harness bundle convention."
 uncertainty = "Memory-like behavior is limited to context-preserving automations and adjacent app surfaces; no stable shared memory API or cross-harness import contract is proven by the checked first-party sources."
@@ -272,7 +272,7 @@ uncertainty = "Memory-like behavior is limited to context-preserving automations
 component = "MCP and tool surfaces"
 load_attachment_point = "MCP servers attach through plugin bundles and Codex configuration."
 activation = "MCP servers attach through plugin bundles and Codex configuration."
-mutability = "Plugin manifests and .mcp.json direct server maps decide which MCP servers are available for the locally verified plugin-install path. Plugin-scoped mcp_servers config appears in current documentation but needs separate verification before Armory relies on it."
+mutability = "Plugin manifests and .mcp.json direct server maps decide which MCP servers are available for the locally verified plugin-install path. Plugin-scoped mcp_servers config appears in current documentation but needs separate verification before Agentworks relies on it."
 scope = [
     "plugin",
     "project",

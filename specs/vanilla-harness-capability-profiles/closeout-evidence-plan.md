@@ -52,7 +52,7 @@ Inspect and update affected docs near the end of each cohesive change set:
 - `docs/agent-equipment-forge.md`;
 - `docs/smith-runbook.md`;
 - `specs/vanilla-harness-capability-profiles/`;
-- `tools/validate_armory_integrity.py` usage references when changed.
+- `tools/validate_agentworks_integrity.py` usage references when changed.
 
 If a plausible doc surface is unchanged, record the rationale in PR or final
 closeout.

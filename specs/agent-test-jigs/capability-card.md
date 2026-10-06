@@ -10,7 +10,7 @@ Equipment, Loadouts, interactions, and Harness Capability claims.
 
 ## Vision alignment
 
-This capability supports the Armory vision by moving repeatable parsing,
+This capability supports the Works vision by moving repeatable parsing,
 execution, observation, assertion, evidence capture, and policy gates out of
 model memory and into inspectable equipment surfaces. It gives Agents stronger
 evidence before they rely on harness capabilities or promote equipment.
@@ -100,7 +100,7 @@ evidence before they rely on harness capabilities or promote equipment.
 - Future result schema validation.
 - Future fixture path and symlink checks.
 - Future effect approval checks.
-- Current design-package closeout through repository tests and Armory Integrity
+- Current design-package closeout through repository tests and Agentworks Integrity
   Validation.
 
 ## Output contract
@@ -130,7 +130,7 @@ adjudication handoffs.
 - Source-supported: `CONTEXT.md`, Capability Profiling Protocol specs,
   Harness Capability Profile specs, repository threat model, and issue #61.
 - Documentation-supported: first-party harness profiles and harness catalog
-  summaries already maintained by the Armory.
+  summaries already maintained by the Works.
 - Practitioner wisdom: weakest reliable oracle, cognitive-load management, and
   explicit effect gates.
 - Hypothesis: the first implementation driver may be a hybrid local driver,

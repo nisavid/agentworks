@@ -18,7 +18,7 @@ This spec describes desired behavior for future Agent Equipment. It does not imp
 
 ## Purpose
 
-Harness Capability Refresh keeps the Armory's harness knowledge current enough for Forge decisions. It periodically checks supported harnesses, records source-backed capability facts, and opens a high-priority issue or issue candidate when depended-on behavior changes.
+Harness Capability Refresh keeps the Works' harness knowledge current enough for Forge decisions. It periodically checks supported harnesses, records source-backed capability facts, and opens a high-priority issue or issue candidate when depended-on behavior changes.
 
 ## User stories
 

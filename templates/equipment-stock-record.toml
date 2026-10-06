@@ -1,4 +1,4 @@
-schema_version = "agent-armory.equipment-stock.v1"
+schema_version = "agentworks.equipment-stock.v1"
 
 [[equipment]]
 id = "example-equipment"

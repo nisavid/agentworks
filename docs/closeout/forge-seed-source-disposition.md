@@ -57,7 +57,7 @@ operator-directed decision and durable follow-up target.
 | H009 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | docs/harness-capabilities.md | Refresh and publish the canonical harness capability catalog. |
 | H010 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | templates/ | Ship seed templates and annotated Forge Examples. |
 | H011 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | specs/repo-ops.md | Create downstream specs for the initial Smith tasks. |
-| H012 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | tools/validate_armory_integrity.py | Validate source disposition, live Forge surfaces, examples, Blueprints, and issue projection. |
+| H012 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | tools/validate_agentworks_integrity.py | Validate source disposition, live Forge surfaces, examples, Blueprints, and issue projection. |
 | H052 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | docs/prd/forge-seed.md | Preserve standard-library validation and non-production seed boundaries. |
 | H053 | SRC002 | adequately_captured | unchallenged | false | false | kept_current |  | docs/closeout/forge-seed-documentation.md | Record final implementation, validation, issue projection, and closeout summaries. |
 | H013 | SRC003 | adequately_captured | unchallenged | false | false | kept_current |  | docs/agent-equipment-forge.md | Explain why the Agent Armory needs a Forge instead of ad hoc equipment. |
@@ -114,8 +114,18 @@ No unresolved challenge enters source retirement. Rows marked `resolved` carry o
 source_bearing_snapshot_tree_id: 589bf626ffc5e9cdfffc7ee5983022adc1f7a1e2
 source_bearing_stamp_id: source-bearing-2026-05-04
 source_manifest_digest: 7ebb526ad69baa2254052deccf3ad9f236b3c785124842329d6d4e2a000cfbb5
-source_disposition_digest: e59e3bc4e9d11eb0198984bab87098c49c98be348bac38df7fef795d579f767f
+source_disposition_digest: ff58e955b86db4cbc9ff4e30f50431cc99df085b228e701746ec8a053eabbf32
 source_bearing_result: passed
+
+## Identity Maintenance
+
+The Agentworks rename updates H012’s current evidence target to
+`tools/validate_agentworks_integrity.py` and refreshes the disposition-table
+checksum above. The recorded pre-rename checksum was
+`e59e3bc4e9d11eb0198984bab87098c49c98be348bac38df7fef795d579f767f`.
+Source identities, normalized claims, dispositions, and the original checkpoint
+identity remain intact. This pointer maintenance does not repeat the historical
+source-bearing or retirement qualification.
 
 ## Final Source-Retired Stamp
 

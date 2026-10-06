@@ -6,7 +6,7 @@
       "./mcp/agent_equipment_config_launcher.py"
     ],
     "env_vars": [
-      "AGENT_ARMORY_ROOT"
+      "AGENTWORKS_ROOT"
     ],
     "default_tools_approval_mode": "prompt",
     "tools": {

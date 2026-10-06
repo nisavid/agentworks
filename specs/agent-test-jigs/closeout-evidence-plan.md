@@ -58,21 +58,21 @@ edge is intentional: the runner should consume a minimal stable Assertion
 Provider interface instead of landing an assertion-less shell; richer
 deterministic assertions can extend that interface later.
 
-- [#162](https://github.com/nisavid/agent-armory/issues/162): Jig Test Plan
+- [#162](https://github.com/nisavid/agentworks/issues/162): Jig Test Plan
   TOML schema and fixture examples;
-- [#163](https://github.com/nisavid/agent-armory/issues/163): first Jig Driver
+- [#163](https://github.com/nisavid/agentworks/issues/163): first Jig Driver
   implementation after ADR gate application;
-- [#165](https://github.com/nisavid/agent-armory/issues/165): deterministic
+- [#165](https://github.com/nisavid/agentworks/issues/165): deterministic
   Assertion Provider library;
-- [#164](https://github.com/nisavid/agent-armory/issues/164): Jig Runner CLI
+- [#164](https://github.com/nisavid/agentworks/issues/164): Jig Runner CLI
   and structured result output;
-- [#166](https://github.com/nisavid/agent-armory/issues/166): local inference
+- [#166](https://github.com/nisavid/agentworks/issues/166): local inference
   service adapter and Learned Oracle providers;
-- [#167](https://github.com/nisavid/agent-armory/issues/167): Harness Test
+- [#167](https://github.com/nisavid/agentworks/issues/167): Harness Test
   Suite integration with Harness Capability lifecycle work;
-- [#168](https://github.com/nisavid/agent-armory/issues/168): Codex
+- [#168](https://github.com/nisavid/agentworks/issues/168): Codex
   disagreement adjudication workflow;
-- [#169](https://github.com/nisavid/agent-armory/issues/169): optional review
+- [#169](https://github.com/nisavid/agentworks/issues/169): optional review
   report or static viewer after structured results exist.
 
 Follow-up issue bodies should be current-state briefs. They should not include

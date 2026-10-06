@@ -6,7 +6,7 @@ Published PRD Issue: #107
 
 ## Problem Statement
 
-Agent Armory needs Issue Tracker Ops to be usable as full Agent Equipment, not
+Agentworks needs Issue Tracker Ops to be usable as full Agent Equipment, not
 only as a GitHub Issues bootstrap script. Agents and operators need a durable,
 configurable, context-sensitive way to record, review, repair, enrich,
 organize, select, work, and orchestrate issue-tracked follow-ups directly in an
@@ -31,7 +31,7 @@ Deliver Issue Tracker Ops as an Agent Equipment product with:
 - a smooth onboarding and migration flow that auto-discovers repo-local and
   user-global Issue Ops policy surfaces;
 - pre-built migration recipes for Matt Pocock's AI Skills for Real Engineers;
-- sufficient expressiveness to capture Agent Armory's current Issue Ops policy;
+- sufficient expressiveness to capture Agentworks's current Issue Ops policy;
 - deterministic CLI and MCP parity for operations, plans, gates, audits, and
   adapter calls;
 - agent-facing skills or profiles for judgment-heavy workflows that prepare
@@ -72,9 +72,9 @@ by later product decision.
     publication, issue slicing, agent briefs, out-of-scope memory, GitHub,
     GitLab, local markdown, and freeform tracker policy expressiveness, so that
     migration does not flatten useful behavior.
-11. As a Smith, I want Issue Ops to represent Agent Armory's current label axes,
+11. As a Smith, I want Issue Ops to represent Agentworks's current label axes,
     dependency disposition, triage records, brief status, engagement modes, and
-    Reflection Finding routing, so that Agent Armory can dogfood the equipment.
+    Reflection Finding routing, so that Agentworks can dogfood the equipment.
 12. As an Agent, I want a tracker-neutral operation model, so that adapter
     behavior is not hard-coded to one tracker.
 13. As an Agent, I want each adapter capability to declare native, emulated,
@@ -165,8 +165,8 @@ by later product decision.
   for `mattpocock/skills`, including setup policy, tracker templates, triage,
   PRD publication, issue slicing, agent briefs, and out-of-scope rejection
   memory.
-- Agent Armory expressiveness: MVP Config must represent the current Agent
-  Armory Issue Ops baseline, including label axes, depth, work kind, engagement
+- Agentworks expressiveness: MVP Config must represent the current Agent
+  Works Issue Ops baseline, including label axes, depth, work kind, engagement
   mode, brief status, dependency disposition, triage records, Reflection
   Findings, fallback capture, and audit-label behavior.
 - Judgment split: deterministic core owns contracts, planning, validation,
@@ -203,7 +203,7 @@ by later product decision.
 - Cover the Matt Pocock migration recipe against fixture copies of setup,
   triage, PRD, issue slicing, agent brief, out-of-scope, GitHub, GitLab, local
   markdown, and other-tracker policy shapes.
-- Cover Agent Armory policy expressiveness with fixtures for the current label
+- Cover Agentworks policy expressiveness with fixtures for the current label
   axes, triage records, dependency disposition, Reflection Finding routing, and
   audit-label expectations.
 - Cover CLI/MCP parity by comparing operation metadata, input schemas, output
@@ -221,7 +221,7 @@ by later product decision.
   stakeholder-sensitive routing before policy is explicitly codified.
 - Treating migrated foreign policy surfaces as authoritative parallel policy
   sources after compatibility or ingestion is established.
-- Implementing unrelated Agent Armory product doctrine work; that is tracked
+- Implementing unrelated Agentworks product doctrine work; that is tracked
   separately by #106.
 
 ## Further Notes

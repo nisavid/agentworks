@@ -114,7 +114,7 @@ repository operations substrate those behaviors use.
 - Policy enforcement behavior is explicit for every harness projection.
 - Advisory fallbacks are labeled as weaker than blocking controls.
 - Intake planning covers the generic repository-operations behavior already
-  scattered across Armory-adjacent docs and the generic behavior currently
+  scattered across Works-adjacent docs and the generic behavior currently
   mixed into Fork Ops source material.
 
 An initial plain config shape may look like:
@@ -133,7 +133,7 @@ paths = ["ops/runbook.md", "ops/*.md"]
 [repo_ops.extension.periodic_actions]
 enabled = true
 
-[repo_ops.repo.nisavid_agent_armory]
+[repo_ops.repo.nisavid_agentworks]
 policy_doc = "ops/repo-ops.md"
 
 [repo_ops.local.this_checkout]

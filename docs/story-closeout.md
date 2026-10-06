@@ -1,6 +1,6 @@
 # Story Closeout
 
-Status: Armory Operating Contract
+Status: Agentworks Operating Contract
 
 ## Purpose
 
@@ -27,7 +27,7 @@ Run closeout gates in this order:
    delivered.
 8. Run Cross-Boundary Coherence before Story Quality because quality review depends on coherent process evidence.
 9. Run Story Quality Ralph Review after coherence findings are fixed or soundly rejected.
-10. Run final validation and publication-readiness checks required by the active plan or repository policy. For current repository integrity, `.python-version` declares the Python 3.14 runtime and `python3.14 tools/validate_armory_integrity.py --final-closeout` is the branch-push and external-projection readiness check.
+10. Run final validation and publication-readiness checks required by the active plan or repository policy. For current repository integrity, `.python-version` declares the Python 3.14 runtime and `python3.14 tools/validate_agentworks_integrity.py --final-closeout` is the branch-push and external-projection readiness check.
 11. Push or otherwise publish the branch only when the active plan, operator direction, or issue-projection surface needs a pushed commit before PR creation. A stated operator pause point may occur here.
 12. Publish or update issue, PR, release, and handoff surfaces from the clean final story evidence.
 13. Perform publication actions that remain in scope, respecting repository policy and stated operator pause points.
@@ -65,7 +65,7 @@ If a revision changes security, documentation, validation, PRD/spec/plan scope, 
 
 Cross-Boundary Coherence Ralph Review checks whether the story's process outputs agree across PRD, Blueprints, plans, implementation, deterministic validation, security closeout, documentation closeout, source-disposition/provenance evidence, existing or draft issue/PR projection, and release or handoff surfaces.
 
-Story Quality Ralph Review checks whether the story meets broader quality expectations after coherence is established: DX, UX, code quality, clean architecture, cohesive module boundaries, robustness against unspecified situations, interactions, user personas and attack paths, lessons from pathological dev/ops cycles, and alignment with the [Armory Vision](vision.md).
+Story Quality Ralph Review checks whether the story meets broader quality expectations after coherence is established: DX, UX, code quality, clean architecture, cohesive module boundaries, robustness against unspecified situations, interactions, user personas and attack paths, lessons from pathological dev/ops cycles, and alignment with the [Agentworks Vision](vision.md).
 
 Intent Model Refresh is the first closeout gate. Update the agent's model of Underlying Intent by reviewing recent operator input, accepted ADR/PRD/spec/plan changes, review dispositions, handoff notes, and observed corrections relevant to the story before running downstream closeout gates.
 
@@ -89,7 +89,7 @@ A story is ready to close when:
 - Change Set Security Closeout is current for the final diff or records why narrower action is sufficient;
 - Change Set Documentation Closeout is current for affected docs and records unchanged rationale where no edits were needed;
 - Cross-Boundary Coherence Ralph Review and Story Quality Ralph Review both have latest clean cycles;
-- Story Quality has checked alignment with the [Armory Vision](vision.md) where
+- Story Quality has checked alignment with the [Agentworks Vision](vision.md) where
   the story affects ideation, architecture, design, strategy, validation,
   maintenance, or the intended agent and operator experience;
 - stockable equipment delivery claims have a linked Equipment Epic Closeout

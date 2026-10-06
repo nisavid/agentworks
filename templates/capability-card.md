@@ -12,7 +12,7 @@ implementation surface.
 
 State how the capability supports `docs/vision.md`: self-onboarding, Loadout or
 Assembly fit, deterministic support, enforceable policy, durable knowledge,
-typed data, reflection, or another part of the intended Armory experience.
+typed data, reflection, or another part of the intended Works experience.
 
 ## Users
 

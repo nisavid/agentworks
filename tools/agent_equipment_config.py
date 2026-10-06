@@ -2064,7 +2064,7 @@ def config_validation_report(
     return report
 
 
-AUTHORING_PLAN_SCHEMA = "agent-armory.config.authoring-plan.v1"
+AUTHORING_PLAN_SCHEMA = "agentworks.config.authoring-plan.v1"
 AUTHORING_AUTHORITY = "config_authoring_plan"
 AUTHORING_TARGET_CATEGORIES = ["committed durable config", "local-only operator config"]
 AUTHORING_REFUSAL_CODE_ORDER = [
@@ -3511,7 +3511,7 @@ def mcp_tool_spec(
         "inputSchema": input_schema,
         "outputSchema": mcp_output_schema(output_schema),
         "annotations": annotations,
-        "x-agent-armory": {
+        "x-agentworks": {
             "cli_operation": cli_operation,
             "read_write_classification": read_write_classification,
             "auth_source": auth_source,
@@ -4174,7 +4174,7 @@ def mcp_call_summary(tool_name: str, payload: dict[str, Any]) -> str:
 
 
 def mcp_call_result(tool: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
-    metadata = tool["x-agent-armory"]
+    metadata = tool["x-agentworks"]
     structured = {
         "tool": tool["name"],
         "operation": tool["name"],
@@ -4191,7 +4191,7 @@ def mcp_call_result(tool: dict[str, Any], payload: dict[str, Any]) -> dict[str, 
 def mcp_error_result(tool_or_name: dict[str, Any] | str, message: str) -> dict[str, Any]:
     if isinstance(tool_or_name, dict):
         tool_name = tool_or_name["name"]
-        metadata = tool_or_name["x-agent-armory"]
+        metadata = tool_or_name["x-agentworks"]
         cli_operation = metadata["cli_operation"]
         read_write_classification = metadata["read_write_classification"]
     else:

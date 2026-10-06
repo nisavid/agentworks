@@ -1,16 +1,16 @@
 # External Tool Evaluation
 
-Status: Armory Operating Contract
+Status: Agentworks Operating Contract
 
 ## Purpose
 
-External-tool evaluation is the Armory process for judging outside tools,
+External-tool evaluation is the Works process for judging outside tools,
 frameworks, harnesses, services, datasets, and adjacent projects before their
 claims influence Agent Equipment architecture, issue projection, documentation,
 security posture, or adoption decisions.
 
 The process creates an **External Tool Evaluation Record** when the evaluation
-can affect Armory architecture, issue projection, docs, security posture, or
+can affect Works architecture, issue projection, docs, security posture, or
 final disposition. A small one-off source check may mark the record not
 applicable in the relevant issue or PR, with a rationale.
 
@@ -32,11 +32,11 @@ applicable when the record states why the stage does not affect the evaluation.
 
 | stage | required output |
 | --- | --- |
-| intake scope | Name the tool, intended Armory question, affected issues, expected outputs, and non-goals. |
+| intake scope | Name the tool, intended Works question, affected issues, expected outputs, and non-goals. |
 | source review | Collect first-party docs, source, schemas, examples, and release notes before accepting claims. |
-| live repository and issue review | Check current Armory docs, issue graph, labels, blockers, and prior ledgers that already answer part of the question. |
+| live repository and issue review | Check current Works docs, issue graph, labels, blockers, and prior ledgers that already answer part of the question. |
 | evidence classification | Classify each durable claim before using it. |
-| Armory role mapping | Translate the external tool's vocabulary into current Armory terms without adopting foreign terms as Armory vocabulary. |
+| Works role mapping | Translate the external tool's vocabulary into current Works terms without adopting foreign terms as Works vocabulary. |
 | bounded prototype decision | Decide whether prototype results are needed, and keep prototype scope separate from source-backed conclusions. |
 | security and disclosure review | Classify credentials, local paths, raw logs, trajectories, transcripts, model outputs, external service usage, and provider/account state before publication. |
 | documentation closeout | Run Change Set Documentation Closeout on every affected human-facing and agent-facing doc. |
@@ -57,7 +57,7 @@ Each External Tool Evaluation Record distinguishes these evidence classes:
   source-backed behavior but not directly stated by the tool provider.
 - unknowns: unresolved facts, missing sources, stale claims, or questions that
   must block or limit projection.
-- rejected claims: claims that sources, prototype results, or Armory constraints
+- rejected claims: claims that sources, prototype results, or Works constraints
   rule out for the current evaluation.
 
 Use [Evidence Taxonomy](evidence-taxonomy.md) for the broader source and
@@ -104,15 +104,15 @@ credentials, side effects, or disclosure rules.
 ## Harbor-First Application
 
 Harbor evaluation uses this contract as the general process for parent issue
-[#183](https://github.com/nisavid/agent-armory/issues/183) and child issues
-[#184](https://github.com/nisavid/agent-armory/issues/184),
-[#185](https://github.com/nisavid/agent-armory/issues/185),
-[#186](https://github.com/nisavid/agent-armory/issues/186),
-[#187](https://github.com/nisavid/agent-armory/issues/187),
-[#188](https://github.com/nisavid/agent-armory/issues/188),
-[#189](https://github.com/nisavid/agent-armory/issues/189),
-[#190](https://github.com/nisavid/agent-armory/issues/190), and
-[#191](https://github.com/nisavid/agent-armory/issues/191).
+[#183](https://github.com/nisavid/agentworks/issues/183) and child issues
+[#184](https://github.com/nisavid/agentworks/issues/184),
+[#185](https://github.com/nisavid/agentworks/issues/185),
+[#186](https://github.com/nisavid/agentworks/issues/186),
+[#187](https://github.com/nisavid/agentworks/issues/187),
+[#188](https://github.com/nisavid/agentworks/issues/188),
+[#189](https://github.com/nisavid/agentworks/issues/189),
+[#190](https://github.com/nisavid/agentworks/issues/190), and
+[#191](https://github.com/nisavid/agentworks/issues/191).
 
 The Harbor External Tool Evaluation Record lives at
 [docs/evaluations/harbor.md](evaluations/harbor.md). It imports the completed

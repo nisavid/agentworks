@@ -21,7 +21,7 @@ portable deterministic engine slice for the covered config behaviors.
 
 ## Vision alignment
 
-The Armory vision expects deterministic state, serialization, policy, and
+The Works vision expects deterministic state, serialization, policy, and
 side-effect boundaries to live outside model memory. Config should make
 equipment behavior adaptable without burying policy in long skills or hidden
 agent preference.
@@ -76,7 +76,7 @@ output.
   Config Authoring Surfaces.
 - Local docs: this Equipment Design Bundle owns the current v0 behavior and
   runtime slice boundary.
-- Validator: `tools/validate_armory_integrity.py` recognizes the bundle and required
+- Validator: `tools/validate_agentworks_integrity.py` recognizes the bundle and required
   v0 terms.
 - Config: authored TOML layers and source category discovery are input to the
   portable runtime slice.

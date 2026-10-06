@@ -184,8 +184,8 @@ Run the label-axis audit before bulk dogfooding or when label drift is
 suspected:
 
 ```sh
-python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agent-armory --config-layer config/agent-equipment.toml
-python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agent-armory --config-layer config/agent-equipment.toml --execute
+python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agentworks --config-layer config/agent-equipment.toml
+python3.14 tools/issue_tracker_ops.py audit-labels --repo nisavid/agentworks --config-layer config/agent-equipment.toml --execute
 ```
 
 The first command previews the read and axis policy. The second performs the

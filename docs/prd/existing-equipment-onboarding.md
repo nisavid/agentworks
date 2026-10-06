@@ -21,7 +21,7 @@ and expose activation limits before new equipment becomes active.
 
 ## Solution
 
-Define Existing Equipment Onboarding as a generic Agent Armory product contract
+Define Existing Equipment Onboarding as a generic Agentworks product contract
 that equipment lines can implement or specialize.
 
 The product contract covers:
@@ -41,7 +41,7 @@ The product contract covers:
 - issue-tracker projection when team-wide follow-ups belong in a repository or
   team tracker.
 
-The generic Armory contract should be stable enough for Fork Ops, Repo Ops,
+The generic Works contract should be stable enough for Fork Ops, Repo Ops,
 Issue Tracker Ops, Agent Equipment Config, Periodic Actions, and future
 equipment lines to reuse without copying one equipment line's vocabulary or
 artifact names.
@@ -150,19 +150,19 @@ artifact names.
     follow-up visibility uses the strongest available surface in each harness.
 39. As an Outfitter, I want reminder surfaces to minimize token overhead, so
     that unresolved follow-up visibility does not bloat ordinary sessions.
-40. As a Forgewright, I want generic policy and schema decisions in Armory
+40. As a Forgewright, I want generic policy and schema decisions in Works
     terms, so that Fork Ops can prove a concrete model without becoming the
     source of generic onboarding doctrine.
 
 ## Implementation Decisions
 
-- Product boundary: Existing Equipment Onboarding is generic Armory equipment
+- Product boundary: Existing Equipment Onboarding is generic Works equipment
   policy and schema behavior. Fork Ops may implement the first concrete version
   and feed lessons back, but the generic contract must not copy Fork Ops-only
   artifact names or fork-specific policy.
 - Delivery sequence: capture the generic PRD now; let Fork Ops prove the first
   concrete migration/onboarding implementation; then use those lessons to
-  implement generic Armory, Repo Ops, or shared Config/Issue Ops support.
+  implement generic Works, Repo Ops, or shared Config/Issue Ops support.
 - Onboarding preflight: the first generic workflow is a non-mutating preflight
   that discovers Existing Equipment Surfaces, proposes Equipment Facets,
   groups findings, identifies conflicts, proposes Consumer Compatibility
@@ -303,8 +303,8 @@ artifact names.
 - Implementing generic Existing Equipment Onboarding runtime behavior in this
   PRD change.
 - Blocking Fork Ops from building its concrete migration/onboarding workflow
-  before the generic Armory implementation exists.
-- Making Fork Ops artifact names the generic Armory artifact names.
+  before the generic Works implementation exists.
+- Making Fork Ops artifact names the generic Works artifact names.
 - Migrating all existing user-global skills, plugins, tools, configs, hooks,
   docs, prompts, or profile state.
 - Replacing Issue Tracker Ops for team-wide follow-up projection.
@@ -319,9 +319,9 @@ artifact names.
 
 ## Further Notes
 
-- Source material for this PRD includes Agent Armory issue #111 and the Fork
+- Source material for this PRD includes Agentworks issue #111 and the Fork
   Ops equipment migration/onboarding synthesis linked from `nisavid/fork-ops#32`.
-- This PRD uses Agent Armory vocabulary from `CONTEXT.md`; Fork Ops-specific
+- This PRD uses Agentworks vocabulary from `CONTEXT.md`; Fork Ops-specific
   names remain source examples, not generic doctrine.
 - The next useful generic work is an Equipment Design Bundle for Existing
   Equipment Onboarding after Fork Ops has proven the concrete workflow enough

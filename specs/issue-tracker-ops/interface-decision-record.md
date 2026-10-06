@@ -12,7 +12,7 @@ harnesses.
 
 ## Vision alignment
 
-Issue Ops makes the Armory's reflection and self-onboarding loop durable. It
+Issue Ops makes the Works' reflection and self-onboarding loop durable. It
 keeps follow-up creation, dependency mapping, repair, enrichment, and equipment
 candidate routing issue-tracked while deterministic adapter behavior and future
 layered config keep tracker mutations out of vague model preference.

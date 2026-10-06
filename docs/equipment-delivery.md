@@ -3,7 +3,7 @@
 Status: Forge Canon
 
 Published Equipment Delivery defines the minimum stock standard for equipment
-that appears as available Armory stock. It keeps public delivery claims
+that appears as available Works stock. It keeps public delivery claims
 separate from Smith-facing design evidence and from historical promotion state.
 
 ## Purpose
@@ -30,7 +30,7 @@ completion decision behind a stockable delivery claim. Issue comments, PR
 bodies, release summaries, and handoff notes may project or summarize it, but
 they do not replace it.
 
-The inventory file uses schema version `agent-armory.equipment-stock.v1`. It
+The inventory file uses schema version `agentworks.equipment-stock.v1`. It
 may use `equipment = []` while the standard exists and before a stockable slice
 is recorded.
 
@@ -130,7 +130,7 @@ or later evidence has not passed.
 
 ## Validation
 
-Armory Integrity Validation checks the inventory schema version, record fields,
+Agentworks Integrity Validation checks the inventory schema version, record fields,
 delivery-compliance vocabulary, promotion and delivery consistency, shop-card,
 inspection-test-plan, and closeout-record path boundaries, shop-card, ITP, and
 closeout-record sections, passed-delivery completion evidence, component

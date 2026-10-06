@@ -18,7 +18,7 @@ Trace: [capability card](capability-card.md) -> [interface decision record](inte
 | Hook | `hooks/review-mutation-gate` | Blocks comments, thread resolution, review submission, and merge changes without authority. |
 | MCP/tool | Forge PR metadata reader | Read-only PR metadata and check status. |
 | Config | `config/pr-review.toml` | Severity vocabulary, mutation policy, and disclosure gates. |
-| Plugin | `agent-armory-pr-review` | Deferred bundle after validation. |
+| Plugin | `agentworks-pr-review` | Deferred bundle after validation. |
 
 ## Minimal Smith Path
 

@@ -67,20 +67,20 @@ class CheckResult:
     path: str
 
 
-VALIDATION_SCHEMA = "armory_integrity.validation_result.v1"
-VALIDATION_NAME = "Armory Integrity Validation"
+VALIDATION_SCHEMA = "agentworks_integrity.validation_result.v1"
+VALIDATION_NAME = "Agentworks Integrity Validation"
 FORGE_VALIDATION_NAME = "Forge Integrity Validation"
 
 
 VALIDATION_INVENTORY = [
     {
         "check": "required_paths",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity preflight for required live and durable evidence surfaces.",
     },
     {
         "check": "python_runtime",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the declared deterministic runtime and live references.",
     },
     {
@@ -95,22 +95,22 @@ VALIDATION_INVENTORY = [
     },
     {
         "check": "threat_model",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for durable security-model presence and routing.",
     },
     {
         "check": "documentation_closeout",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for durable documentation closeout evidence.",
     },
     {
         "check": "security_closeout",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for durable security closeout evidence.",
     },
     {
         "check": "projection_drafts",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for issue, PR, release, and handoff projection evidence.",
     },
     {
@@ -125,17 +125,17 @@ VALIDATION_INVENTORY = [
     },
     {
         "check": "published_equipment_delivery",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level stock inventory, shop card, ITP, and closeout-record validation for published equipment delivery claims.",
     },
     {
         "check": "agent_equipment_config_codex_plugin",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level validation for the repo marketplace, Codex plugin manifest, MCP launcher, guard hook, and routing skill for Agent Equipment Config.",
     },
     {
         "check": "published_equipment_inventory_view",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level validation that the human-facing Markdown inventory remains a checked projection of the canonical stock inventory.",
     },
     {
@@ -155,77 +155,77 @@ VALIDATION_INVENTORY = [
     },
     {
         "check": "issue_ops_policy_config",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the committed Issue Ops policy authority and compatibility docs.",
     },
     {
         "check": "markdown_links",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for internal documentation link targets.",
     },
     {
         "check": "source_disposition",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable source-disposition ledger retained after source retirement.",
     },
     {
         "check": "harbor_jig_source_map",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor-to-Armory jig source-map ledger.",
     },
     {
         "check": "harbor_neighbor_tool_catalog",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor-neighbor tool catalog ledger.",
     },
     {
         "check": "harbor_reward_kit_evaluation",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor Reward Kit source-disposition ledger.",
     },
     {
         "check": "harbor_agent_equipment_ab_prototype_results",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor Agent Equipment A/B prototype results ledger.",
     },
     {
         "check": "harbor_atif_job_artifacts_evaluation",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor ATIF and job artifacts source-disposition ledger.",
     },
     {
         "check": "harbor_driver_gate",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor driver-gate source-disposition ledger.",
     },
     {
         "check": "harbor_final_disposition",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable Harbor final-disposition source-disposition ledger.",
     },
     {
         "check": "external_tool_evaluation",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the reusable external-tool evaluation operating contract.",
     },
     {
         "check": "harbor_external_tool_evaluation_record",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the Harbor External Tool Evaluation Record skeleton.",
     },
     {
         "check": "skill_eval_methodology_source_intake",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable skill-eval methodology source-intake ledger.",
     },
     {
         "check": "plugin_creator_source_intake",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable plugin-creator source-intake ledger.",
     },
     {
         "check": "equipment_ingestion_delivery_alignment",
-        "boundary": "armory_integrity",
+        "boundary": "agentworks_integrity",
         "relationship": "Top-level repository integrity check for the durable equipment-ingestion delivery alignment record.",
     },
     {
@@ -952,7 +952,7 @@ EXTERNAL_TOOL_EVALUATION_COVERAGE_TERMS = [
     "source review",
     "live repository and issue review",
     "evidence classification",
-    "Armory role mapping",
+    "Works role mapping",
     "bounded prototype decision",
     "security and disclosure review",
     "documentation closeout",
@@ -1618,7 +1618,7 @@ PUBLISHED_EQUIPMENT_INVENTORY_PATH = "inventory/equipment.toml"
 PUBLISHED_EQUIPMENT_INVENTORY_VIEW_PATH = "docs/equipment/inventory.md"
 PUBLISHED_EQUIPMENT_SHOP_CARD_INDEX_PATH = "docs/equipment/shop-cards/README.md"
 PUBLISHED_EQUIPMENT_INSPECTION_TEST_PLAN_INDEX_PATH = "docs/equipment/inspection-test-plans/README.md"
-PUBLISHED_EQUIPMENT_INVENTORY_SCHEMA_VERSION = "agent-armory.equipment-stock.v1"
+PUBLISHED_EQUIPMENT_INVENTORY_SCHEMA_VERSION = "agentworks.equipment-stock.v1"
 PUBLISHED_EQUIPMENT_CLOSEOUT_RECORD_DIR = "docs/closeout"
 PUBLISHED_EQUIPMENT_SHOP_CARD_DIR = "docs/equipment/shop-cards"
 PUBLISHED_EQUIPMENT_INSPECTION_TEST_PLAN_DIR = "docs/equipment/inspection-test-plans"
@@ -3426,12 +3426,12 @@ def validate_external_tool_evaluation(root: Path) -> list[CheckResult]:
     nonblank_lines = [line.strip() for line in visible_markdown.splitlines() if line.strip()]
     headings = markdown_heading_texts(markdown)
     results: list[CheckResult] = []
-    if "Status: Armory Operating Contract" not in nonblank_lines[:8]:
+    if "Status: Agentworks Operating Contract" not in nonblank_lines[:8]:
         results.append(
             CheckResult(
                 "external_tool_evaluation:status",
                 False,
-                "status must be Armory Operating Contract",
+                "status must be Agentworks Operating Contract",
                 EXTERNAL_TOOL_EVALUATION_PATH,
             )
         )
@@ -3816,7 +3816,7 @@ def story_closeout_gate_order_valid(markdown: str) -> bool:
 
 
 CANONICAL_DOC_STATUSES = {
-    "docs/vision.md": "Armory Canon",
+    "docs/vision.md": "Agentworks Canon",
     "docs/agent-equipment-forge.md": "Forge Canon",
     "docs/smith-runbook.md": "Forge Core",
     "docs/forgewright-runbook.md": "Forge Core",
@@ -3827,7 +3827,7 @@ CANONICAL_DOC_STATUSES = {
     "docs/security-and-control.md": "Forge Canon",
     "docs/equipment-promotion.md": "Forge Canon",
     "docs/equipment-delivery.md": "Forge Canon",
-    "docs/story-closeout.md": "Armory Operating Contract",
+    "docs/story-closeout.md": "Agentworks Operating Contract",
 }
 
 
@@ -7286,7 +7286,7 @@ def ast_launcher_signature_contract(function: ast.FunctionDef) -> bool:
     )
 
 
-def ast_find_armory_root_signature_contract(function: ast.FunctionDef) -> bool:
+def ast_find_agentworks_root_signature_contract(function: ast.FunctionDef) -> bool:
     args = function.args
     return (
         not args.posonlyargs
@@ -7317,11 +7317,11 @@ def ast_root_assignment(node: ast.AST) -> bool:
     call = node.value
     return (
         isinstance(call, ast.Call)
-        and ast_call_name(call.func) == "find_armory_root"
+        and ast_call_name(call.func) == "find_agentworks_root"
         and not call.args
         and len(call.keywords) == 1
         and call.keywords[0].arg == "env_root"
-        and ast_os_environ_get_constant(call.keywords[0].value, "AGENT_ARMORY_ROOT")
+        and ast_os_environ_get_constant(call.keywords[0].value, "AGENTWORKS_ROOT")
     )
 
 
@@ -7541,7 +7541,7 @@ def ast_server_environment_contract(function: ast.FunctionDef) -> bool:
     return (
         "SERVER_ENV_VAR_NAMES" in names
         and "os.environ.get" in calls
-        and "AGENT_ARMORY_ROOT" not in constants
+        and "AGENTWORKS_ROOT" not in constants
         and "copy" not in attrs
         and any(isinstance(statement, ast.Return) for statement in function.body)
     )
@@ -7580,7 +7580,7 @@ def ast_function_has_no_decorators(function: ast.FunctionDef) -> bool:
     return not function.decorator_list
 
 
-def ast_has_armory_marketplace_contract(function: ast.FunctionDef) -> bool:
+def ast_has_agentworks_marketplace_contract(function: ast.FunctionDef) -> bool:
     names = ast_name_ids(function)
     calls = set(ast_call_names(function))
     constants = ast_string_constants(function)
@@ -7591,7 +7591,7 @@ def ast_has_armory_marketplace_contract(function: ast.FunctionDef) -> bool:
         and "read_text" in calls
         and "get" in attrs
         and {
-            "agent-armory",
+            "agentworks",
             "agent-equipment-config",
             "local",
             "./plugins/agent-equipment-config",
@@ -7599,17 +7599,17 @@ def ast_has_armory_marketplace_contract(function: ast.FunctionDef) -> bool:
     )
 
 
-def ast_candidate_is_armory_root_contract(function: ast.FunctionDef) -> bool:
+def ast_candidate_is_agentworks_root_contract(function: ast.FunctionDef) -> bool:
     names = ast_name_ids(function)
     calls = ast_call_names(function)
     return (
         {"REPO_SERVER", "REPO_MARKER"}.issubset(names)
         and calls.count("is_file") >= 2
-        and "has_armory_marketplace" in calls
+        and "has_agentworks_marketplace" in calls
     )
 
 
-def ast_find_armory_root_contract(function: ast.FunctionDef) -> bool:
+def ast_find_agentworks_root_contract(function: ast.FunctionDef) -> bool:
     kwonly_args = {arg.arg for arg in function.args.kwonlyargs}
     names = ast_name_ids(function)
     calls = ast_call_names(function)
@@ -7621,7 +7621,7 @@ def ast_find_armory_root_contract(function: ast.FunctionDef) -> bool:
         and "start_dir" in names
         and "os" not in names
         and "PWD" not in constants
-        and calls.count("candidate_is_armory_root") >= 2
+        and calls.count("candidate_is_agentworks_root") >= 2
         and "Path" in calls
         and "Path.cwd" in calls
         and "expanduser" in calls
@@ -7633,9 +7633,9 @@ def ast_find_armory_root_contract(function: ast.FunctionDef) -> bool:
 
 def ast_launcher_module_contract(tree: ast.Module) -> bool:
     allowed_functions = {
-        "has_armory_marketplace",
-        "candidate_is_armory_root",
-        "find_armory_root",
+        "has_agentworks_marketplace",
+        "candidate_is_agentworks_root",
+        "find_agentworks_root",
         "server_environment",
         "launch",
     }
@@ -7683,23 +7683,23 @@ def ast_launcher_module_contract(tree: ast.Module) -> bool:
     if not ast_constant_tuple_assignment(
         tree,
         target="SERVER_ENV_VAR_NAMES",
-        values=("AGENT_ARMORY_ROOT",),
+        values=("AGENTWORKS_ROOT",),
     ):
         return False
     server_environment = ast_function(tree, "server_environment")
     if server_environment is None or not ast_server_environment_contract(server_environment):
         return False
     scoped_calls = {
-        "has_armory_marketplace": (
+        "has_agentworks_marketplace": (
             {"any", "isinstance", "json.loads"},
             {"get", "read_text"},
         ),
-        "candidate_is_armory_root": (
-            {"has_armory_marketplace"},
+        "candidate_is_agentworks_root": (
+            {"has_agentworks_marketplace"},
             {"is_file"},
         ),
-        "find_armory_root": (
-            {"Path", "Path.cwd", "candidate_is_armory_root"},
+        "find_agentworks_root": (
+            {"Path", "Path.cwd", "candidate_is_agentworks_root"},
             {"expanduser", "resolve"},
         ),
         "server_environment": (
@@ -7709,7 +7709,7 @@ def ast_launcher_module_contract(tree: ast.Module) -> bool:
         "launch": (
             {
                 "Path",
-                "find_armory_root",
+                "find_agentworks_root",
                 "os.chdir",
                 "os.environ.get",
                 "os.execve",
@@ -7834,7 +7834,7 @@ module.os.environ.clear()
 server_environment_missing = dict(module.server_environment())
 module.os.environ.update(
     {
-        "AGENT_ARMORY_ROOT": str(root),
+        "AGENTWORKS_ROOT": str(root),
         "SHOULD_NOT_REACH_MCP": "secret",
     }
 )
@@ -7847,10 +7847,10 @@ def render(value):
 print(
     json.dumps(
         {
-            "env": render(module.find_armory_root(env_root=str(root), start_dir=root.parent)),
-            "cwd": render(module.find_armory_root(env_root=None, start_dir=plugin_mcp_dir)),
+            "env": render(module.find_agentworks_root(env_root=str(root), start_dir=root.parent)),
+            "cwd": render(module.find_agentworks_root(env_root=None, start_dir=plugin_mcp_dir)),
             "fallback": render(
-                module.find_armory_root(env_root=str(root / "missing"), start_dir=plugin_mcp_dir)
+                module.find_agentworks_root(env_root=str(root / "missing"), start_dir=plugin_mcp_dir)
             ),
             "server_environment": dict(module.server_environment()),
             "server_environment_missing": server_environment_missing,
@@ -7899,7 +7899,7 @@ print(
         "cwd": expected_root,
         "env": expected_root,
         "fallback": expected_root,
-        "server_environment": {"AGENT_ARMORY_ROOT": expected_root},
+        "server_environment": {"AGENTWORKS_ROOT": expected_root},
         "server_environment_missing": {},
     }
     if observed != expected:
@@ -7939,9 +7939,9 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
             )
         ]
 
-    has_armory_marketplace = ast_function(tree, "has_armory_marketplace")
-    candidate_is_armory_root = ast_function(tree, "candidate_is_armory_root")
-    find_armory_root = ast_function(tree, "find_armory_root")
+    has_agentworks_marketplace = ast_function(tree, "has_agentworks_marketplace")
+    candidate_is_agentworks_root = ast_function(tree, "candidate_is_agentworks_root")
+    find_agentworks_root = ast_function(tree, "find_agentworks_root")
     launch = ast_function(tree, "launch")
     valid = (
         ast_launcher_module_contract(tree)
@@ -7960,13 +7960,13 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
             target="REPO_MARKER",
             value="inventory/equipment.toml",
         )
-        and has_armory_marketplace is not None
-        and ast_has_armory_marketplace_contract(has_armory_marketplace)
-        and candidate_is_armory_root is not None
-        and ast_candidate_is_armory_root_contract(candidate_is_armory_root)
-        and find_armory_root is not None
-        and ast_find_armory_root_signature_contract(find_armory_root)
-        and ast_find_armory_root_contract(find_armory_root)
+        and has_agentworks_marketplace is not None
+        and ast_has_agentworks_marketplace_contract(has_agentworks_marketplace)
+        and candidate_is_agentworks_root is not None
+        and ast_candidate_is_agentworks_root_contract(candidate_is_agentworks_root)
+        and find_agentworks_root is not None
+        and ast_find_agentworks_root_signature_contract(find_agentworks_root)
+        and ast_find_agentworks_root_contract(find_agentworks_root)
         and launch is not None
         and ast_launcher_signature_contract(launch)
         and ast_launch_execs_repo_server(launch)
@@ -7980,7 +7980,7 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
         CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Armory checkout and exec the standalone MCP server",
+            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
             AGENT_EQUIPMENT_CONFIG_PLUGIN_LAUNCHER_PATH,
         )
     ]
@@ -8595,12 +8595,12 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
     if error is not None:
         results.append(error)
     elif marketplace is not None:
-        if marketplace.get("name") != "agent-armory":
+        if marketplace.get("name") != "agentworks":
             results.append(
                 CheckResult(
                     "agent_equipment_config_codex_plugin:marketplace:name",
                     False,
-                    "marketplace name must be agent-armory",
+                    "marketplace name must be agentworks",
                     AGENT_EQUIPMENT_CONFIG_PLUGIN_MARKETPLACE_PATH,
                 )
             )
@@ -8682,7 +8682,7 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
             "name": "agent-equipment-config",
             "version": "0.1.0",
             "description": None,
-            "repository": "https://github.com/nisavid/agent-armory",
+            "repository": "https://github.com/nisavid/agentworks",
         }
         allowed_manifest_keys = {
             "name",
@@ -8906,12 +8906,12 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                     )
                 )
             env_vars = server.get("env_vars")
-            if env_vars != ["AGENT_ARMORY_ROOT"]:
+            if env_vars != ["AGENTWORKS_ROOT"]:
                 results.append(
                     CheckResult(
                         "agent_equipment_config_codex_plugin:mcp:agent-equipment-config:env_vars",
                         False,
-                        "env_vars must pass through only AGENT_ARMORY_ROOT",
+                        "env_vars must pass through only AGENTWORKS_ROOT",
                         AGENT_EQUIPMENT_CONFIG_PLUGIN_MCP_PATH,
                     )
                 )
@@ -10189,8 +10189,8 @@ def run(root: Path, *, final_closeout: bool = False) -> list[CheckResult]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Validate Agent Armory Integrity.",
-        epilog="Armory Integrity Validation includes the Forge Integrity Validation suite and equipment-candidate shape checks. Equipment-specific behavior validation belongs to the named equipment validator.",
+        description="Validate Agentworks Integrity.",
+        epilog="Agentworks Integrity Validation includes the Forge Integrity Validation suite and equipment-candidate shape checks. Equipment-specific behavior validation belongs to the named equipment validator.",
     )
     parser.add_argument("--root", default=".", help="Repository root to validate.")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON.")

@@ -4,7 +4,7 @@ Status: Equipment Blueprint
 Promotion state: specified
 
 This Equipment Design Bundle records the accepted design package for issue
-[#61](https://github.com/nisavid/agent-armory/issues/61). It specifies Agent
+[#61](https://github.com/nisavid/agentworks/issues/61). It specifies Agent
 Test Jigs, the Harness Testing System shape, and the first driver gate without
 implementing a runner, driver, schema validator, assertion provider, local
 inference adapter, or harness test suite.
@@ -28,7 +28,7 @@ implementation.
 
 Agent Test Jigs give Smiths and future harness lifecycle work a controlled way
 to exercise Agent Harnesses, Agent Equipment, Loadouts, and interactions before
-the Armory relies on their Capability Surface claims in larger workflows.
+the Works relies on their Capability Surface claims in larger workflows.
 
 The design package keeps a strict boundary between:
 
@@ -73,7 +73,7 @@ Deferred to follow-up issues:
 ### Jig Test Plan
 
 A Jig Test Plan is the machine-readable input to a Jig Runner. The preferred
-direction is a declarative TOML behavioral spec because the Armory already uses
+direction is a declarative TOML behavioral spec because the Works already uses
 TOML for human-authored structured equipment surfaces and because the
 `arch-strix-halo-pkgs` inference scenario catalog shows a compact local example
 of scenario-shaped TOML.
@@ -258,7 +258,7 @@ Initial candidate dispositions:
 
 | Candidate | Strengths | Limits | Gate disposition |
 | --- | --- | --- | --- |
-| OpenClaw approach | Source-backed harness with cron, heartbeat, hooks, background services, and plugin surfaces worth studying. | It is itself a harness, not automatically the Armory's generic driver backend. | Research reference before copying any driver model. |
+| OpenClaw approach | Source-backed harness with cron, heartbeat, hooks, background services, and plugin surfaces worth studying. | It is itself a harness, not automatically the Works' generic driver backend. | Research reference before copying any driver model. |
 | Hermes Agent approach | Source-backed harness with cron, gateway, plugin hooks, and worker flows worth comparing. | Harness-specific lifecycle and gateway assumptions may not fit Codex-mediated local runs. | Research reference before copying any driver model. |
 | Codex sandbox/local execution | Current working harness, approvals, worktrees, and local tooling already available. | Sandbox semantics vary by session, and Codex should not be both unexamined investigator and hidden target. | Likely first consumer path, not sufficient as an unreviewed driver choice. |
 | Containers | Strong filesystem and process isolation with familiar cleanup boundaries. | Setup, privilege, GPU/inference access, and nested harness behavior may be heavy. | Candidate for high-rigor driver. |
@@ -273,7 +273,7 @@ Initial candidate dispositions:
 
 The spec language and reports are product-style tool surfaces. Because this
 repo does not define `PRODUCT.md` or `DESIGN.md`, #61 adopts the existing
-Armory docs as the source of product intent and keeps visual work out of scope.
+Works docs as the source of product intent and keeps visual work out of scope.
 
 Design rules for later UI, report, or review surfaces:
 
@@ -294,21 +294,21 @@ is intentional: the runner should consume a minimal stable Assertion Provider
 interface instead of landing an assertion-less shell; richer deterministic
 assertions can extend that interface later.
 
-- [#162](https://github.com/nisavid/agent-armory/issues/162): Jig Test Plan
+- [#162](https://github.com/nisavid/agentworks/issues/162): Jig Test Plan
   TOML schema and example fixtures;
-- [#163](https://github.com/nisavid/agent-armory/issues/163): first Jig Driver
+- [#163](https://github.com/nisavid/agentworks/issues/163): first Jig Driver
   implementation selected by the gate;
-- [#165](https://github.com/nisavid/agent-armory/issues/165): deterministic
+- [#165](https://github.com/nisavid/agentworks/issues/165): deterministic
   Assertion Provider library;
-- [#164](https://github.com/nisavid/agent-armory/issues/164): Jig Runner CLI
+- [#164](https://github.com/nisavid/agentworks/issues/164): Jig Runner CLI
   and structured result output;
-- [#166](https://github.com/nisavid/agent-armory/issues/166): local inference
+- [#166](https://github.com/nisavid/agentworks/issues/166): local inference
   service adapter and Learned Oracle providers;
-- [#167](https://github.com/nisavid/agent-armory/issues/167): Harness Test
+- [#167](https://github.com/nisavid/agentworks/issues/167): Harness Test
   Suite integration for Harness Capability lifecycle work;
-- [#168](https://github.com/nisavid/agent-armory/issues/168): Codex
+- [#168](https://github.com/nisavid/agentworks/issues/168): Codex
   disagreement adjudication workflow;
-- [#169](https://github.com/nisavid/agent-armory/issues/169): optional review
+- [#169](https://github.com/nisavid/agentworks/issues/169): optional review
   report or static viewer only after result artifacts exist.
 
 Issue #62 should consume this bundle before making claims about local

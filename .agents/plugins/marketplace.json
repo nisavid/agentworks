@@ -1,7 +1,7 @@
 {
-  "name": "agent-armory",
+  "name": "agentworks",
   "interface": {
-    "displayName": "Agent Armory"
+    "displayName": "Agentworks"
   },
   "plugins": [
     {

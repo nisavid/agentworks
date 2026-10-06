@@ -1,24 +1,24 @@
-# The Agent Armory documentation
+# Agentworks documentation
 
 This map helps human readers choose what to read and what to give to their
-agents. The Agent Armory is under construction: the Forge has just come online,
+agents. Agentworks is under construction: the Forge has just come online,
 and Agent Equipment Config has its first published runtime slice.
 
 ## Choose a path
 
-- **Wielding a loadout**: start with the [Armory Vision](vision.md), then the
+- **Wielding a loadout**: start with the [Agentworks Vision](vision.md), then the
   [Forge Tour](forge-tour.md). For shared equipment configuration, use
   the [Agent Equipment Config shop card](equipment/shop-cards/agent-equipment-config.md),
   the [runtime guide](equipment/agent-equipment-config.md), and the
   [Config integration guide](equipment/agent-equipment-config-integration.md).
   Check the [stocked-equipment inventory](equipment/inventory.md) before
-  treating any surface as current Armory stock.
+  treating any surface as current Works stock.
 - **Outfitting a harness**: ask an outfitter to compare
   [harness capabilities](harness-capabilities.md),
   [harness components](harness-components.md), and
   [security and control](security-and-control.md) against the
-  [Armory Vision](vision.md) before selecting a future loadout.
-- **Evaluating the Armory**: start with the [Armory Vision](vision.md) and the
+  [Agentworks Vision](vision.md) before selecting a future loadout.
+- **Evaluating the Works**: start with the [Agentworks Vision](vision.md) and the
   [Forge Tour](forge-tour.md), then use the
   [Forge Canon](agent-equipment-forge.md) and current [roadmap](#roadmap) to see
   what exists now, how equipment is made, and what is planned.
@@ -28,25 +28,27 @@ and Agent Equipment Config has its first published runtime slice.
   [Published Equipment Delivery](equipment-delivery.md) to see what must be
   true before equipment is ready to use.
 - **Commissioning new equipment**: have a smith start with the
-  [Armory Vision](vision.md), [smith runbook](smith-runbook.md),
+  [Agentworks Vision](vision.md), [smith runbook](smith-runbook.md),
   [interface decision guide](interface-decision-guide.md), and
   [templates](../templates/).
 - **Keeping equipment current**: ask the responsible agent to compare the
-  [Armory Vision](vision.md),
+  [Agentworks Vision](vision.md),
   [harness capabilities](harness-capabilities.md),
   [security and control](security-and-control.md), and
   [equipment promotion](equipment-promotion.md).
 
 ## Start here
 
-- [Armory Vision](vision.md): Efficient Coherence and the intended agent and
-  operator experience behind the Armory, the Forge, and Agent Equipment.
-- [Forge Tour](forge-tour.md): human-facing orientation to the Armory, the Forge,
+- [Agentworks Vision](vision.md): Efficient Coherence and the intended agent and
+  operator experience behind the Works, the Forge, and Agent Equipment.
+- [Forge Tour](forge-tour.md): human-facing orientation to the Works, the Forge,
   agent roles, and current construction state.
 - [Forge Canon](agent-equipment-forge.md): core method for the Forge and component
   model.
 - [Project context and language](../CONTEXT.md): glossary, relationships,
   precision rules, example dialogue, and ambiguity resolutions.
+- [Agentworks identity](adr/0023-adopt-agentworks-identity.md): the current
+  project name, current identifiers, and consumer migration requirements.
 
 ## Tutorials and guided examples
 
@@ -75,7 +77,7 @@ agent equipment.
   cleanly, with checks, safeguards, docs, and review aligned.
 - [External tool evaluation](external-tool-evaluation.md): use when an outside
   tool, framework, harness, service, dataset, or adjacent project may influence
-  Armory architecture, issue projection, documentation, security posture, or
+  Works architecture, issue projection, documentation, security posture, or
   adoption decisions.
 
 ## Reference
@@ -109,9 +111,9 @@ agent equipment.
 
 ## Explanation
 
-- [Armory Vision](vision.md): Efficient Coherence and the experience,
+- [Agentworks Vision](vision.md): Efficient Coherence and the experience,
   architecture, strategy, design, validation, and maintenance north star for the
-  Armory.
+  Works.
 - [Forge Canon](agent-equipment-forge.md): the deeper explanation of how the
   Forge turns ideas into trustworthy equipment.
 - [Forgewright runbook](forgewright-runbook.md): give this to an agent when the
@@ -129,7 +131,7 @@ agent equipment.
 - [Design decisions](adr/): the decision records behind durable choices in the
   Forge.
 - [Agentic Engineering Operating Model Review](reviews/agentic-engineering-operating-model.md):
-  current review of cross-Armory operating contracts, validation boundaries,
+  current review of cross-Works operating contracts, validation boundaries,
   and manual Harness Capability Profile refresh certification.
 
 ## Roadmap
@@ -152,7 +154,7 @@ The current roadmap points to equipment lines that still have future slices:
   coverage.
 - [Repo Ops](../specs/repo-ops.md): repository framework for agentic
   operations. Repo Ops is complete for repositories that are not forks.
-- [Fork Ops](https://github.com/nisavid/agent-armory/issues/87): planned
+- [Fork Ops](https://github.com/nisavid/agentworks/issues/87): planned
   Repo Ops add-on for fork-specific operations after Fork Ops source material
   and Repo Ops prerequisites are ready for intake.
 - [Periodic Actions](../specs/periodic-actions.md): recurring agent actions
@@ -168,15 +170,15 @@ The current roadmap points to equipment lines that still have future slices:
   design package for controlled harness, equipment, Loadout, interaction, and
   Harness Capability validation. Implementation remains projected to follow-up
   issues.
-- [Head Gear / Reflection and cognition equipment](https://github.com/nisavid/agent-armory/issues/25):
+- [Head Gear / Reflection and cognition equipment](https://github.com/nisavid/agentworks/issues/25):
   future generic cognition enhancement equipment that turns underspecified
   intent and recent agent experience into durable insight, routed follow-up, and
   harness improvements.
-- [Portable workflow equipment](https://github.com/nisavid/agent-armory/issues/8):
+- [Portable workflow equipment](https://github.com/nisavid/agentworks/issues/8):
   future support for portable agent equipment.
-- [Side-thread hand-back](https://github.com/nisavid/agent-armory/issues/7):
+- [Side-thread hand-back](https://github.com/nisavid/agentworks/issues/7):
   future support for side conversations around active work.
-- [Ephemeral workflow opportunity capture](https://github.com/nisavid/agent-armory/issues/9):
+- [Ephemeral workflow opportunity capture](https://github.com/nisavid/agentworks/issues/9):
   future support for capturing useful workflow ideas during active sessions.
 
 The GitHub issue tracker carries active story structure. The projected Forge

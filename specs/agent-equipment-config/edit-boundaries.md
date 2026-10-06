@@ -140,7 +140,7 @@ authority, source eligibility, trust, ownership, schema, semantic safety, and
 secret boundaries, then writes eligible local TOML sources atomically with
 all-or-nothing mutation audit evidence.
 
-Issue [#78](https://github.com/nisavid/agent-armory/issues/78) owns published
+Issue [#78](https://github.com/nisavid/agentworks/issues/78) owns published
 integration guidance for the settled MVP operation surface. General source
 authoring guidance follows the Config Authoring Surfaces bucket and keeps MCP
 authoring parity as separate follow-up work.
