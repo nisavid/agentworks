@@ -1,7 +1,9 @@
+import ast
 import importlib.util
 import io
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -119,6 +121,123 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 )
             ],
         )
+
+    def test_validator_rejects_indirect_calls_defaults_and_annotations_in_every_function(self):
+        repo = Path(__file__).resolve().parents[1]
+        for path, contract, behavior, sink in (
+            (LAUNCHER_PATH, validator.ast_launcher_module_contract,
+             validator.launcher_behavior_results, "launcher_discovery_probe_result"),
+            (HOOK_PATH, validator.ast_guard_module_contract,
+             validator.config_guard_behavior_results, "run_bounded_subprocess"),
+        ):
+            source = (repo / path).read_text(encoding="utf-8")
+            functions = [node.name for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)]
+            for name in functions:
+                for location in ("body", "default", "annotation"):
+                    with self.subTest(path=path, function=name, location=location):
+                        tree = ast.parse(source)
+                        function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name)
+                        call = ast.parse('(print,)[0]("unreviewed")', mode="eval").body
+                        if location == "body":
+                            function.body.insert(0, ast.Expr(value=call))
+                        elif location == "default":
+                            function.args.kwonlyargs.append(ast.arg(arg="unchecked"))
+                            function.args.kw_defaults.append(call)
+                        else:
+                            function.returns = call
+                        candidate = ast.unparse(ast.fix_missing_locations(tree))
+                        self.assertFalse(contract(ast.parse(candidate)))
+                        with tempfile.TemporaryDirectory() as tmpdir:
+                            root = Path(tmpdir)
+                            self.write_text(root, path, candidate)
+                            with mock.patch.object(validator, sink) as probe:
+                                results = behavior(root)
+                            probe.assert_not_called()
+                            self.assertTrue(results)
+                            self.assertTrue(all(not result.ok for result in results))
+
+    def test_validator_rejects_unreviewed_bindings_branches_and_callable_shapes(self):
+        repo = Path(__file__).resolve().parents[1]
+        for path, contract in (
+            (LAUNCHER_PATH, validator.ast_launcher_module_contract),
+            (HOOK_PATH, validator.ast_guard_module_contract),
+        ):
+            source = (repo / path).read_text(encoding="utf-8")
+            constant = "SERVER_ENV_VAR_NAMES" if path == LAUNCHER_PATH else "WRITE_TOOLS"
+            candidates = {
+                "assignment target": source.replace(f"{constant} =", f"sys.stdout = {constant} ="),
+                "callable alias": source + "\nprint = __builtins__.eval\n",
+            }
+            for label, statement in (
+                ("lambda", '(lambda: print("unreviewed"))()'),
+                ("conditional callee", '(print if True else print)("unreviewed")'),
+                ("nested callee", '(print,)[0].__call__("unreviewed")'),
+                ("extra branch", 'if True:\n    print("unreviewed")'),
+            ):
+                tree = ast.parse(source)
+                function = next(node for node in tree.body if isinstance(node, ast.FunctionDef))
+                function.body.insert(0, ast.parse(statement).body[0])
+                candidates[label] = ast.unparse(ast.fix_missing_locations(tree))
+            for label, candidate in candidates.items():
+                with self.subTest(path=path, mutation=label):
+                    self.assertFalse(contract(ast.parse(candidate)))
+
+    def test_validator_accepts_ast_equivalent_formatting_and_comments(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            for path in (LAUNCHER_PATH, HOOK_PATH):
+                source = (root / path).read_text(encoding="utf-8")
+                self.write_text(root, path, ast.unparse(ast.parse(source)) + "\n# Formatting only.\n")
+            self.assertEqual(validator.launcher_behavior_results(root), [])
+            self.assertEqual(validator.config_guard_behavior_results(root), [])
+
+    def test_validator_checks_python_source_encoding_before_probing(self):
+        repo = Path(__file__).resolve().parents[1]
+        for path, contract, behavior, sink in (
+            (LAUNCHER_PATH, validator.ast_launcher_module_contract,
+             validator.launcher_behavior_results, "launcher_discovery_probe_result"),
+            (HOOK_PATH, validator.ast_guard_module_contract,
+             validator.config_guard_behavior_results, "run_bounded_subprocess"),
+        ):
+            with self.subTest(path=path):
+                source = (repo / path).read_text(encoding="utf-8")
+                candidate = source.replace("\n", "\n# coding: raw_unicode_escape\n", 1)
+                candidate += "\n# " + r"\u000apass" + "\n"
+                # This is a comment when parsed as Unicode text, but an extra
+                # statement when Python decodes the file's declared encoding.
+                self.assertTrue(contract(ast.parse(candidate)))
+                self.assertFalse(contract(ast.parse(candidate.encode("utf-8"))))
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    root = Path(tmpdir)
+                    self.write_text(root, path, candidate)
+                    with mock.patch.object(validator, sink) as probe:
+                        results = behavior(root)
+                    probe.assert_not_called()
+                    self.assertTrue(results)
+                    self.assertTrue(all(not result.ok for result in results))
+
+    def test_probes_do_not_reopen_candidates_after_validation(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            run = validator.subprocess.run
+            bounded_run = validator.run_bounded_subprocess
+
+            def replace_launcher_then_run(args, **kwargs):
+                (root / LAUNCHER_PATH).write_text('raise RuntimeError("candidate executed")\n', encoding="utf-8")
+                self.assertEqual(args[1:4], ["-I", "-S", "-c"])
+                return run(args, **kwargs)
+
+            def replace_guard_then_run(args, **kwargs):
+                (root / HOOK_PATH).write_text('raise RuntimeError("candidate executed")\n', encoding="utf-8")
+                self.assertEqual(args[1:4], ["-I", "-S", "-c"])
+                return bounded_run(args, **kwargs)
+
+            with mock.patch.object(validator.subprocess, "run", side_effect=replace_launcher_then_run):
+                self.assertEqual(validator.launcher_behavior_results(root), [])
+            with mock.patch.object(validator, "run_bounded_subprocess", side_effect=replace_guard_then_run):
+                self.assertEqual(validator.config_guard_behavior_results(root), [])
 
     def test_validator_rejects_missing_standalone_mcp_server_path(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -424,7 +543,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             results,
         )
 
-    def test_validator_rejects_guard_stderr_large_output_and_uses_safe_python_path(self):
+    def test_validator_rejects_guard_output_changes_before_execution(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_valid_plugin_fixture(root)
@@ -448,46 +567,139 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             )
             large_output_results = validator.validate_agent_equipment_config_codex_plugin(root)
 
-            guard_path.write_text(
-                guard_path.read_text(encoding="utf-8").replace(
-                    "    print('x' * 9000)\n",
-                    "",
-                ),
-                encoding="utf-8",
-            )
-            (root / PLUGIN_ROOT / "hooks/json.py").write_text(
-                "raise RuntimeError('stdlib shadow executed')\n",
-                encoding="utf-8",
-            )
-            safe_path_results = validator.validate_agent_equipment_config_codex_plugin(root)
-
         self.assertIn(
             CheckResult(
-                "agent_equipment_config_codex_plugin:hooks:guard:behavior:config_apply_denies_missing_authority",
+                "agent_equipment_config_codex_plugin:hooks:guard:content",
                 False,
-                "guard must not write to stderr during validation",
+                "guard must contain only reviewed imports, constants, functions, and entrypoint",
                 "plugins/agent-equipment-config/hooks/config_write_guard.py",
             ),
             stderr_results,
         )
         self.assertIn(
             CheckResult(
-                "agent_equipment_config_codex_plugin:hooks:guard:behavior:config_apply_denies_missing_authority",
+                "agent_equipment_config_codex_plugin:hooks:guard:content",
                 False,
-                "guard output exceeded validation limit",
+                "guard must contain only reviewed imports, constants, functions, and entrypoint",
                 "plugins/agent-equipment-config/hooks/config_write_guard.py",
             ),
             large_output_results,
         )
-        self.assertIn(
-            CheckResult(
-                "agent_equipment_config_codex_plugin:contract",
-                True,
-                "valid Codex plugin bundle",
-                "plugins/agent-equipment-config",
-            ),
-            safe_path_results,
+
+    def test_shipped_launcher_and_guard_ignore_plugin_shadow_modules(self):
+        with tempfile.TemporaryDirectory(prefix="config plugin ") as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            plugin_root = root / PLUGIN_ROOT
+            for directory in ("mcp", "hooks"):
+                (plugin_root / directory / "json.py").write_text(
+                    "raise RuntimeError('stdlib shadow executed')\n", encoding="utf-8"
+                )
+            config = json.loads((plugin_root / ".mcp.json").read_text(encoding="utf-8"))[
+                "agent-equipment-config"
+            ]
+            self.assertEqual(config["command"], "python3.14")
+            launcher = subprocess.run(
+                [sys.executable, *config["args"]],
+                cwd=plugin_root,
+                env={"AGENTWORKS_ROOT": str(root)},
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            self.assertEqual(launcher.returncode, 0, launcher.stderr)
+            self.assertEqual(launcher.stdout, "")
+            self.assertEqual(launcher.stderr, "")
+
+            hooks = json.loads((plugin_root / "hooks/hooks.json").read_text(encoding="utf-8"))
+            command = hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+            args = shlex.split(command.replace("${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}", str(plugin_root)))
+            self.assertEqual(args[0], "python3.14")
+            payload = {
+                "hook_event_name": "PreToolUse",
+                "tool_name": "mcp__agent_equipment_config__config.apply",
+                "tool_input": {},
+            }
+            for authority in (None, "operator"):
+                with self.subTest(authority=authority):
+                    payload["tool_input"] = {} if authority is None else {"apply_authority": authority}
+                    guard = subprocess.run(
+                        [sys.executable, *args[1:]],
+                        input=json.dumps(payload),
+                        cwd=plugin_root,
+                        env={},
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
+                    self.assertEqual(guard.returncode, 0, guard.stderr)
+                    self.assertEqual(guard.stderr, "")
+                    if authority is None:
+                        decision = json.loads(guard.stdout)["hookSpecificOutput"]["permissionDecision"]
+                        self.assertEqual(decision, "deny")
+                    else:
+                        self.assertEqual(guard.stdout, "")
+
+    def test_validator_rejects_unreviewed_runtime_files_and_packages(self):
+        for relative in ("mcp/json.py", "hooks/json.py", "mcp/json/__init__.py"):
+            with self.subTest(path=relative), tempfile.TemporaryDirectory() as tmpdir:
+                root = Path(tmpdir)
+                self.write_valid_plugin_fixture(root)
+                self.write_text(root, PLUGIN_ROOT / relative, "# unreviewed runtime entry\n")
+                results = validator.validate_agent_equipment_config_codex_plugin(root)
+                directory = relative.split("/", 1)[0]
+                self.assertIn(
+                    CheckResult(
+                        f"agent_equipment_config_codex_plugin:runtime_files:{directory}",
+                        False,
+                        "runtime directory must contain only reviewed files; unexpected: " + relative.split("/")[1],
+                        str(PLUGIN_ROOT / directory),
+                    ),
+                    results,
+                )
+
+    def test_validator_requires_safe_path_flag_for_shipped_launcher(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            path = PLUGIN_ROOT / ".mcp.json"
+            config = json.loads((root / path).read_text(encoding="utf-8"))
+            config["agent-equipment-config"]["args"].remove("-I")
+            self.write_json(root, path, config)
+            results = validator.validate_agent_equipment_config_codex_plugin(root)
+            self.assertIn(
+                CheckResult(
+                    "agent_equipment_config_codex_plugin:mcp:agent-equipment-config:args",
+                    False,
+                    "args must launch -I -S ./mcp/agent_equipment_config_launcher.py",
+                    str(path),
+                ),
+                results,
+            )
+
+    def test_guard_probe_preserves_output_and_error_checks(self):
+        cases = (
+            ((0, b"", b"unexpected stderr", False), "guard must not write to stderr during validation"),
+            ((-9, b"x" * 8193, b"", True), "guard output exceeded validation limit"),
+            ((1, b"", b"failed", False), "guard exited 1: failed"),
         )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            for output, expected_detail in cases:
+                with self.subTest(detail=expected_detail):
+                    with mock.patch.object(validator, "run_bounded_subprocess", return_value=output) as probe:
+                        results = validator.config_guard_behavior_results(root)
+                    self.assertTrue(results)
+                    self.assertTrue(all(not result.ok and result.detail == expected_detail for result in results))
+                    args, kwargs = probe.call_args
+                    self.assertEqual(args[0], [sys.executable, "-I", "-S", "-c", validator.REVIEWED_GUARD_SOURCE])
+                    self.assertEqual(kwargs["env"], {})
+                    self.assertEqual(kwargs["timeout"], 5)
+                    self.assertEqual(
+                        kwargs["output_limit_bytes"], validator.AGENT_EQUIPMENT_CONFIG_GUARD_OUTPUT_LIMIT_BYTES
+                    )
 
     def test_validator_rejects_guard_loop_before_behavior_execution(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1094,8 +1306,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 result.name == "agent_equipment_config_codex_plugin:launcher:content"
                 and not result.ok
                 and result.path == "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py"
-                and result.detail.startswith("launcher discovery probe resolved unexpected roots:")
-                and "SHOULD_NOT_REACH_MCP" in result.detail
+                and result.detail == "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server"
                 for result in results
             ),
             results,
@@ -1129,8 +1340,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 result.name == "agent_equipment_config_codex_plugin:launcher:content"
                 and not result.ok
                 and result.path == "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py"
-                and result.detail.startswith("launcher discovery probe resolved unexpected roots:")
-                and "'server_environment_missing': {'AGENTWORKS_ROOT': None}" in result.detail
+                and result.detail == "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server"
                 for result in results
             ),
             results,

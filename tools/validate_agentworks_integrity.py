@@ -7055,784 +7055,235 @@ def plugin_manifest_path_value_is_safe(
     return None
 
 
-def ast_call_name(node: ast.AST) -> str | None:
-    if isinstance(node, ast.Name):
-        return node.id
-    if isinstance(node, ast.Attribute):
-        parent = ast_call_name(node.value)
-        return f"{parent}.{node.attr}" if parent else node.attr
-    return None
+# These validator-owned programs define the complete reviewed executable grammar.
+# Keep them independent of the checkout selected with --root. Semantic changes to
+# either plugin module require reviewing and updating its canonical program here.
+# Comments, whitespace, and equivalent literal spellings are not executable AST.
+REVIEWED_LAUNCHER_SOURCE = r'''
+#!/usr/bin/env python3.14
+from __future__ import annotations
 
-
-def ast_constant_path_assignment(tree: ast.Module, *, target: str, value: str) -> bool:
-    assignments = [
-        node
-        for node in tree.body
-        if isinstance(node, ast.Assign)
-        and any(isinstance(item, ast.Name) and item.id == target for item in node.targets)
-    ]
-    if len(assignments) != 1:
-        return False
-    node = assignments[0]
-    return (
-        isinstance(node.value, ast.Call)
-        and ast_call_name(node.value.func) == "Path"
-        and len(node.value.args) == 1
-        and isinstance(node.value.args[0], ast.Constant)
-        and node.value.args[0].value == value
-    )
-
-
-def ast_function(tree: ast.Module, name: str) -> ast.FunctionDef | None:
-    functions = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name]
-    if len(functions) != 1:
-        return None
-    return functions[0]
-
-
-def ast_call_names(node: ast.AST) -> list[str]:
-    names: list[str] = []
-    for child in ast.walk(node):
-        if isinstance(child, ast.Call):
-            name = ast_call_name(child.func)
-            if name is not None:
-                names.append(name)
-    return names
-
-
-def ast_name_ids(node: ast.AST) -> set[str]:
-    return {child.id for child in ast.walk(node) if isinstance(child, ast.Name)}
-
-
-def ast_attribute_names(node: ast.AST) -> set[str]:
-    return {child.attr for child in ast.walk(node) if isinstance(child, ast.Attribute)}
-
-
-def ast_string_constants(node: ast.AST) -> set[str]:
-    return {
-        child.value
-        for child in ast.walk(node)
-        if isinstance(child, ast.Constant) and isinstance(child.value, str)
-    }
-
-
-def ast_assigns_name(node: ast.AST, name: str) -> bool:
-    return isinstance(node, ast.Assign) and any(
-        isinstance(target, ast.Name) and target.id == name for target in node.targets
-    )
-
-
-def ast_return_constant(node: ast.AST, value: object) -> bool:
-    return isinstance(node, ast.Return) and isinstance(node.value, ast.Constant) and node.value.value == value
-
-
-def ast_terminal_return_constant(statements: list[ast.stmt], value: object) -> bool:
-    return bool(statements) and ast_return_constant(statements[-1], value)
-
-
-def ast_none_default(node: ast.AST | None) -> bool:
-    return isinstance(node, ast.Constant) and node.value is None
-
-
-def ast_future_annotations(node: ast.AST) -> bool:
-    return (
-        isinstance(node, ast.ImportFrom)
-        and node.module == "__future__"
-        and len(node.names) == 1
-        and node.names[0].name == "annotations"
-        and node.names[0].asname is None
-    )
-
-
-def ast_import_exact(node: ast.AST, module: str) -> bool:
-    return (
-        isinstance(node, ast.Import)
-        and len(node.names) == 1
-        and node.names[0].name == module
-        and node.names[0].asname is None
-    )
-
-
-def ast_from_import_exact(node: ast.AST, module: str, name: str) -> bool:
-    return (
-        isinstance(node, ast.ImportFrom)
-        and node.level == 0
-        and node.module == module
-        and len(node.names) == 1
-        and node.names[0].name == name
-        and node.names[0].asname is None
-    )
-
-
-def ast_system_exit_entrypoint(node: ast.AST, target: str) -> bool:
-    if not isinstance(node, ast.If) or len(node.body) != 1 or node.orelse:
-        return False
-    test = node.test
-    if not (
-        isinstance(test, ast.Compare)
-        and isinstance(test.left, ast.Name)
-        and test.left.id == "__name__"
-        and len(test.ops) == 1
-        and isinstance(test.ops[0], ast.Eq)
-        and len(test.comparators) == 1
-        and isinstance(test.comparators[0], ast.Constant)
-        and test.comparators[0].value == "__main__"
-    ):
-        return False
-    statement = node.body[0]
-    if not isinstance(statement, ast.Raise) or statement.cause is not None:
-        return False
-    call = statement.exc
-    return (
-        isinstance(call, ast.Call)
-        and ast_call_name(call.func) == "SystemExit"
-        and len(call.args) == 1
-        and isinstance(call.args[0], ast.Call)
-        and ast_call_name(call.args[0].func) == target
-        and not call.args[0].args
-        and not call.args[0].keywords
-        and not call.keywords
-    )
-
-
-def ast_main_entrypoint(node: ast.AST) -> bool:
-    return ast_system_exit_entrypoint(node, "main") or ast_system_exit_entrypoint(node, "launch")
-
-
-def ast_launch_entrypoint(node: ast.AST) -> bool:
-    return ast_system_exit_entrypoint(node, "launch")
-
-
-def ast_entrypoint_is_final_after_function(
-    tree: ast.Module,
-    *,
-    function_name: str,
-    entrypoint_predicate: Callable[[ast.AST], bool],
-) -> bool:
-    if not tree.body or not entrypoint_predicate(tree.body[-1]):
-        return False
-    function_indexes = [
-        index
-        for index, node in enumerate(tree.body)
-        if isinstance(node, ast.FunctionDef) and node.name == function_name
-    ]
-    return len(function_indexes) == 1 and function_indexes[0] < len(tree.body) - 1
-
-
-def ast_constant_assignment(tree: ast.Module, *, target: str, value: object) -> bool:
-    assignments = [
-        node
-        for node in tree.body
-        if isinstance(node, ast.Assign)
-        and any(isinstance(item, ast.Name) and item.id == target for item in node.targets)
-    ]
-    if len(assignments) != 1:
-        return False
-    node = assignments[0]
-    return isinstance(node.value, ast.Constant) and node.value.value == value
-
-
-def ast_constant_set_assignment(tree: ast.Module, *, target: str, values: set[str]) -> bool:
-    assignments = [
-        node
-        for node in tree.body
-        if isinstance(node, ast.Assign)
-        and any(isinstance(item, ast.Name) and item.id == target for item in node.targets)
-    ]
-    if len(assignments) != 1:
-        return False
-    assigned = assignments[0].value
-    if not isinstance(assigned, ast.Set):
-        return False
-    return {
-        item.value for item in assigned.elts if isinstance(item, ast.Constant) and isinstance(item.value, str)
-    } == values and len(assigned.elts) == len(values)
-
-
-def ast_constant_tuple_assignment(tree: ast.Module, *, target: str, values: tuple[str, ...]) -> bool:
-    assignments = [
-        node
-        for node in tree.body
-        if isinstance(node, ast.Assign)
-        and any(isinstance(item, ast.Name) and item.id == target for item in node.targets)
-    ]
-    if len(assignments) != 1:
-        return False
-    assigned = assignments[0].value
-    if not isinstance(assigned, ast.Tuple):
-        return False
-    return tuple(
-        item.value for item in assigned.elts if isinstance(item, ast.Constant) and isinstance(item.value, str)
-    ) == values and len(assigned.elts) == len(values)
-
-
-def ast_calls_are_allowlisted(
-    node: ast.AST, *, allowed_calls: set[str], allowed_method_names: set[str]
-) -> bool:
-    for name in ast_call_names(node):
-        if name in allowed_calls:
-            continue
-        if name.rsplit(".", 1)[-1] in allowed_method_names:
-            continue
-        return False
-    return True
-
-
-def ast_contains_loop(node: ast.AST) -> bool:
-    return any(isinstance(child, (ast.For, ast.AsyncFor, ast.While)) for child in ast.walk(node))
-
-
-def ast_launcher_signature_contract(function: ast.FunctionDef) -> bool:
-    args = function.args
-    return (
-        not args.posonlyargs
-        and [arg.arg for arg in args.args] == ["argv"]
-        and len(args.defaults) == 1
-        and ast_none_default(args.defaults[0])
-        and not args.kwonlyargs
-        and not args.kw_defaults
-        and args.vararg is None
-        and args.kwarg is None
-    )
-
-
-def ast_find_agentworks_root_signature_contract(function: ast.FunctionDef) -> bool:
-    args = function.args
-    return (
-        not args.posonlyargs
-        and not args.args
-        and not args.defaults
-        and [arg.arg for arg in args.kwonlyargs] == ["env_root", "start_dir"]
-        and len(args.kw_defaults) == 2
-        and all(ast_none_default(default) for default in args.kw_defaults)
-        and args.vararg is None
-        and args.kwarg is None
-    )
-
-
-def ast_os_environ_get_constant(node: ast.AST, value: str) -> bool:
-    return (
-        isinstance(node, ast.Call)
-        and ast_call_name(node.func) == "os.environ.get"
-        and len(node.args) == 1
-        and isinstance(node.args[0], ast.Constant)
-        and node.args[0].value == value
-        and not node.keywords
-    )
-
-
-def ast_root_assignment(node: ast.AST) -> bool:
-    if not ast_assigns_name(node, "root") or not isinstance(node, ast.Assign):
-        return False
-    call = node.value
-    return (
-        isinstance(call, ast.Call)
-        and ast_call_name(call.func) == "find_agentworks_root"
-        and not call.args
-        and len(call.keywords) == 1
-        and call.keywords[0].arg == "env_root"
-        and ast_os_environ_get_constant(call.keywords[0].value, "AGENTWORKS_ROOT")
-    )
-
-
-def ast_sys_argv_tail(node: ast.AST) -> bool:
-    return (
-        isinstance(node, ast.Subscript)
-        and isinstance(node.value, ast.Attribute)
-        and isinstance(node.value.value, ast.Name)
-        and node.value.value.id == "sys"
-        and node.value.attr == "argv"
-        and isinstance(node.slice, ast.Slice)
-        and isinstance(node.slice.lower, ast.Constant)
-        and node.slice.lower.value == 1
-        and node.slice.upper is None
-        and node.slice.step is None
-    )
-
-
-def ast_argv_assignment(node: ast.AST) -> bool:
-    if not ast_assigns_name(node, "_argv") or not isinstance(node, ast.Assign):
-        return False
-    value = node.value
-    return (
-        isinstance(value, ast.IfExp)
-        and isinstance(value.test, ast.Compare)
-        and isinstance(value.test.left, ast.Name)
-        and value.test.left.id == "argv"
-        and len(value.test.ops) == 1
-        and isinstance(value.test.ops[0], ast.IsNot)
-        and len(value.test.comparators) == 1
-        and isinstance(value.test.comparators[0], ast.Constant)
-        and value.test.comparators[0].value is None
-        and isinstance(value.body, ast.Name)
-        and value.body.id == "argv"
-        and ast_sys_argv_tail(value.orelse)
-    )
-
-
-def ast_root_none_guard_returns_2(node: ast.AST) -> bool:
-    if not isinstance(node, ast.If):
-        return False
-    test = node.test
-    if not (
-        isinstance(test, ast.Compare)
-        and isinstance(test.left, ast.Name)
-        and test.left.id == "root"
-        and len(test.ops) == 1
-        and isinstance(test.ops[0], ast.Is)
-        and len(test.comparators) == 1
-        and isinstance(test.comparators[0], ast.Constant)
-        and test.comparators[0].value is None
-    ):
-        return False
-    return not node.orelse and ast_terminal_return_constant(node.body, 2)
-
-
-def ast_server_assignment(node: ast.AST) -> bool:
-    if not ast_assigns_name(node, "server") or not isinstance(node, ast.Assign):
-        return False
-    expected = ast.parse("Path(__file__).resolve().parent / BUNDLED_SERVER", mode="eval").body
-    return ast.dump(node.value) == ast.dump(expected)
-
-
-def ast_server_file_guard_returns_2(node: ast.AST) -> bool:
-    if not isinstance(node, ast.If):
-        return False
-    expected = ast.parse(
-        'not all((server.parent / name).is_file() for name in ("__init__.py", "agent_equipment_config.py", server.name))',
-        mode="eval",
-    ).body
-    if ast.dump(node.test) != ast.dump(expected):
-        return False
-    return not node.orelse and ast_terminal_return_constant(node.body, 2)
-
-
-def ast_expression_call(node: ast.AST, name: str) -> ast.Call | None:
-    if not isinstance(node, ast.Expr) or not isinstance(node.value, ast.Call):
-        return None
-    if ast_call_name(node.value.func) != name:
-        return None
-    return node.value
-
-
-def ast_chdir_root(node: ast.AST) -> bool:
-    call = ast_expression_call(node, "os.chdir")
-    return (
-        call is not None
-        and len(call.args) == 1
-        and isinstance(call.args[0], ast.Name)
-        and call.args[0].id == "root"
-        and not call.keywords
-    )
-
-
-def ast_python_executable_assignment(node: ast.AST) -> bool:
-    if not ast_assigns_name(node, "python_executable") or not isinstance(node, ast.Assign):
-        return False
-    value = node.value
-    return (
-        isinstance(value, ast.Call)
-        and ast_call_name(value.func) == "str"
-        and len(value.args) == 1
-        and isinstance(value.args[0], ast.Call)
-        and ast_call_name(value.args[0].func) == "resolve"
-        and not value.args[0].args
-        and not value.args[0].keywords
-        and isinstance(value.args[0].func, ast.Attribute)
-        and isinstance(value.args[0].func.value, ast.Call)
-        and ast_call_name(value.args[0].func.value.func) == "Path"
-        and len(value.args[0].func.value.args) == 1
-        and isinstance(value.args[0].func.value.args[0], ast.Attribute)
-        and ast_call_name(value.args[0].func.value.args[0]) == "sys.executable"
-        and not value.args[0].func.value.keywords
-        and not value.keywords
-    )
-
-
-def ast_execve_repo_server(node: ast.AST) -> bool:
-    call = ast_expression_call(node, "os.execve")
-    if call is None or len(call.args) != 3 or call.keywords:
-        return False
-    command = call.args[0]
-    argv = call.args[1]
-    env = call.args[2]
-    argv_items = argv.elts if isinstance(argv, ast.List) else []
-    if len(argv_items) != 5:
-        return False
-    if not all(isinstance(item, ast.Constant) and item.value == flag
-               for item, flag in zip(argv_items[1:3], ("-I", "-S"))):
-        return False
-    forwarded_args = argv_items[4]
-    if not (
-        isinstance(forwarded_args, ast.Starred)
-        and isinstance(forwarded_args.value, ast.Name)
-        and forwarded_args.value.id == "_argv"
-    ):
-        return False
-    first_argv = argv_items[0] if argv_items else None
-    second_argv = argv_items[3] if len(argv_items) > 3 else None
-    has_python_command = (
-        isinstance(command, ast.Name)
-        and command.id == "python_executable"
-        and isinstance(first_argv, ast.Name)
-        and first_argv.id == "python_executable"
-    )
-    has_server_argv = (
-        isinstance(second_argv, ast.Call)
-        and ast_call_name(second_argv.func) == "str"
-        and len(second_argv.args) == 1
-        and isinstance(second_argv.args[0], ast.Name)
-        and second_argv.args[0].id == "server"
-        and not second_argv.keywords
-    )
-    env_allowlist = (
-        isinstance(env, ast.Call)
-        and ast_call_name(env.func) == "server_environment"
-        and not env.args
-        and not env.keywords
-    )
-    return has_python_command and has_server_argv and env_allowlist
-
-
-def ast_stderr_print_expr(node: ast.AST) -> bool:
-    call = ast_expression_call(node, "print")
-    if call is None or len(call.args) != 1 or len(call.keywords) != 1:
-        return False
-    keyword = call.keywords[0]
-    message = call.args[0]
-    if keyword.arg != "file" or ast_call_name(keyword.value) != "sys.stderr":
-        return False
-    if not isinstance(message, ast.JoinedStr):
-        return False
-    constants = {
-        part.value for part in message.values if isinstance(part, ast.Constant) and isinstance(part.value, str)
-    }
-    formatted_names = {
-        ast_call_name(part.value)
-        for part in message.values
-        if isinstance(part, ast.FormattedValue) and ast_call_name(part.value) is not None
-    }
-    return (
-        "Agent Equipment Config MCP launcher could not execute " in constants
-        and ": " in constants
-        and formatted_names == {"python_executable", "error"}
-    )
-
-
-def ast_execve_try_returns_127(node: ast.AST) -> bool:
-    if not isinstance(node, ast.Try) or len(node.body) != 1:
-        return False
-    if not ast_execve_repo_server(node.body[0]):
-        return False
-    if len(node.handlers) != 1 or node.orelse or node.finalbody:
-        return False
-    handler = node.handlers[0]
-    return (
-        ast_call_name(handler.type) == "OSError"
-        and len(handler.body) == 2
-        and ast_stderr_print_expr(handler.body[0])
-        and ast_return_constant(handler.body[1], 127)
-    )
-
-
-def ast_server_environment_contract(function: ast.FunctionDef) -> bool:
-    names = ast_name_ids(function)
-    calls = set(ast_call_names(function))
-    constants = ast_string_constants(function)
-    attrs = ast_attribute_names(function)
-    return (
-        "SERVER_ENV_VAR_NAMES" in names
-        and "os.environ.get" in calls
-        and "AGENTWORKS_ROOT" not in constants
-        and "copy" not in attrs
-        and any(isinstance(statement, ast.Return) for statement in function.body)
-    )
-
-
-def ast_launch_execs_repo_server(launch: ast.FunctionDef) -> bool:
-    stage = 0
-    has_argv_assignment = False
-    for statement in launch.body:
-        if stage == 0 and ast_argv_assignment(statement):
-            if has_argv_assignment:
-                return False
-            has_argv_assignment = True
-        elif stage == 0 and ast_root_assignment(statement):
-            stage = 1
-        elif stage == 1 and ast_root_none_guard_returns_2(statement):
-            stage = 2
-        elif stage == 2 and ast_server_assignment(statement):
-            stage = 3
-        elif stage == 3 and ast_server_file_guard_returns_2(statement):
-            stage = 4
-        elif stage == 4 and ast_chdir_root(statement):
-            stage = 5
-        elif stage == 5 and ast_python_executable_assignment(statement):
-            stage = 6
-        elif stage == 6 and ast_execve_try_returns_127(statement):
-            stage = 7
-        elif stage == 7 and ast_return_constant(statement, 127):
-            continue
-        else:
-            return False
-    return stage == 7 and has_argv_assignment
-
-
-def ast_function_has_no_decorators(function: ast.FunctionDef) -> bool:
-    return not function.decorator_list
-
-
-def ast_has_agentworks_marketplace_contract(function: ast.FunctionDef) -> bool:
-    names = ast_name_ids(function)
-    calls = set(ast_call_names(function))
-    constants = ast_string_constants(function)
-    attrs = ast_attribute_names(function)
-    return (
-        "MARKETPLACE_MARKER" in names
-        and "json.loads" in calls
-        and "read_text" in calls
-        and "get" in attrs
-        and {
-            "agentworks",
-            "agent-equipment-config",
-            "local",
-            "./plugins/agent-equipment-config",
-        }.issubset(constants)
-    )
-
-
-def ast_candidate_is_agentworks_root_contract(function: ast.FunctionDef) -> bool:
-    names = ast_name_ids(function)
-    calls = ast_call_names(function)
-    return (
-        {"REPO_SERVER", "REPO_MARKER"}.issubset(names)
-        and calls.count("is_file") >= 2
-        and "has_agentworks_marketplace" in calls
-    )
-
-
-def ast_find_agentworks_root_contract(function: ast.FunctionDef) -> bool:
-    kwonly_args = {arg.arg for arg in function.args.kwonlyargs}
-    names = ast_name_ids(function)
-    calls = ast_call_names(function)
-    attrs = ast_attribute_names(function)
-    constants = ast_string_constants(function)
-    return (
-        kwonly_args == {"env_root", "start_dir"}
-        and "env_root" in names
-        and "start_dir" in names
-        and "os" not in names
-        and "PWD" not in constants
-        and calls.count("candidate_is_agentworks_root") >= 2
-        and "Path" in calls
-        and "Path.cwd" in calls
-        and "expanduser" in calls
-        and "resolve" in attrs
-        and "parents" in attrs
-        and any(ast_return_constant(statement, None) for statement in function.body)
-    )
-
-
-def ast_launcher_module_contract(tree: ast.Module) -> bool:
-    allowed_functions = {
-        "has_agentworks_marketplace",
-        "candidate_is_agentworks_root",
-        "find_agentworks_root",
-        "server_environment",
-        "launch",
-    }
-    seen_functions: set[str] = set()
-    launcher_entrypoints = 0
-    for node in tree.body:
-        if ast_launch_entrypoint(node):
-            launcher_entrypoints += 1
-            continue
-        if (
-            ast_future_annotations(node)
-            or ast_import_exact(node, "json")
-            or ast_import_exact(node, "os")
-            or ast_import_exact(node, "sys")
-            or ast_from_import_exact(node, "pathlib", "Path")
-        ):
-            continue
-        if isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name)
-            and target.id in {
-                "REPO_SERVER",
-                "BUNDLED_SERVER",
-                "REPO_MARKER",
-                "MARKETPLACE_MARKER",
-                "SERVER_ENV_VAR_NAMES",
-            }
-            for target in node.targets
-        ):
-            continue
-        if (
-            isinstance(node, ast.FunctionDef)
-            and node.name in allowed_functions
-            and ast_function_has_no_decorators(node)
-        ):
-            seen_functions.add(node.name)
-            continue
-        return False
-    if launcher_entrypoints != 1 or seen_functions != allowed_functions:
-        return False
-    if not ast_entrypoint_is_final_after_function(
-        tree,
-        function_name="launch",
-        entrypoint_predicate=ast_launch_entrypoint,
-    ):
-        return False
-    if not ast_constant_tuple_assignment(
-        tree,
-        target="SERVER_ENV_VAR_NAMES",
-        values=("AGENTWORKS_ROOT",),
-    ):
-        return False
-    server_environment = ast_function(tree, "server_environment")
-    if server_environment is None or not ast_server_environment_contract(server_environment):
-        return False
-    scoped_calls = {
-        "has_agentworks_marketplace": (
-            {"any", "isinstance", "json.loads"},
-            {"get", "read_text"},
-        ),
-        "candidate_is_agentworks_root": (
-            {"has_agentworks_marketplace"},
-            {"is_file"},
-        ),
-        "find_agentworks_root": (
-            {"Path", "Path.cwd", "candidate_is_agentworks_root"},
-            {"expanduser", "resolve"},
-        ),
-        "server_environment": (
-            {"os.environ.get"},
-            set(),
-        ),
-        "launch": (
-            {
-                "Path",
-                "all",
-                "find_agentworks_root",
-                "os.chdir",
-                "os.environ.get",
-                "os.execve",
-                "print",
-                "server_environment",
-                "str",
-            },
-            {"is_file", "resolve"},
-        ),
-    }
-    return all(
-        (function := ast_function(tree, function_name)) is not None
-        and ast_function_has_no_decorators(function)
-        and ast_calls_are_allowlisted(
-            function,
-            allowed_calls=allowed_calls,
-            allowed_method_names=allowed_method_names,
-        )
-        for function_name, (allowed_calls, allowed_method_names) in scoped_calls.items()
-    )
-
-
-def ast_guard_module_contract(tree: ast.Module) -> bool:
-    allowed_functions = {
-        "normalized_tool_name",
-        "is_config_local_write_tool",
-        "tool_input",
-        "deny_decision",
-        "evaluate",
-        "main",
-    }
-    seen_functions: set[str] = set()
-    main_entrypoints = 0
-    for node in tree.body:
-        if ast_system_exit_entrypoint(node, "main"):
-            main_entrypoints += 1
-            continue
-        if (
-            ast_future_annotations(node)
-            or ast_import_exact(node, "json")
-            or ast_import_exact(node, "re")
-            or ast_import_exact(node, "sys")
-            or ast_from_import_exact(node, "typing", "Any")
-        ):
-            continue
-        if isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name) and target.id in {"CONFIG_SERVER_NAME", "WRITE_TOOLS"}
-            for target in node.targets
-        ):
-            continue
-        if (
-            isinstance(node, ast.FunctionDef)
-            and node.name in allowed_functions
-            and ast_function_has_no_decorators(node)
-        ):
-            seen_functions.add(node.name)
-            continue
-        return False
-    if main_entrypoints != 1 or seen_functions != allowed_functions:
-        return False
-    if ast_contains_loop(tree):
-        return False
-    scoped_calls = {
-        "normalized_tool_name": (
-            {"re.sub"},
-            {"lower", "strip"},
-        ),
-        "is_config_local_write_tool": (
-            {"len", "normalized_tool_name"},
-            {"split"},
-        ),
-        "tool_input": (
-            {"isinstance"},
-            {"get"},
-        ),
-        "deny_decision": (
-            set(),
-            set(),
-        ),
-        "evaluate": (
-            {"deny_decision", "is_config_local_write_tool", "isinstance", "tool_input"},
-            {"get"},
-        ),
-        "main": (
-            {"deny_decision", "evaluate", "isinstance", "json.dumps", "json.load", "print"},
-            set(),
-        ),
-    }
-    return (
-        ast_constant_assignment(tree, target="CONFIG_SERVER_NAME", value="agent_equipment_config")
-        and ast_constant_set_assignment(tree, target="WRITE_TOOLS", values={"config_apply", "migrate_config_apply"})
-        and all(
-            (function := ast_function(tree, function_name)) is not None
-            and ast_function_has_no_decorators(function)
-            and ast_calls_are_allowlisted(
-                function,
-                allowed_calls=allowed_calls,
-                allowed_method_names=allowed_method_names,
-            )
-            for function_name, (allowed_calls, allowed_method_names) in scoped_calls.items()
-        )
-    )
-
-
-def launcher_discovery_probe_result(root: Path, launcher_path: Path) -> CheckResult | None:
-    script = """
-import importlib.util
 import json
+import os
 import sys
 from pathlib import Path
 
-launcher_path = Path(sys.argv[1])
+
+REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
+BUNDLED_SERVER = Path("runtime/tools/agent_equipment_config_mcp_server.py")
+REPO_MARKER = Path("inventory/equipment.toml")
+MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
+SERVER_ENV_VAR_NAMES = ("AGENTWORKS_ROOT",)
+
+
+def has_agentworks_marketplace(candidate: Path) -> bool:
+    try:
+        data = json.loads((candidate / MARKETPLACE_MARKER).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    if not isinstance(data, dict) or data.get("name") != "agentworks":
+        return False
+    plugins = data.get("plugins")
+    if not isinstance(plugins, list):
+        return False
+    return any(
+        isinstance(plugin, dict)
+        and plugin.get("name") == "agent-equipment-config"
+        and isinstance(plugin.get("source"), dict)
+        and plugin["source"].get("source") == "local"
+        and plugin["source"].get("path") == "./plugins/agent-equipment-config"
+        for plugin in plugins
+    )
+
+
+def candidate_is_agentworks_root(candidate: Path) -> bool:
+    return (
+        (candidate / REPO_SERVER).is_file()
+        and (candidate / REPO_MARKER).is_file()
+        and has_agentworks_marketplace(candidate)
+    )
+
+
+def find_agentworks_root(*, env_root: str | None = None, start_dir: Path | None = None) -> Path | None:
+    if env_root:
+        env_candidate = Path(env_root).expanduser()
+        if candidate_is_agentworks_root(env_candidate):
+            return env_candidate.resolve()
+    current = (start_dir if start_dir is not None else Path.cwd()).expanduser().resolve()
+    if candidate_is_agentworks_root(current):
+        return current
+    for candidate in current.parents:
+        if candidate_is_agentworks_root(candidate):
+            return candidate.resolve()
+    return None
+
+
+def server_environment() -> dict[str, str]:
+    return {
+        name: value
+        for name in SERVER_ENV_VAR_NAMES
+        if (value := os.environ.get(name)) is not None
+    }
+
+
+def launch(argv: list[str] | None = None) -> int:
+    _argv = argv if argv is not None else sys.argv[1:]
+    root = find_agentworks_root(
+        env_root=os.environ.get("AGENTWORKS_ROOT"),
+    )
+    if root is None:
+        print(
+            "Agent Equipment Config MCP launcher could not find an Agentworks "
+            "checkout. Set AGENTWORKS_ROOT to the checkout containing "
+            "tools/agent_equipment_config_mcp_server.py.",
+            file=sys.stderr,
+        )
+        return 2
+
+    server = Path(__file__).resolve().parent / BUNDLED_SERVER
+    if not all((server.parent / name).is_file() for name in ("__init__.py", "agent_equipment_config.py", server.name)):
+        print(
+            "Agent Equipment Config MCP launcher could not find the complete runtime bundle near "
+            f"{BUNDLED_SERVER} in the installed plugin. Reinstall the plugin.",
+            file=sys.stderr,
+        )
+        return 2
+
+    os.chdir(root)
+    python_executable = str(Path(sys.executable).resolve())
+    try:
+        os.execve(
+            python_executable,
+            [python_executable, "-I", "-S", str(server), *_argv],
+            server_environment(),
+        )
+    except OSError as error:
+        print(
+            f"Agent Equipment Config MCP launcher could not execute {python_executable}: {error}",
+            file=sys.stderr,
+        )
+        return 127
+    return 127
+
+
+if __name__ == "__main__":
+    raise SystemExit(launch())
+'''
+
+REVIEWED_GUARD_SOURCE = r'''
+#!/usr/bin/env python3.14
+from __future__ import annotations
+
+import json
+import re
+import sys
+from typing import Any
+
+
+CONFIG_SERVER_NAME = "agent_equipment_config"
+WRITE_TOOLS = {"config_apply", "migrate_config_apply"}
+
+
+def normalized_tool_name(value: str) -> str:
+    normalized = re.sub(r"[^0-9A-Za-z]+", "_", value).strip("_").lower()
+    return re.sub(r"_+", "_", normalized)
+
+
+def is_config_local_write_tool(tool_name: str) -> bool:
+    parts = tool_name.split("__", 2)
+    if len(parts) != 3 or parts[0] != "mcp":
+        return False
+    server, tool = parts[1], parts[2]
+    return normalized_tool_name(server) == CONFIG_SERVER_NAME and normalized_tool_name(tool) in WRITE_TOOLS
+
+
+def tool_input(payload: dict[str, Any]) -> dict[str, Any]:
+    value = payload.get("tool_input")
+    if not isinstance(value, dict):
+        value = payload.get("arguments")
+    if not isinstance(value, dict):
+        value = {}
+    nested_arguments = value.get("arguments")
+    if isinstance(nested_arguments, dict):
+        return nested_arguments
+    return value
+
+
+def deny_decision(
+    reason: str = 'Agent Equipment Config local-write MCP tools require apply_authority = "operator".',
+) -> dict[str, Any]:
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason,
+        }
+    }
+
+
+def evaluate(payload: dict[str, Any]) -> dict[str, Any] | None:
+    if payload.get("hook_event_name") not in {None, "PreToolUse"}:
+        return None
+    tool_name = payload.get("tool_name")
+    if not isinstance(tool_name, str) or not is_config_local_write_tool(tool_name):
+        return None
+    if tool_input(payload).get("apply_authority") == "operator":
+        return None
+    return deny_decision()
+
+
+def main() -> int:
+    try:
+        payload = json.load(sys.stdin)
+    except json.JSONDecodeError:
+        print(
+            json.dumps(
+                deny_decision("Agent Equipment Config guard hook received malformed JSON input."),
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        )
+        return 0
+    if not isinstance(payload, dict):
+        print(
+            json.dumps(
+                deny_decision("Agent Equipment Config guard hook received non-object JSON input."),
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        )
+        return 0
+    decision = evaluate(payload)
+    if decision is not None:
+        print(json.dumps(decision, separators=(",", ":"), sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+'''
+
+
+def ast_launcher_module_contract(tree: ast.Module) -> bool:
+    return ast.dump(tree) == ast.dump(ast.parse(REVIEWED_LAUNCHER_SOURCE))
+
+
+def ast_guard_module_contract(tree: ast.Module) -> bool:
+    return ast.dump(tree) == ast.dump(ast.parse(REVIEWED_GUARD_SOURCE))
+
+
+def launcher_discovery_probe_result(root: Path, launcher_path: Path) -> CheckResult | None:
+    # Never reopen or import the candidate: only this trusted canonical program
+    # may run, even if the checkout changes after its AST was checked.
+    script = "LAUNCHER_SOURCE = " + repr(REVIEWED_LAUNCHER_SOURCE) + "\n" + """
+import json
+import sys
+import types
+from pathlib import Path
+
 root = Path(sys.argv[2]).resolve()
-spec = importlib.util.spec_from_file_location("agent_equipment_config_launcher_probe", launcher_path)
-if spec is None or spec.loader is None:
-    raise RuntimeError(f"cannot import {launcher_path}")
-module = importlib.util.module_from_spec(spec)
-sys.dont_write_bytecode = True
-spec.loader.exec_module(module)
+module = types.ModuleType("agent_equipment_config_launcher_probe")
+exec(compile(LAUNCHER_SOURCE, sys.argv[1], "exec"), module.__dict__)
 plugin_mcp_dir = root / "plugins/agent-equipment-config/mcp"
 module.os.environ.clear()
 server_environment_missing = dict(module.server_environment())
@@ -7853,6 +7304,7 @@ print(
         {
             "env": render(module.find_agentworks_root(env_root=str(root), start_dir=root.parent)),
             "cwd": render(module.find_agentworks_root(env_root=None, start_dir=plugin_mcp_dir)),
+            "default_start": render(module.find_agentworks_root(env_root=None)),
             "fallback": render(
                 module.find_agentworks_root(env_root=str(root / "missing"), start_dir=plugin_mcp_dir)
             ),
@@ -7865,7 +7317,7 @@ print(
 """
     try:
         completed = subprocess.run(
-            [sys.executable, "-P", "-c", script, str(launcher_path), str(root)],
+            [sys.executable, "-I", "-S", "-c", script, str(launcher_path), str(root)],
             cwd=root,
             env={},
             stdout=subprocess.PIPE,
@@ -7901,6 +7353,7 @@ print(
     expected_root = str(root.resolve())
     expected = {
         "cwd": expected_root,
+        "default_start": expected_root,
         "env": expected_root,
         "fallback": expected_root,
         "server_environment": {"AGENTWORKS_ROOT": expected_root},
@@ -7931,8 +7384,10 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
         ]
 
     try:
-        text = launcher_path.read_text(encoding="utf-8")
-        tree = ast.parse(text, filename=str(launcher_path))
+        # Parse bytes so Python source encoding declarations have the same
+        # meaning here as when the installed launcher is executed.
+        source = launcher_path.read_bytes()
+        tree = ast.parse(source, filename=str(launcher_path))
     except (OSError, UnicodeDecodeError, SyntaxError) as error:
         return [
             CheckResult(
@@ -7943,44 +7398,7 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
             )
         ]
 
-    has_agentworks_marketplace = ast_function(tree, "has_agentworks_marketplace")
-    candidate_is_agentworks_root = ast_function(tree, "candidate_is_agentworks_root")
-    find_agentworks_root = ast_function(tree, "find_agentworks_root")
-    launch = ast_function(tree, "launch")
-    valid = (
-        ast_launcher_module_contract(tree)
-        and ast_constant_path_assignment(
-            tree,
-            target="REPO_SERVER",
-            value="tools/agent_equipment_config_mcp_server.py",
-        )
-        and ast_constant_path_assignment(
-            tree,
-            target="BUNDLED_SERVER",
-            value="runtime/tools/agent_equipment_config_mcp_server.py",
-        )
-        and ast_constant_path_assignment(
-            tree,
-            target="MARKETPLACE_MARKER",
-            value=".agents/plugins/marketplace.json",
-        )
-        and ast_constant_path_assignment(
-            tree,
-            target="REPO_MARKER",
-            value="inventory/equipment.toml",
-        )
-        and has_agentworks_marketplace is not None
-        and ast_has_agentworks_marketplace_contract(has_agentworks_marketplace)
-        and candidate_is_agentworks_root is not None
-        and ast_candidate_is_agentworks_root_contract(candidate_is_agentworks_root)
-        and find_agentworks_root is not None
-        and ast_find_agentworks_root_signature_contract(find_agentworks_root)
-        and ast_find_agentworks_root_contract(find_agentworks_root)
-        and launch is not None
-        and ast_launcher_signature_contract(launch)
-        and ast_launch_execs_repo_server(launch)
-    )
-    if valid:
+    if ast_launcher_module_contract(tree):
         probe_error = launcher_discovery_probe_result(root, launcher_path)
         if probe_error is None:
             return []
@@ -8089,8 +7507,8 @@ def config_guard_behavior_results(root: Path) -> list[CheckResult]:
     try:
         guard_path = guard_path.resolve(strict=True)
         root_path = root.resolve(strict=True)
-        guard_text = guard_path.read_text(encoding="utf-8")
-        guard_tree = ast.parse(guard_text, filename=str(guard_path))
+        guard_source = guard_path.read_bytes()
+        guard_tree = ast.parse(guard_source, filename=str(guard_path))
     except OSError as error:
         return [
             CheckResult(
@@ -8380,7 +7798,7 @@ def config_guard_behavior_results(root: Path) -> list[CheckResult]:
     for case_name, payload, expects_denial in cases:
         try:
             returncode, stdout_bytes, stderr_bytes, output_exceeded = run_bounded_subprocess(
-                [sys.executable, "-I", "-S", str(guard_path)],
+                [sys.executable, "-I", "-S", "-c", REVIEWED_GUARD_SOURCE],
                 input_bytes=payload.encode("utf-8"),
                 cwd=root_path,
                 env={},
@@ -8585,6 +8003,40 @@ def validate_agent_equipment_config_codex_plugin_inventory(root: Path) -> list[C
     return results
 
 
+def plugin_runtime_file_results(root: Path) -> list[CheckResult]:
+    results: list[CheckResult] = []
+    for directory in ("mcp", "hooks"):
+        relative_path = f"{AGENT_EQUIPMENT_CONFIG_PLUGIN_ROOT}/{directory}"
+        ok, detail, path = repo_relative_path_status(root, relative_path, "directory")
+        if ok:
+            reviewed_names = {
+                Path(required).relative_to(relative_path).parts[0]
+                for required in AGENT_EQUIPMENT_CONFIG_PLUGIN_REQUIRED_PATHS
+                if Path(required).is_relative_to(relative_path)
+            }
+            try:
+                with os.scandir(path) as entries:
+                    unexpected = sorted(item.name for item in entries if item.name not in reviewed_names)
+            except OSError as error:
+                ok, detail = False, f"runtime directory unreadable: {error}"
+            else:
+                ok = not unexpected
+                detail = (
+                    "runtime directory must contain only reviewed files; unexpected: "
+                    + ", ".join(unexpected)
+                )
+        if not ok:
+            results.append(
+                CheckResult(
+                    f"agent_equipment_config_codex_plugin:runtime_files:{directory}",
+                    False,
+                    detail,
+                    relative_path,
+                )
+            )
+    return results
+
+
 def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult]:
     results: list[CheckResult] = []
     for required_path in AGENT_EQUIPMENT_CONFIG_PLUGIN_REQUIRED_PATHS:
@@ -8599,6 +8051,7 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                 )
             )
     results.extend(validate_agent_equipment_config_codex_plugin_inventory(root))
+    results.extend(plugin_runtime_file_results(root))
     for name in (*AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_SOURCES, "__init__.py"):
         relative = f"{AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_ROOT}/{name}"
         ok, _detail, bundled = repo_relative_path_status(root, relative, "file")
