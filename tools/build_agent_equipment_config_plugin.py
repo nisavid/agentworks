@@ -21,6 +21,22 @@ def main() -> int:
     for directory in (BUNDLE, *BUNDLE.parents):
         if directory.is_symlink():
             parser.error(f"runtime bundle directory must not be a symlink: {directory}")
+    unexpected = []
+    for directory, allowed in [(BUNDLE.parent, {"tools"}), (BUNDLE, set(expected))]:
+        if not directory.is_dir():
+            continue
+        try:
+            for entry in directory.iterdir():
+                if entry.name in allowed:
+                    continue
+                if entry.name == "__pycache__" and not entry.is_symlink() and entry.is_dir():
+                    continue
+                unexpected.append(entry.relative_to(BUNDLE.parent).as_posix())
+        except OSError as error:
+            parser.error(f"cannot inspect runtime bundle: {error}")
+    if unexpected:
+        print("Plugin runtime snapshot contains unexpected entries: " + ", ".join(sorted(unexpected)))
+        return 1
     stale = []
     for name, content in expected.items():
         target = BUNDLE / name

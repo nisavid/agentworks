@@ -107,7 +107,9 @@ The Codex plugin launcher executes a packaged snapshot of the canonical MCP
 server and Config engine. The plugin tests copy an installation before changing
 checkout code, then check initialization, tool listing, relative Config paths,
 ancestor discovery, symlink aliases, and refusal when a bundle file is missing.
-The integrity validator rejects stale snapshots and symlinked bundle paths.
+The integrity validator rejects stale snapshots, symlinked bundle paths, and
+extra entries in either runtime directory. Builder checks enforce the same
+entry set while allowing ordinary bytecode-cache directories.
 
 ## Validation Evidence
 

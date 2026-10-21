@@ -123,3 +123,13 @@ correction merged in PR #221. Refreshing the bundle preserves that correction
 for installed plugins: reviewed changes and canonical metadata determine the
 document validated and written. Checkout code remains outside the installed
 startup boundary. Canonical and bundled engine bytes must continue to match.
+
+
+The snapshot checks also inventory `mcp/runtime/` and `mcp/runtime/tools/`.
+They reject extra files, packages, and directories: an unexpected module beside
+`tools/` could otherwise shadow a standard-library import after the server
+inserts its runtime path. Normal `__pycache__` directories are ignored; symlinked
+caches and files with that name are rejected. Both builder modes refuse extras
+without deleting them. Regression tests exercise rejection in both checks and
+preserve the normal-cache control. Bytecode caches remain inside the installed
+plugin trust boundary; source parity does not attest arbitrary cache contents.

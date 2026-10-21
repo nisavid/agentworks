@@ -8615,7 +8615,29 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                 "bundled runtime must match canonical sources; run python3.14 tools/build_agent_equipment_config_plugin.py",
                 relative,
             ))
-
+    runtime_tools = root / AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_ROOT
+    for directory, allowed in [
+        (runtime_tools.parent, {"tools"}),
+        (runtime_tools, {*AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_SOURCES, "__init__.py"}),
+    ]:
+        relative = directory.relative_to(root).as_posix()
+        ok, _detail, _path = repo_relative_path_status(root, relative, "directory")
+        if not ok:
+            continue  # Required-path checks report invalid bundle directories.
+        try:
+            unexpected = sorted(
+                entry.name for entry in directory.iterdir()
+                if entry.name not in allowed
+                and not (entry.name == "__pycache__" and not entry.is_symlink() and entry.is_dir())
+            )
+            detail = "bundled runtime contains unexpected entries: " + ", ".join(unexpected)
+        except OSError as error:
+            unexpected = ["unreadable directory"]
+            detail = f"cannot inspect bundled runtime: {error}"
+        if unexpected:
+            results.append(CheckResult(
+                "agent_equipment_config_codex_plugin:runtime:unexpected", False, detail, relative,
+            ))
 
     marketplace, error = load_json_object(root, AGENT_EQUIPMENT_CONFIG_PLUGIN_MARKETPLACE_PATH)
     if error is not None:

@@ -171,6 +171,50 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 results = validator.validate_agent_equipment_config_codex_plugin(root)
                 self.assertTrue(any(not result.ok and result.name.endswith("launcher:content") for result in results))
 
+    def test_snapshot_checks_reject_unexpected_runtime_entries(self):
+        repo = Path(__file__).resolve().parents[1]
+        runtime = PLUGIN_ROOT / "mcp/runtime"
+        for relative, kind in [
+            ("argparse.py", "file"), ("argparse", "directory"),
+            ("tools/extra.py", "file"), ("tools/extra", "directory"),
+            ("__pycache__", "file"), ("tools/__pycache__", "symlink"),
+        ]:
+            with self.subTest(relative=relative, kind=kind), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.write_valid_plugin_fixture(root)
+                script = root / "tools/build_agent_equipment_config_plugin.py"
+                shutil.copyfile(repo / "tools/build_agent_equipment_config_plugin.py", script)
+                extra = root / runtime / relative
+                if kind == "directory":
+                    extra.mkdir()
+                elif kind == "symlink":
+                    extra.symlink_to(root / "tools", target_is_directory=True)
+                else:
+                    extra.write_text("# unexpected module\n", encoding="utf-8")
+                results = validator.validate_agent_equipment_config_codex_plugin(root)
+                self.assertTrue(any(not r.ok and r.name.endswith("runtime:unexpected") for r in results), results)
+                for args in [[], ["--check"]]:
+                    result = subprocess.run([sys.executable, "-I", "-S", str(script), *args],
+                                            text=True, capture_output=True, timeout=10)
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn(relative, result.stdout)
+                self.assertTrue(extra.exists())
+
+    def test_snapshot_checks_allow_normal_runtime_bytecode_directories(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.write_valid_plugin_fixture(root)
+            for directory in [root / PLUGIN_ROOT / "mcp/runtime", root / PLUGIN_ROOT / "mcp/runtime/tools"]:
+                cache = directory / "__pycache__"
+                cache.mkdir()
+                (cache / "cached.cpython-314.pyc").write_bytes(b"cache")
+            script = root / "tools/build_agent_equipment_config_plugin.py"
+            shutil.copyfile(Path(__file__).resolve().parents[1] / "tools/build_agent_equipment_config_plugin.py", script)
+            self.assertTrue(all(r.ok for r in validator.validate_agent_equipment_config_codex_plugin(root)))
+            result = subprocess.run([sys.executable, "-I", "-S", str(script), "--check"],
+                                    text=True, capture_output=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_validator_rejects_stale_manifest_metadata_shape(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

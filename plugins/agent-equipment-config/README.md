@@ -46,7 +46,10 @@ python3.14 tools/build_agent_equipment_config_plugin.py
 python3.14 tools/build_agent_equipment_config_plugin.py --check
 ```
 
-Repository validation requires byte parity with the canonical sources. Update
+Repository validation requires byte parity with the canonical sources and rejects
+extra entries in both runtime directories. Ordinary `__pycache__` directories
+are ignored; symlinks and files with that name are rejected. The builder also
+refuses unexpected entries rather than deleting them. Update
 or reinstall the plugin to adopt a new runtime snapshot; switching branches or
 editing a checkout does not change an already installed plugin's code.
 
