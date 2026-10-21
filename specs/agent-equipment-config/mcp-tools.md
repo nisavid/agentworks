@@ -16,6 +16,14 @@ surface.
 
 This spec describes desired behavior and the current runtime boundary. It does not implement Agent Equipment.
 
+The Codex plugin distributes a byte-identical snapshot of that server and the
+Config engine under `plugins/agent-equipment-config/mcp/runtime/tools/`.
+Its launcher uses checkout discovery only for the data working directory and
+runs installed code with Python `-I -S`. Refresh the snapshot with
+`tools/build_agent_equipment_config_plugin.py` when canonical sources change;
+repository validation enforces parity. An existing installation changes code
+only through a plugin update or reinstall.
+
 ## Tool definition contract
 
 Each Config MCP tool definition includes:

@@ -1643,7 +1643,16 @@ AGENT_EQUIPMENT_CONFIG_PLUGIN_SKILL_PATH = (
 )
 AGENT_EQUIPMENT_CONFIG_PLUGIN_README_PATH = f"{AGENT_EQUIPMENT_CONFIG_PLUGIN_ROOT}/README.md"
 AGENT_EQUIPMENT_CONFIG_STANDALONE_MCP_SERVER_PATH = "tools/agent_equipment_config_mcp_server.py"
+AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_ROOT = f"{AGENT_EQUIPMENT_CONFIG_PLUGIN_ROOT}/mcp/runtime/tools"
+AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_SOURCES = (
+    "agent_equipment_config.py", "agent_equipment_config_mcp_server.py",
+)
+AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_PATHS = [
+    f"{AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_ROOT}/{name}"
+    for name in (*AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_SOURCES, "__init__.py")
+]
 AGENT_EQUIPMENT_CONFIG_PLUGIN_REQUIRED_PATHS = [
+    *AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_PATHS,
     AGENT_EQUIPMENT_CONFIG_PLUGIN_MARKETPLACE_PATH,
     AGENT_EQUIPMENT_CONFIG_PLUGIN_MANIFEST_PATH,
     AGENT_EQUIPMENT_CONFIG_PLUGIN_MCP_PATH,
@@ -1663,6 +1672,7 @@ AGENT_EQUIPMENT_CONFIG_PLUGIN_STOCK_COMPONENT_PATHS = {
             AGENT_EQUIPMENT_CONFIG_PLUGIN_HOOKS_PATH,
             AGENT_EQUIPMENT_CONFIG_PLUGIN_HOOK_GUARD_PATH,
             AGENT_EQUIPMENT_CONFIG_PLUGIN_LAUNCHER_PATH,
+            *AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_PATHS,
             AGENT_EQUIPMENT_CONFIG_PLUGIN_README_PATH,
         }
     ),
@@ -7381,29 +7391,18 @@ def ast_root_none_guard_returns_2(node: ast.AST) -> bool:
 def ast_server_assignment(node: ast.AST) -> bool:
     if not ast_assigns_name(node, "server") or not isinstance(node, ast.Assign):
         return False
-    value = node.value
-    return (
-        isinstance(value, ast.BinOp)
-        and isinstance(value.op, ast.Div)
-        and isinstance(value.left, ast.Name)
-        and value.left.id == "root"
-        and isinstance(value.right, ast.Name)
-        and value.right.id == "REPO_SERVER"
-    )
+    expected = ast.parse("Path(__file__).resolve().parent / BUNDLED_SERVER", mode="eval").body
+    return ast.dump(node.value) == ast.dump(expected)
 
 
 def ast_server_file_guard_returns_2(node: ast.AST) -> bool:
     if not isinstance(node, ast.If):
         return False
-    test = node.test
-    if not (
-        isinstance(test, ast.UnaryOp)
-        and isinstance(test.op, ast.Not)
-        and isinstance(test.operand, ast.Call)
-        and ast_call_name(test.operand.func) == "server.is_file"
-        and not test.operand.args
-        and not test.operand.keywords
-    ):
+    expected = ast.parse(
+        'not all((server.parent / name).is_file() for name in ("__init__.py", "agent_equipment_config.py", server.name))',
+        mode="eval",
+    ).body
+    if ast.dump(node.test) != ast.dump(expected):
         return False
     return not node.orelse and ast_terminal_return_constant(node.body, 2)
 
@@ -7458,9 +7457,12 @@ def ast_execve_repo_server(node: ast.AST) -> bool:
     argv = call.args[1]
     env = call.args[2]
     argv_items = argv.elts if isinstance(argv, ast.List) else []
-    if len(argv_items) != 3:
+    if len(argv_items) != 5:
         return False
-    forwarded_args = argv_items[2]
+    if not all(isinstance(item, ast.Constant) and item.value == flag
+               for item, flag in zip(argv_items[1:3], ("-I", "-S"))):
+        return False
+    forwarded_args = argv_items[4]
     if not (
         isinstance(forwarded_args, ast.Starred)
         and isinstance(forwarded_args.value, ast.Name)
@@ -7468,7 +7470,7 @@ def ast_execve_repo_server(node: ast.AST) -> bool:
     ):
         return False
     first_argv = argv_items[0] if argv_items else None
-    second_argv = argv_items[1] if len(argv_items) > 1 else None
+    second_argv = argv_items[3] if len(argv_items) > 3 else None
     has_python_command = (
         isinstance(command, ast.Name)
         and command.id == "python_executable"
@@ -7657,6 +7659,7 @@ def ast_launcher_module_contract(tree: ast.Module) -> bool:
             isinstance(target, ast.Name)
             and target.id in {
                 "REPO_SERVER",
+                "BUNDLED_SERVER",
                 "REPO_MARKER",
                 "MARKETPLACE_MARKER",
                 "SERVER_ENV_VAR_NAMES",
@@ -7709,6 +7712,7 @@ def ast_launcher_module_contract(tree: ast.Module) -> bool:
         "launch": (
             {
                 "Path",
+                "all",
                 "find_agentworks_root",
                 "os.chdir",
                 "os.environ.get",
@@ -7952,6 +7956,11 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
         )
         and ast_constant_path_assignment(
             tree,
+            target="BUNDLED_SERVER",
+            value="runtime/tools/agent_equipment_config_mcp_server.py",
+        )
+        and ast_constant_path_assignment(
+            tree,
             target="MARKETPLACE_MARKER",
             value=".agents/plugins/marketplace.json",
         )
@@ -7980,7 +7989,7 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
         CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+            "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
             AGENT_EQUIPMENT_CONFIG_PLUGIN_LAUNCHER_PATH,
         )
     ]
@@ -8371,7 +8380,7 @@ def config_guard_behavior_results(root: Path) -> list[CheckResult]:
     for case_name, payload, expects_denial in cases:
         try:
             returncode, stdout_bytes, stderr_bytes, output_exceeded = run_bounded_subprocess(
-                [sys.executable, "-P", str(guard_path)],
+                [sys.executable, "-I", "-S", str(guard_path)],
                 input_bytes=payload.encode("utf-8"),
                 cwd=root_path,
                 env={},
@@ -8590,6 +8599,45 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                 )
             )
     results.extend(validate_agent_equipment_config_codex_plugin_inventory(root))
+    for name in (*AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_SOURCES, "__init__.py"):
+        relative = f"{AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_ROOT}/{name}"
+        ok, _detail, bundled = repo_relative_path_status(root, relative, "file")
+        if not ok:
+            continue  # Required-path checks report missing, escaping, or symlinked bundles.
+        try:
+            expected = b"" if name == "__init__.py" else (root / "tools" / name).read_bytes()
+            matches = bundled.read_bytes() == expected
+        except OSError:
+            matches = False
+        if not matches:
+            results.append(CheckResult(
+                "agent_equipment_config_codex_plugin:runtime:snapshot", False,
+                "bundled runtime must match canonical sources; run python3.14 tools/build_agent_equipment_config_plugin.py",
+                relative,
+            ))
+    runtime_tools = root / AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_ROOT
+    for directory, allowed in [
+        (runtime_tools.parent, {"tools"}),
+        (runtime_tools, {*AGENT_EQUIPMENT_CONFIG_PLUGIN_RUNTIME_SOURCES, "__init__.py"}),
+    ]:
+        relative = directory.relative_to(root).as_posix()
+        ok, _detail, _path = repo_relative_path_status(root, relative, "directory")
+        if not ok:
+            continue  # Required-path checks report invalid bundle directories.
+        try:
+            unexpected = sorted(
+                entry.name for entry in directory.iterdir()
+                if entry.name not in allowed
+                and not (entry.name == "__pycache__" and not entry.is_symlink() and entry.is_dir())
+            )
+            detail = "bundled runtime contains unexpected entries: " + ", ".join(unexpected)
+        except OSError as error:
+            unexpected = ["unreadable directory"]
+            detail = f"cannot inspect bundled runtime: {error}"
+        if unexpected:
+            results.append(CheckResult(
+                "agent_equipment_config_codex_plugin:runtime:unexpected", False, detail, relative,
+            ))
 
     marketplace, error = load_json_object(root, AGENT_EQUIPMENT_CONFIG_PLUGIN_MARKETPLACE_PATH)
     if error is not None:
@@ -8680,7 +8728,7 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
     elif manifest is not None:
         required_manifest_values = {
             "name": "agent-equipment-config",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "description": None,
             "repository": "https://github.com/nisavid/agentworks",
         }
@@ -8896,12 +8944,12 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                         AGENT_EQUIPMENT_CONFIG_PLUGIN_MCP_PATH,
                     )
                 )
-            if server.get("args") != ["./mcp/agent_equipment_config_launcher.py"]:
+            if server.get("args") != ["-I", "-S", "./mcp/agent_equipment_config_launcher.py"]:
                 results.append(
                     CheckResult(
                         "agent_equipment_config_codex_plugin:mcp:agent-equipment-config:args",
                         False,
-                        "args must launch ./mcp/agent_equipment_config_launcher.py",
+                        "args must launch -I -S ./mcp/agent_equipment_config_launcher.py",
                         AGENT_EQUIPMENT_CONFIG_PLUGIN_MCP_PATH,
                     )
                 )
@@ -9038,7 +9086,7 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                     )
                 )
             expected_command = (
-                'python3.14 -P "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"'
+                'python3.14 -I -S "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"'
             )
             if hook_record.get("command") != expected_command:
                 results.append(

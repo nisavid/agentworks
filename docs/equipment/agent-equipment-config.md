@@ -86,8 +86,10 @@ prefers `AGENTWORKS_ROOT` when it points at this repository, then searches the
 current working directory and ancestors for the server marker
 (`tools/agent_equipment_config_mcp_server.py`), inventory marker
 (`inventory/equipment.toml`), and repo marketplace marker
-(`.agents/plugins/marketplace.json`). It runs the server from the resolved
-checkout root. Its guard hook denies Config local-write MCP calls that
+(`.agents/plugins/marketplace.json`). It uses the resolved checkout as the data
+working directory and executes its installed runtime snapshot with Python
+`-I -S`. Checkout edits do not change installed code; update or reinstall the
+plugin to adopt a new snapshot. Its guard hook denies Config local-write MCP calls that
 omit `apply_authority = "operator"`; Codex hook trust and MCP approval prompts
 remain host policy surfaces.
 

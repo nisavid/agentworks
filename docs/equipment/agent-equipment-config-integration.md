@@ -265,16 +265,19 @@ For Codex, use the repo-owned plugin under
 `plugins/agent-equipment-config/` when the surface should equip routing
 guidance, MCP launch configuration, and local-write hook friction together. The
 plugin source is exposed through `.agents/plugins/marketplace.json`; Codex
-installs local plugins into its cache. The bundled MCP launcher prefers
-`AGENTWORKS_ROOT` when it points at a trusted live Works checkout; otherwise,
-it checks the working directory and its parents. A matching checkout must
-contain the server marker (`tools/agent_equipment_config_mcp_server.py`),
-inventory marker (`inventory/equipment.toml`), and `agentworks` repo marketplace
-marker (`.agents/plugins/marketplace.json`). Use a trusted checkout for either
-discovery path. It changes directory to that checkout
-before executing the standalone MCP server. Keep behavior in the standalone
-runtime and MCP server; the plugin routes to those contracts instead of
-reimplementing them.
+installs local plugins into its cache, including a snapshot of the canonical
+Config engine and MCP server. The launcher prefers `AGENTWORKS_ROOT` when it
+points at a Works checkout; otherwise, it checks the working directory and its
+parents. A matching checkout must contain the server marker
+(`tools/agent_equipment_config_mcp_server.py`), inventory marker
+(`inventory/equipment.toml`), and `agentworks` repo marketplace marker
+(`.agents/plugins/marketplace.json`). These markers select the data working
+directory. The launcher executes the installed snapshot with Python `-I -S`;
+it does not import or execute checkout Python files. Keep behavior in the
+canonical runtime and server, then refresh the plugin snapshot with
+`python3.14 tools/build_agent_equipment_config_plugin.py`. Repository validation
+checks byte parity. Installed plugins adopt runtime changes only after an
+explicit plugin update or reinstall.
 
 Before publishing an integration surface, document:
 

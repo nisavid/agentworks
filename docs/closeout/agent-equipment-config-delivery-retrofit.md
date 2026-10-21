@@ -22,7 +22,9 @@ parity work completed by #135. This closeout does not reopen either issue.
 - Advertised gear-up surfaces: Config CLI runtime,
   `tools/agent_equipment_config.py`, stdio MCP server,
   `tools/agent_equipment_config_mcp_server.py`, Codex plugin, and Config
-  routing skill.
+  routing skill. The Codex plugin packages a runtime snapshot; checkout
+  discovery selects its data working directory. Refresh snapshots with
+  `tools/build_agent_equipment_config_plugin.py` before publication.
 - Component manifest: required CLI, MCP, docs, Codex plugin, and Config routing
   skill surfaces; required Codex gear-up validation evidence; optional example
   Config layers; unavailable secret value resolution.

@@ -1,7 +1,9 @@
 import importlib.util
 import io
 import json
+import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import textwrap
@@ -78,7 +80,8 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         shutil.copytree(repo_root / PLUGIN_ROOT, root / PLUGIN_ROOT, dirs_exist_ok=True)
         server = root / "tools/agent_equipment_config_mcp_server.py"
         server.parent.mkdir(parents=True, exist_ok=True)
-        server.write_text("# server\n", encoding="utf-8")
+        server.write_bytes((repo_root / "tools/agent_equipment_config_mcp_server.py").read_bytes())
+        (root / "tools/agent_equipment_config.py").write_bytes((repo_root / "tools/agent_equipment_config.py").read_bytes())
         inventory = root / "inventory/equipment.toml"
         inventory.parent.mkdir(parents=True, exist_ok=True)
         inventory.write_text(
@@ -134,6 +137,83 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             ),
             results,
         )
+
+    def test_validator_rejects_stale_or_symlinked_runtime_snapshot(self):
+        runtime = PLUGIN_ROOT / "mcp/runtime/tools"
+        for name in ["__init__.py", "agent_equipment_config.py", "agent_equipment_config_mcp_server.py"]:
+            for change in ["modified", "symlink"]:
+                with self.subTest(name=name, change=change), tempfile.TemporaryDirectory() as tmpdir:
+                    root = Path(tmpdir)
+                    self.write_valid_plugin_fixture(root)
+                    target = root / runtime / name
+                    if change == "modified":
+                        target.write_bytes(target.read_bytes() + b"# unapproved change\n")
+                    else:
+                        content = target.read_bytes()
+                        target.unlink()
+                        sibling = root / "alternate.py"
+                        sibling.write_bytes(content)
+                        target.symlink_to(sibling)
+                    results = validator.validate_agent_equipment_config_codex_plugin(root)
+                    self.assertTrue(any(not result.ok and result.path == (runtime / name).as_posix()
+                                        for result in results), results)
+
+    def test_validator_rejects_launcher_isolation_removal_and_checkout_execution(self):
+        for before, after in [
+            ('"-I", "-S", ', ''),
+            ('Path(__file__).resolve().parent / BUNDLED_SERVER', 'root / REPO_SERVER'),
+        ]:
+            with self.subTest(after=after), tempfile.TemporaryDirectory() as tmpdir:
+                root = Path(tmpdir)
+                self.write_valid_plugin_fixture(root)
+                launcher = root / LAUNCHER_PATH
+                launcher.write_text(launcher.read_text(encoding="utf-8").replace(before, after), encoding="utf-8")
+                results = validator.validate_agent_equipment_config_codex_plugin(root)
+                self.assertTrue(any(not result.ok and result.name.endswith("launcher:content") for result in results))
+
+    def test_snapshot_checks_reject_unexpected_runtime_entries(self):
+        repo = Path(__file__).resolve().parents[1]
+        runtime = PLUGIN_ROOT / "mcp/runtime"
+        for relative, kind in [
+            ("argparse.py", "file"), ("argparse", "directory"),
+            ("tools/extra.py", "file"), ("tools/extra", "directory"),
+            ("__pycache__", "file"), ("tools/__pycache__", "symlink"),
+        ]:
+            with self.subTest(relative=relative, kind=kind), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.write_valid_plugin_fixture(root)
+                script = root / "tools/build_agent_equipment_config_plugin.py"
+                shutil.copyfile(repo / "tools/build_agent_equipment_config_plugin.py", script)
+                extra = root / runtime / relative
+                if kind == "directory":
+                    extra.mkdir()
+                elif kind == "symlink":
+                    extra.symlink_to(root / "tools", target_is_directory=True)
+                else:
+                    extra.write_text("# unexpected module\n", encoding="utf-8")
+                results = validator.validate_agent_equipment_config_codex_plugin(root)
+                self.assertTrue(any(not r.ok and r.name.endswith("runtime:unexpected") for r in results), results)
+                for args in [[], ["--check"]]:
+                    result = subprocess.run([sys.executable, "-I", "-S", str(script), *args],
+                                            text=True, capture_output=True, timeout=10)
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn(relative, result.stdout)
+                self.assertTrue(extra.exists())
+
+    def test_snapshot_checks_allow_normal_runtime_bytecode_directories(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.write_valid_plugin_fixture(root)
+            for directory in [root / PLUGIN_ROOT / "mcp/runtime", root / PLUGIN_ROOT / "mcp/runtime/tools"]:
+                cache = directory / "__pycache__"
+                cache.mkdir()
+                (cache / "cached.cpython-314.pyc").write_bytes(b"cache")
+            script = root / "tools/build_agent_equipment_config_plugin.py"
+            shutil.copyfile(Path(__file__).resolve().parents[1] / "tools/build_agent_equipment_config_plugin.py", script)
+            self.assertTrue(all(r.ok for r in validator.validate_agent_equipment_config_codex_plugin(root)))
+            result = subprocess.run([sys.executable, "-I", "-S", str(script), "--check"],
+                                    text=True, capture_output=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_validator_rejects_stale_manifest_metadata_shape(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -293,7 +373,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -463,7 +543,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -513,7 +593,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -556,7 +636,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+            "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, wrong_marker_results)
@@ -584,7 +664,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -605,8 +685,8 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             launcher_text = launcher_path.read_text(encoding="utf-8")
             launcher_path.write_text(
                 launcher_text.replace(
-                    "[python_executable, str(server), *_argv]",
-                    "[python_executable, str(server)]",
+                    '[python_executable, "-I", "-S", str(server), *_argv]',
+                    '[python_executable, "-I", "-S", str(server)]',
                 ),
                 encoding="utf-8",
             )
@@ -617,7 +697,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -840,7 +920,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -854,8 +934,8 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             launcher_text = launcher_path.read_text(encoding="utf-8")
             launcher_path.write_text(
                 launcher_text.replace(
-                    "        return 2\n\n    server = root / REPO_SERVER\n",
-                    "        return 2\n        return 0\n\n    server = root / REPO_SERVER\n",
+                    "        return 2\n\n    server = Path(__file__).resolve().parent / BUNDLED_SERVER\n",
+                    "        return 2\n        return 0\n\n    server = Path(__file__).resolve().parent / BUNDLED_SERVER\n",
                     1,
                 ),
                 encoding="utf-8",
@@ -876,7 +956,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+            "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, root_guard_results)
@@ -899,7 +979,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -931,7 +1011,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -954,7 +1034,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -980,7 +1060,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1077,7 +1157,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1110,7 +1190,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
         expected = CheckResult(
             "agent_equipment_config_codex_plugin:launcher:content",
             False,
-            "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+            "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
             "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
         )
         self.assertIn(expected, relative_import_results)
@@ -1139,7 +1219,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                     server = root / REPO_SERVER
                     os.chdir(root)
                     python_executable = str(Path(sys.executable).resolve())
-                    os.execve(python_executable, [python_executable, str(server)], server_environment())
+                    os.execve(python_executable, [python_executable, "-I", "-S", str(server)], server_environment())
                 """,
             )
 
@@ -1149,7 +1229,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1184,7 +1264,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                     os.chdir(root)
                     python_executable = str(Path(sys.executable).resolve())
                     try:
-                        os.execve(python_executable, [python_executable, str(server)], server_environment())
+                        os.execve(python_executable, [python_executable, "-I", "-S", str(server)], server_environment())
                     except OSError:
                         return 127
                 """,
@@ -1196,7 +1276,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1228,7 +1308,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                     os.chdir(root)
                     python_executable = str(Path(sys.executable).resolve())
                     try:
-                        os.execve(python_executable, [python_executable, str(server)], server_environment())
+                        os.execve(python_executable, [python_executable, "-I", "-S", str(server)], server_environment())
                     except OSError:
                         return 127
                 """,
@@ -1240,7 +1320,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             CheckResult(
                 "agent_equipment_config_codex_plugin:launcher:content",
                 False,
-                "launcher must resolve the Agentworks checkout and exec the standalone MCP server",
+                "launcher must select the Agentworks data checkout and exec the isolated bundled MCP server",
                 "plugins/agent-equipment-config/mcp/agent_equipment_config_launcher.py",
             ),
             results,
@@ -1286,6 +1366,86 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
 
 
 class AgentEquipmentConfigLauncherTests(unittest.TestCase):
+    def test_missing_bundled_runtime_never_falls_back_to_checkout_code(self):
+        for missing in ["__init__.py", "agent_equipment_config.py", "agent_equipment_config_mcp_server.py"]:
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as tmpdir:
+                root = Path(tmpdir)
+                write_launcher_repo_markers(root)
+                sentinel = root / "checkout-code-ran"
+                (root / "tools/agent_equipment_config_mcp_server.py").write_text(
+                    f"from pathlib import Path\nPath({str(sentinel)!r}).touch()\n", encoding="utf-8")
+                installed = root / "installed plugin"
+                shutil.copytree(Path(__file__).resolve().parents[1] / PLUGIN_ROOT, installed)
+                (installed / "mcp/runtime/tools" / missing).unlink()
+                result = subprocess.run(
+                    [sys.executable, "-I", "-S", str(installed / "mcp/agent_equipment_config_launcher.py")],
+                    cwd=root, env={"AGENTWORKS_ROOT": str(root)}, input="", text=True,
+                    capture_output=True, timeout=10,
+                )
+                self.assertNotEqual(result.returncode, 0, result.stderr)
+                self.assertFalse(sentinel.exists())
+                self.assertEqual(result.stdout, "")
+
+    def test_installed_plugin_ignores_mutable_checkout_code(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        messages = [
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+             "params": {"protocolVersion": "2025-11-25"}},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
+            {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
+             "params": {"name": "config.resolve", "arguments": {"layer_paths": ["local.toml"], "fragments": ["issue_tracker_ops"],
+                                                                    "requested_behavior": "advisory"}}},
+        ]
+        with tempfile.TemporaryDirectory() as tmpdir:
+            base = Path(tmpdir)
+            installed = base / "installed plugin"
+            shutil.copytree(repo_root / PLUGIN_ROOT, installed)
+            root = base / "checkout"
+            root.mkdir()
+            write_launcher_repo_markers(root)
+            (root / "local.toml").write_text(
+                '[agent_equipment_config.layer]\nname = "repository policy"\ncategory = "committed durable config"\n'
+                '[issue_tracker_ops]\nmode = "dry-run"\nexternal_disclosure = "blocked"\n', encoding="utf-8")
+            sentinel = base / "untrusted-code-ran"
+            poison = f"from pathlib import Path\nPath({str(sentinel)!r}).write_text('executed')\n"
+            # These bytes change after installation, including the transitive import.
+            for path in ["tools/agent_equipment_config_mcp_server.py", "tools/agent_equipment_config.py",
+                         "tools/__init__.py", "json.py", "sitecustomize.py"]:
+                (root / path).write_text(poison, encoding="utf-8")
+            nested = root / "work/subdir"
+            nested.mkdir(parents=True)
+            alias = base / "checkout-alias"
+            alias.symlink_to(root, target_is_directory=True)
+            config = json.loads((installed / ".mcp.json").read_text(encoding="utf-8"))["agent-equipment-config"]
+            args = [str(installed / arg.removeprefix("./")) if arg.startswith("./") else arg
+                    for arg in config["args"]]
+            for env_root, cwd, python_path in [(str(root), installed, None), (str(root), installed, str(root)),
+                                               (None, nested, str(root)), (str(alias), installed, str(root))]:
+                with self.subTest(env_root=env_root, cwd=cwd):
+                    sentinel.unlink(missing_ok=True)
+                    env = dict(os.environ)
+                    env.pop("PYTHONPATH", None)
+                    if python_path is not None:
+                        env["PYTHONPATH"] = python_path
+                    env.pop("AGENTWORKS_ROOT", None)
+                    if env_root is not None:
+                        env["AGENTWORKS_ROOT"] = env_root
+                    result = subprocess.run(
+                        [sys.executable, *args], cwd=cwd, env=env,
+                        input="".join(json.dumps(message) + "\n" for message in messages),
+                        text=True, capture_output=True, timeout=10,
+                    )
+                    self.assertFalse(sentinel.exists(), result.stderr)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    responses = [json.loads(line) for line in result.stdout.splitlines()]
+                    self.assertEqual(len(responses), 3, result.stderr)
+                    self.assertEqual(responses[0]["result"]["serverInfo"]["name"], "agent-equipment-config")
+                    self.assertIn("config.resolve", [tool["name"] for tool in responses[1]["result"]["tools"]])
+                    self.assertFalse(responses[2]["result"].get("isError", False), responses[2])
+                    self.assertEqual(responses[2]["result"]["structuredContent"]["result"]["safety_status"], "usable")
+                    self.assertIn("local.toml", json.dumps(responses[2]))
+                    self.assertEqual(result.stderr, "")
+
     def test_launcher_server_environment_allows_only_agentworks_root(self):
         launcher = load_module(
             Path(__file__).resolve().parents[1] / LAUNCHER_PATH,
@@ -1352,7 +1512,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         python_executable = str(Path(launcher.sys.executable).resolve())
         self.assertEqual(python_executable, exec_call["command"])
         self.assertEqual(
-            [python_executable, str(root.resolve() / "tools/agent_equipment_config_mcp_server.py"), "--stdio"],
+            [python_executable, "-I", "-S", str(Path(launcher.__file__).parent / launcher.BUNDLED_SERVER), "--stdio"],
             exec_call["args"],
         )
         self.assertEqual({}, exec_call["env"])
@@ -1429,7 +1589,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         python_executable = str(Path(launcher.sys.executable).resolve())
         self.assertEqual(python_executable, exec_call["command"])
         self.assertEqual(
-            [python_executable, str(root.resolve() / "tools/agent_equipment_config_mcp_server.py"), "--stdio"],
+            [python_executable, "-I", "-S", str(Path(launcher.__file__).parent / launcher.BUNDLED_SERVER), "--stdio"],
             exec_call["args"],
         )
         self.assertEqual({"AGENTWORKS_ROOT": str(root)}, exec_call["env"])
@@ -1438,9 +1598,11 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             write_launcher_repo_markers(root)
-            server = root / "tools/agent_equipment_config_mcp_server.py"
+            installed = root / "installed"
+            shutil.copytree(Path(__file__).resolve().parents[1] / PLUGIN_ROOT, installed)
+            server = installed / "mcp/runtime/tools/agent_equipment_config_mcp_server.py"
             launcher = load_module(
-                Path(__file__).resolve().parents[1] / LAUNCHER_PATH,
+                installed / "mcp/agent_equipment_config_launcher.py",
                 "config_launcher_recheck",
             )
             stderr = io.StringIO()
@@ -1458,7 +1620,7 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
         self.assertEqual(2, exit_code)
         chdir.assert_not_called()
         execve.assert_not_called()
-        self.assertIn("Agentworks checkout", stderr.getvalue())
+        self.assertIn("installed plugin", stderr.getvalue())
 
     def test_launcher_reports_exec_failure(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1484,6 +1646,47 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
 
 
 class AgentEquipmentConfigGuardHookTests(unittest.TestCase):
+    def test_installed_hook_ignores_checkout_python_startup_code(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        cases = [
+            ({"tool_name": "mcp__agent_equipment_config__config.apply", "tool_input": {}}, True),
+            ({"tool_name": "mcp__agent_equipment_config__config.apply",
+              "tool_input": {"apply_authority": "operator"}}, False),
+            ({"tool_name": "mcp__agent_equipment_config__migrate.config_apply", "tool_input": {}}, True),
+            ("{", True),
+            ("[]", True),
+        ]
+        with tempfile.TemporaryDirectory() as tmpdir:
+            base = Path(tmpdir)
+            installed = base / "installed plugin"
+            shutil.copytree(repo_root / PLUGIN_ROOT, installed)
+            checkout = base / "checkout"
+            checkout.mkdir()
+            sentinel = base / "checkout-startup-ran"
+            (checkout / "sitecustomize.py").write_text(
+                f"from pathlib import Path\nPath({str(sentinel)!r}).touch()\n", encoding="utf-8",
+            )
+            hooks = json.loads((installed / "hooks/hooks.json").read_text(encoding="utf-8"))
+            command = hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+            for payload, expects_denial in cases:
+                with self.subTest(payload=payload):
+                    encoded = json.dumps(payload) if isinstance(payload, dict) else payload
+                    result = subprocess.run(
+                        command, shell=True, cwd=checkout,
+                        env={"PATH": str(Path(sys.executable).parent) + os.pathsep + os.defpath,
+                             "PLUGIN_ROOT": str(installed), "PYTHONPATH": str(checkout)},
+                        input=encoded, text=True, capture_output=True, timeout=10,
+                    )
+                    self.assertFalse(sentinel.exists(), result.stderr)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(result.stderr, "")
+                    if expects_denial:
+                        self.assertEqual(
+                            json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "deny",
+                        )
+                    else:
+                        self.assertEqual(result.stdout, "")
+
     def load_hook(self):
         return load_module(Path(__file__).resolve().parents[1] / HOOK_PATH, "config_write_guard")
 
