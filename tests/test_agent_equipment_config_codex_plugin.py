@@ -2,7 +2,9 @@ import ast
 import importlib.util
 import io
 import json
+import shlex
 import shutil
+import subprocess
 import sys
 import tempfile
 import textwrap
@@ -462,7 +464,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             results,
         )
 
-    def test_validator_rejects_guard_output_changes_before_execution_and_uses_safe_python_path(self):
+    def test_validator_rejects_guard_output_changes_before_execution(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
             self.write_valid_plugin_fixture(root)
@@ -486,19 +488,6 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             )
             large_output_results = validator.validate_agent_equipment_config_codex_plugin(root)
 
-            guard_path.write_text(
-                guard_path.read_text(encoding="utf-8").replace(
-                    "    print('x' * 9000)\n",
-                    "",
-                ),
-                encoding="utf-8",
-            )
-            (root / PLUGIN_ROOT / "hooks/json.py").write_text(
-                "raise RuntimeError('stdlib shadow executed')\n",
-                encoding="utf-8",
-            )
-            safe_path_results = validator.validate_agent_equipment_config_codex_plugin(root)
-
         self.assertIn(
             CheckResult(
                 "agent_equipment_config_codex_plugin:hooks:guard:content",
@@ -517,15 +506,97 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
             ),
             large_output_results,
         )
-        self.assertIn(
-            CheckResult(
-                "agent_equipment_config_codex_plugin:contract",
-                True,
-                "valid Codex plugin bundle",
-                "plugins/agent-equipment-config",
-            ),
-            safe_path_results,
-        )
+
+    def test_shipped_launcher_and_guard_ignore_plugin_shadow_modules(self):
+        with tempfile.TemporaryDirectory(prefix="config plugin ") as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            plugin_root = root / PLUGIN_ROOT
+            for directory in ("mcp", "hooks"):
+                (plugin_root / directory / "json.py").write_text(
+                    "raise RuntimeError('stdlib shadow executed')\n", encoding="utf-8"
+                )
+            config = json.loads((plugin_root / ".mcp.json").read_text(encoding="utf-8"))[
+                "agent-equipment-config"
+            ]
+            self.assertEqual(config["command"], "python3.14")
+            launcher = subprocess.run(
+                [sys.executable, *config["args"]],
+                cwd=plugin_root,
+                env={"AGENTWORKS_ROOT": str(root)},
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            self.assertEqual(launcher.returncode, 0, launcher.stderr)
+            self.assertEqual(launcher.stdout, "")
+            self.assertEqual(launcher.stderr, "")
+
+            hooks = json.loads((plugin_root / "hooks/hooks.json").read_text(encoding="utf-8"))
+            command = hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+            args = shlex.split(command.replace("${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}", str(plugin_root)))
+            self.assertEqual(args[0], "python3.14")
+            payload = {
+                "hook_event_name": "PreToolUse",
+                "tool_name": "mcp__agent_equipment_config__config.apply",
+                "tool_input": {},
+            }
+            for authority in (None, "operator"):
+                with self.subTest(authority=authority):
+                    payload["tool_input"] = {} if authority is None else {"apply_authority": authority}
+                    guard = subprocess.run(
+                        [sys.executable, *args[1:]],
+                        input=json.dumps(payload),
+                        cwd=plugin_root,
+                        env={},
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
+                    self.assertEqual(guard.returncode, 0, guard.stderr)
+                    self.assertEqual(guard.stderr, "")
+                    if authority is None:
+                        decision = json.loads(guard.stdout)["hookSpecificOutput"]["permissionDecision"]
+                        self.assertEqual(decision, "deny")
+                    else:
+                        self.assertEqual(guard.stdout, "")
+
+    def test_validator_rejects_unreviewed_runtime_files_and_packages(self):
+        for relative in ("mcp/json.py", "hooks/json.py", "mcp/json/__init__.py"):
+            with self.subTest(path=relative), tempfile.TemporaryDirectory() as tmpdir:
+                root = Path(tmpdir)
+                self.write_valid_plugin_fixture(root)
+                self.write_text(root, PLUGIN_ROOT / relative, "# unreviewed runtime entry\n")
+                results = validator.validate_agent_equipment_config_codex_plugin(root)
+                directory = relative.split("/", 1)[0]
+                self.assertIn(
+                    CheckResult(
+                        f"agent_equipment_config_codex_plugin:runtime_files:{directory}",
+                        False,
+                        "runtime directory must contain only reviewed files",
+                        str(PLUGIN_ROOT / directory),
+                    ),
+                    results,
+                )
+
+    def test_validator_requires_safe_path_flag_for_shipped_launcher(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self.write_valid_plugin_fixture(root)
+            path = PLUGIN_ROOT / ".mcp.json"
+            config = json.loads((root / path).read_text(encoding="utf-8"))
+            config["agent-equipment-config"]["args"].remove("-P")
+            self.write_json(root, path, config)
+            results = validator.validate_agent_equipment_config_codex_plugin(root)
+            self.assertIn(
+                CheckResult(
+                    "agent_equipment_config_codex_plugin:mcp:agent-equipment-config:args",
+                    False,
+                    "args must launch -P ./mcp/agent_equipment_config_launcher.py",
+                    str(path),
+                ),
+                results,
+            )
 
     def test_guard_probe_preserves_output_and_error_checks(self):
         cases = (

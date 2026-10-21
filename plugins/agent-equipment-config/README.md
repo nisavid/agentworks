@@ -20,7 +20,8 @@ server map.
 ## MCP Checkout Binding
 
 The plugin MCP entry runs from the installed plugin root and launches
-`./mcp/agent_equipment_config_launcher.py`. The launcher starts the standalone
+`./mcp/agent_equipment_config_launcher.py` with Python's `-P` flag to avoid
+importing modules from the plugin directory. The launcher starts the standalone
 server only when `AGENTWORKS_ROOT` points at a checkout, or when the process
 cwd is inside a checkout, containing:
 
@@ -38,8 +39,8 @@ against the repository, not the installed plugin cache.
 ## Hook Trust
 
 `hooks/hooks.json` registers a `PreToolUse` command hook through
-`python3.14 -P "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"`. The isolated
-startup flag avoids plugin-cache import shadowing, and the quoted path is safe
+`python3.14 -P "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"`. The `-P`
+flag avoids plugin-cache import shadowing, and the quoted path is safe
 for plugin cache paths containing whitespace. The hook ignores unrelated MCP
 tools and denies Agent Equipment Config local-write MCP calls unless
 `apply_authority = "operator"` is present in the tool input.
