@@ -33,9 +33,16 @@ current Python interpreter.
   no trusted checkout is found.
 - The guard hook no-ops unrelated tools and denies Config local-write MCP calls
   unless the tool input includes `apply_authority = "operator"`.
-- The validator statically restricts launcher and hook imports, functions,
-  entrypoints, constants, decorators, command paths, MCP config, and hook shape
-  before running bounded behavior probes.
+- The validator requires the complete launcher and guard ASTs to match reviewed
+  programs owned by the trusted validator. Comments and formatting may differ;
+  executable statements, expressions, bindings, signatures, and annotations may
+  not. Candidate source is parsed from bytes so Python encoding declarations
+  cannot change the program after validation. Semantic plugin changes require
+  reviewing and updating those programs.
+- Behavior probes execute only those validator-owned programs with isolated
+  Python (`-I -c`), an empty environment, and time limits. Guard output remains
+  bounded. They never import or execute Python from the checkout under review,
+  including after a candidate file changes between validation and probing.
 - Codex hook trust and MCP approval prompts remain host policy surfaces.
 
 ## Review Disposition
@@ -46,10 +53,21 @@ decorators that run during import, stock inventory could omit the plugin
 component paths while the plugin files still existed, and launcher failure
 branches could pass with nonterminal return or misplaced module-entrypoint
 shapes. The validator now requires the `_argv` assignment, rejects decorators on
-reviewed launcher and guard functions before behavior probes import plugin code,
+reviewed launcher and guard functions before behavior probes,
 checks inventory component projection, accepts only terminal failure returns in
 the reviewed launcher guards, and requires the module entrypoint to be final
 after `launch()`.
+
+Subsequent current-code security revalidation found that partial AST allowlists
+still admitted indirect calls, extra assignment targets, and import-time
+defaults. Complete AST comparison replaces that execution boundary; probes run
+trusted canonical programs rather than reopening candidate files. Regression
+coverage rejects unreviewed code before probing and replaces candidate files at
+the probe boundary to verify that their contents cannot execute. Positive
+controls retain the current plugin contract, comment and formatting flexibility,
+root discovery with `start_dir` omitted, environment filtering, and the guard's
+allow/deny decisions. This control assumes the validator itself comes from a
+trusted checkout, as described in the repository threat model.
 
 A fresh isolated Codex prototype using `CODEX_HOME` under `/tmp` installed
 `agent-equipment-config@agent-armory` from `.agents/plugins/marketplace.json`

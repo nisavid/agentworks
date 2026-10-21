@@ -7631,204 +7631,234 @@ def ast_find_agentworks_root_contract(function: ast.FunctionDef) -> bool:
     )
 
 
-def ast_launcher_module_contract(tree: ast.Module) -> bool:
-    allowed_functions = {
-        "has_agentworks_marketplace",
-        "candidate_is_agentworks_root",
-        "find_agentworks_root",
-        "server_environment",
-        "launch",
-    }
-    seen_functions: set[str] = set()
-    launcher_entrypoints = 0
-    for node in tree.body:
-        if ast_launch_entrypoint(node):
-            launcher_entrypoints += 1
-            continue
-        if (
-            ast_future_annotations(node)
-            or ast_import_exact(node, "json")
-            or ast_import_exact(node, "os")
-            or ast_import_exact(node, "sys")
-            or ast_from_import_exact(node, "pathlib", "Path")
-        ):
-            continue
-        if isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name)
-            and target.id in {
-                "REPO_SERVER",
-                "REPO_MARKER",
-                "MARKETPLACE_MARKER",
-                "SERVER_ENV_VAR_NAMES",
-            }
-            for target in node.targets
-        ):
-            continue
-        if (
-            isinstance(node, ast.FunctionDef)
-            and node.name in allowed_functions
-            and ast_function_has_no_decorators(node)
-        ):
-            seen_functions.add(node.name)
-            continue
-        return False
-    if launcher_entrypoints != 1 or seen_functions != allowed_functions:
-        return False
-    if not ast_entrypoint_is_final_after_function(
-        tree,
-        function_name="launch",
-        entrypoint_predicate=ast_launch_entrypoint,
-    ):
-        return False
-    if not ast_constant_tuple_assignment(
-        tree,
-        target="SERVER_ENV_VAR_NAMES",
-        values=("AGENTWORKS_ROOT",),
-    ):
-        return False
-    server_environment = ast_function(tree, "server_environment")
-    if server_environment is None or not ast_server_environment_contract(server_environment):
-        return False
-    scoped_calls = {
-        "has_agentworks_marketplace": (
-            {"any", "isinstance", "json.loads"},
-            {"get", "read_text"},
-        ),
-        "candidate_is_agentworks_root": (
-            {"has_agentworks_marketplace"},
-            {"is_file"},
-        ),
-        "find_agentworks_root": (
-            {"Path", "Path.cwd", "candidate_is_agentworks_root"},
-            {"expanduser", "resolve"},
-        ),
-        "server_environment": (
-            {"os.environ.get"},
-            set(),
-        ),
-        "launch": (
-            {
-                "Path",
-                "find_agentworks_root",
-                "os.chdir",
-                "os.environ.get",
-                "os.execve",
-                "print",
-                "server_environment",
-                "str",
-            },
-            {"is_file", "resolve"},
-        ),
-    }
-    return all(
-        (function := ast_function(tree, function_name)) is not None
-        and ast_function_has_no_decorators(function)
-        and ast_calls_are_allowlisted(
-            function,
-            allowed_calls=allowed_calls,
-            allowed_method_names=allowed_method_names,
-        )
-        for function_name, (allowed_calls, allowed_method_names) in scoped_calls.items()
-    )
+# These validator-owned programs define the complete reviewed executable grammar.
+# Keep them independent of the checkout selected with --root. Semantic changes to
+# either plugin module require reviewing and updating its canonical program here.
+# Comments, whitespace, and equivalent literal spellings are not executable AST.
+REVIEWED_LAUNCHER_SOURCE = r'''
+#!/usr/bin/env python3.14
+from __future__ import annotations
 
-
-def ast_guard_module_contract(tree: ast.Module) -> bool:
-    allowed_functions = {
-        "normalized_tool_name",
-        "is_config_local_write_tool",
-        "tool_input",
-        "deny_decision",
-        "evaluate",
-        "main",
-    }
-    seen_functions: set[str] = set()
-    main_entrypoints = 0
-    for node in tree.body:
-        if ast_system_exit_entrypoint(node, "main"):
-            main_entrypoints += 1
-            continue
-        if (
-            ast_future_annotations(node)
-            or ast_import_exact(node, "json")
-            or ast_import_exact(node, "re")
-            or ast_import_exact(node, "sys")
-            or ast_from_import_exact(node, "typing", "Any")
-        ):
-            continue
-        if isinstance(node, ast.Assign) and any(
-            isinstance(target, ast.Name) and target.id in {"CONFIG_SERVER_NAME", "WRITE_TOOLS"}
-            for target in node.targets
-        ):
-            continue
-        if (
-            isinstance(node, ast.FunctionDef)
-            and node.name in allowed_functions
-            and ast_function_has_no_decorators(node)
-        ):
-            seen_functions.add(node.name)
-            continue
-        return False
-    if main_entrypoints != 1 or seen_functions != allowed_functions:
-        return False
-    if ast_contains_loop(tree):
-        return False
-    scoped_calls = {
-        "normalized_tool_name": (
-            {"re.sub"},
-            {"lower", "strip"},
-        ),
-        "is_config_local_write_tool": (
-            {"len", "normalized_tool_name"},
-            {"split"},
-        ),
-        "tool_input": (
-            {"isinstance"},
-            {"get"},
-        ),
-        "deny_decision": (
-            set(),
-            set(),
-        ),
-        "evaluate": (
-            {"deny_decision", "is_config_local_write_tool", "isinstance", "tool_input"},
-            {"get"},
-        ),
-        "main": (
-            {"deny_decision", "evaluate", "isinstance", "json.dumps", "json.load", "print"},
-            set(),
-        ),
-    }
-    return (
-        ast_constant_assignment(tree, target="CONFIG_SERVER_NAME", value="agent_equipment_config")
-        and ast_constant_set_assignment(tree, target="WRITE_TOOLS", values={"config_apply", "migrate_config_apply"})
-        and all(
-            (function := ast_function(tree, function_name)) is not None
-            and ast_function_has_no_decorators(function)
-            and ast_calls_are_allowlisted(
-                function,
-                allowed_calls=allowed_calls,
-                allowed_method_names=allowed_method_names,
-            )
-            for function_name, (allowed_calls, allowed_method_names) in scoped_calls.items()
-        )
-    )
-
-
-def launcher_discovery_probe_result(root: Path, launcher_path: Path) -> CheckResult | None:
-    script = """
-import importlib.util
 import json
+import os
 import sys
 from pathlib import Path
 
-launcher_path = Path(sys.argv[1])
+
+REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
+REPO_MARKER = Path("inventory/equipment.toml")
+MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
+SERVER_ENV_VAR_NAMES = ("AGENTWORKS_ROOT",)
+
+
+def has_agentworks_marketplace(candidate: Path) -> bool:
+    try:
+        data = json.loads((candidate / MARKETPLACE_MARKER).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return False
+    if not isinstance(data, dict) or data.get("name") != "agentworks":
+        return False
+    plugins = data.get("plugins")
+    if not isinstance(plugins, list):
+        return False
+    return any(
+        isinstance(plugin, dict)
+        and plugin.get("name") == "agent-equipment-config"
+        and isinstance(plugin.get("source"), dict)
+        and plugin["source"].get("source") == "local"
+        and plugin["source"].get("path") == "./plugins/agent-equipment-config"
+        for plugin in plugins
+    )
+
+
+def candidate_is_agentworks_root(candidate: Path) -> bool:
+    return (
+        (candidate / REPO_SERVER).is_file()
+        and (candidate / REPO_MARKER).is_file()
+        and has_agentworks_marketplace(candidate)
+    )
+
+
+def find_agentworks_root(*, env_root: str | None = None, start_dir: Path | None = None) -> Path | None:
+    if env_root:
+        env_candidate = Path(env_root).expanduser()
+        if candidate_is_agentworks_root(env_candidate):
+            return env_candidate.resolve()
+    current = (start_dir if start_dir is not None else Path.cwd()).expanduser().resolve()
+    if candidate_is_agentworks_root(current):
+        return current
+    for candidate in current.parents:
+        if candidate_is_agentworks_root(candidate):
+            return candidate.resolve()
+    return None
+
+
+def server_environment() -> dict[str, str]:
+    return {
+        name: value
+        for name in SERVER_ENV_VAR_NAMES
+        if (value := os.environ.get(name)) is not None
+    }
+
+
+def launch(argv: list[str] | None = None) -> int:
+    _argv = argv if argv is not None else sys.argv[1:]
+    root = find_agentworks_root(
+        env_root=os.environ.get("AGENTWORKS_ROOT"),
+    )
+    if root is None:
+        print(
+            "Agent Equipment Config MCP launcher could not find an Agentworks "
+            "checkout. Set AGENTWORKS_ROOT to the checkout containing "
+            "tools/agent_equipment_config_mcp_server.py.",
+            file=sys.stderr,
+        )
+        return 2
+
+    server = root / REPO_SERVER
+    if not server.is_file():
+        print(
+            "Agent Equipment Config MCP launcher could not find "
+            f"{REPO_SERVER} in the resolved Agentworks checkout.",
+            file=sys.stderr,
+        )
+        return 2
+
+    os.chdir(root)
+    python_executable = str(Path(sys.executable).resolve())
+    try:
+        os.execve(
+            python_executable,
+            [python_executable, str(server), *_argv],
+            server_environment(),
+        )
+    except OSError as error:
+        print(
+            f"Agent Equipment Config MCP launcher could not execute {python_executable}: {error}",
+            file=sys.stderr,
+        )
+        return 127
+    return 127
+
+
+if __name__ == "__main__":
+    raise SystemExit(launch())
+'''
+
+REVIEWED_GUARD_SOURCE = r'''
+#!/usr/bin/env python3.14
+from __future__ import annotations
+
+import json
+import re
+import sys
+from typing import Any
+
+
+CONFIG_SERVER_NAME = "agent_equipment_config"
+WRITE_TOOLS = {"config_apply", "migrate_config_apply"}
+
+
+def normalized_tool_name(value: str) -> str:
+    normalized = re.sub(r"[^0-9A-Za-z]+", "_", value).strip("_").lower()
+    return re.sub(r"_+", "_", normalized)
+
+
+def is_config_local_write_tool(tool_name: str) -> bool:
+    parts = tool_name.split("__", 2)
+    if len(parts) != 3 or parts[0] != "mcp":
+        return False
+    server, tool = parts[1], parts[2]
+    return normalized_tool_name(server) == CONFIG_SERVER_NAME and normalized_tool_name(tool) in WRITE_TOOLS
+
+
+def tool_input(payload: dict[str, Any]) -> dict[str, Any]:
+    value = payload.get("tool_input")
+    if not isinstance(value, dict):
+        value = payload.get("arguments")
+    if not isinstance(value, dict):
+        value = {}
+    nested_arguments = value.get("arguments")
+    if isinstance(nested_arguments, dict):
+        return nested_arguments
+    return value
+
+
+def deny_decision(
+    reason: str = 'Agent Equipment Config local-write MCP tools require apply_authority = "operator".',
+) -> dict[str, Any]:
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason,
+        }
+    }
+
+
+def evaluate(payload: dict[str, Any]) -> dict[str, Any] | None:
+    if payload.get("hook_event_name") not in {None, "PreToolUse"}:
+        return None
+    tool_name = payload.get("tool_name")
+    if not isinstance(tool_name, str) or not is_config_local_write_tool(tool_name):
+        return None
+    if tool_input(payload).get("apply_authority") == "operator":
+        return None
+    return deny_decision()
+
+
+def main() -> int:
+    try:
+        payload = json.load(sys.stdin)
+    except json.JSONDecodeError:
+        print(
+            json.dumps(
+                deny_decision("Agent Equipment Config guard hook received malformed JSON input."),
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        )
+        return 0
+    if not isinstance(payload, dict):
+        print(
+            json.dumps(
+                deny_decision("Agent Equipment Config guard hook received non-object JSON input."),
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        )
+        return 0
+    decision = evaluate(payload)
+    if decision is not None:
+        print(json.dumps(decision, separators=(",", ":"), sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+'''
+
+
+def ast_launcher_module_contract(tree: ast.Module) -> bool:
+    return ast.dump(tree) == ast.dump(ast.parse(REVIEWED_LAUNCHER_SOURCE))
+
+
+def ast_guard_module_contract(tree: ast.Module) -> bool:
+    return ast.dump(tree) == ast.dump(ast.parse(REVIEWED_GUARD_SOURCE))
+
+
+def launcher_discovery_probe_result(root: Path, launcher_path: Path) -> CheckResult | None:
+    # Never reopen or import the candidate: only this trusted canonical program
+    # may run, even if the checkout changes after its AST was checked.
+    script = "LAUNCHER_SOURCE = " + repr(REVIEWED_LAUNCHER_SOURCE) + "\n" + """
+import json
+import sys
+import types
+from pathlib import Path
+
 root = Path(sys.argv[2]).resolve()
-spec = importlib.util.spec_from_file_location("agent_equipment_config_launcher_probe", launcher_path)
-if spec is None or spec.loader is None:
-    raise RuntimeError(f"cannot import {launcher_path}")
-module = importlib.util.module_from_spec(spec)
-sys.dont_write_bytecode = True
-spec.loader.exec_module(module)
+module = types.ModuleType("agent_equipment_config_launcher_probe")
+exec(compile(LAUNCHER_SOURCE, sys.argv[1], "exec"), module.__dict__)
 plugin_mcp_dir = root / "plugins/agent-equipment-config/mcp"
 module.os.environ.clear()
 server_environment_missing = dict(module.server_environment())
@@ -7849,6 +7879,7 @@ print(
         {
             "env": render(module.find_agentworks_root(env_root=str(root), start_dir=root.parent)),
             "cwd": render(module.find_agentworks_root(env_root=None, start_dir=plugin_mcp_dir)),
+            "default_start": render(module.find_agentworks_root(env_root=None)),
             "fallback": render(
                 module.find_agentworks_root(env_root=str(root / "missing"), start_dir=plugin_mcp_dir)
             ),
@@ -7861,7 +7892,7 @@ print(
 """
     try:
         completed = subprocess.run(
-            [sys.executable, "-P", "-c", script, str(launcher_path), str(root)],
+            [sys.executable, "-I", "-c", script, str(launcher_path), str(root)],
             cwd=root,
             env={},
             stdout=subprocess.PIPE,
@@ -7897,6 +7928,7 @@ print(
     expected_root = str(root.resolve())
     expected = {
         "cwd": expected_root,
+        "default_start": expected_root,
         "env": expected_root,
         "fallback": expected_root,
         "server_environment": {"AGENTWORKS_ROOT": expected_root},
@@ -7927,8 +7959,10 @@ def launcher_behavior_results(root: Path) -> list[CheckResult]:
         ]
 
     try:
-        text = launcher_path.read_text(encoding="utf-8")
-        tree = ast.parse(text, filename=str(launcher_path))
+        # Parse bytes so Python source encoding declarations have the same
+        # meaning here as when the installed launcher is executed.
+        source = launcher_path.read_bytes()
+        tree = ast.parse(source, filename=str(launcher_path))
     except (OSError, UnicodeDecodeError, SyntaxError) as error:
         return [
             CheckResult(
@@ -8080,8 +8114,8 @@ def config_guard_behavior_results(root: Path) -> list[CheckResult]:
     try:
         guard_path = guard_path.resolve(strict=True)
         root_path = root.resolve(strict=True)
-        guard_text = guard_path.read_text(encoding="utf-8")
-        guard_tree = ast.parse(guard_text, filename=str(guard_path))
+        guard_source = guard_path.read_bytes()
+        guard_tree = ast.parse(guard_source, filename=str(guard_path))
     except OSError as error:
         return [
             CheckResult(
@@ -8371,7 +8405,7 @@ def config_guard_behavior_results(root: Path) -> list[CheckResult]:
     for case_name, payload, expects_denial in cases:
         try:
             returncode, stdout_bytes, stderr_bytes, output_exceeded = run_bounded_subprocess(
-                [sys.executable, "-P", str(guard_path)],
+                [sys.executable, "-I", "-c", REVIEWED_GUARD_SOURCE],
                 input_bytes=payload.encode("utf-8"),
                 cwd=root_path,
                 env={},
