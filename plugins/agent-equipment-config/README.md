@@ -53,8 +53,8 @@ editing a checkout does not change an already installed plugin's code.
 ## Hook Trust
 
 `hooks/hooks.json` registers a `PreToolUse` command hook through
-`python3.14 -P "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"`. The isolated
-startup flag avoids plugin-cache import shadowing, and the quoted path is safe
+`python3.14 -I -S "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"`.
+The isolation flags exclude ambient import paths and site startup code. The quoted path is safe
 for plugin cache paths containing whitespace. The hook ignores unrelated MCP
 tools and denies Agent Equipment Config local-write MCP calls unless
 `apply_authority = "operator"` is present in the tool input.

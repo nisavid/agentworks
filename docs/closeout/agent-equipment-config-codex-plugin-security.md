@@ -83,8 +83,8 @@ installation. Security Cloud finding `csf_e454d541d2d1852ee17c28f8`, occurrence
 `occ_e97d6bdcc70fd1253a2798b3`, identified this gap.
 
 The plugin now packages the canonical Config engine and stdio wrapper under
-`mcp/runtime/tools/` with an empty package initializer. Both launcher startup
-and child execution use Python `-I -S`. The selected checkout supplies only the
+`mcp/runtime/tools/` with an empty package initializer. Launcher startup,
+child execution, and the write guard use Python `-I -S`. The selected checkout supplies only the
 data working directory; the executable path resolves from the installed
 launcher. Missing runtime files fail closed without a checkout fallback.
 
@@ -101,6 +101,10 @@ selection, ancestor discovery, symlink aliases, initialization, tool listing,
 and a read-only Config request using a relative layer path. A separate test
 removes each bundled file and verifies refusal without checkout execution.
 Existing approval, write guard, and runtime mutation contracts remain in place.
+
+The installed hook command is also exercised with inherited `PYTHONPATH`
+pointing at checkout startup code. That code must not execute; normal denial,
+operator allowance, migration denial, and malformed-input handling must remain.
 
 Security verification uses the Codex Security finding-fix workflow and a fresh
 read-only bypass/regression review. This narrower action covers the executable

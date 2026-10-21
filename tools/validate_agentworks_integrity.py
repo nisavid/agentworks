@@ -8380,7 +8380,7 @@ def config_guard_behavior_results(root: Path) -> list[CheckResult]:
     for case_name, payload, expects_denial in cases:
         try:
             returncode, stdout_bytes, stderr_bytes, output_exceeded = run_bounded_subprocess(
-                [sys.executable, "-P", str(guard_path)],
+                [sys.executable, "-I", "-S", str(guard_path)],
                 input_bytes=payload.encode("utf-8"),
                 cwd=root_path,
                 env={},
@@ -9064,7 +9064,7 @@ def validate_agent_equipment_config_codex_plugin(root: Path) -> list[CheckResult
                     )
                 )
             expected_command = (
-                'python3.14 -P "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"'
+                'python3.14 -I -S "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py"'
             )
             if hook_record.get("command") != expected_command:
                 results.append(

@@ -1602,6 +1602,47 @@ class AgentEquipmentConfigLauncherTests(unittest.TestCase):
 
 
 class AgentEquipmentConfigGuardHookTests(unittest.TestCase):
+    def test_installed_hook_ignores_checkout_python_startup_code(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        cases = [
+            ({"tool_name": "mcp__agent_equipment_config__config.apply", "tool_input": {}}, True),
+            ({"tool_name": "mcp__agent_equipment_config__config.apply",
+              "tool_input": {"apply_authority": "operator"}}, False),
+            ({"tool_name": "mcp__agent_equipment_config__migrate.config_apply", "tool_input": {}}, True),
+            ("{", True),
+            ("[]", True),
+        ]
+        with tempfile.TemporaryDirectory() as tmpdir:
+            base = Path(tmpdir)
+            installed = base / "installed plugin"
+            shutil.copytree(repo_root / PLUGIN_ROOT, installed)
+            checkout = base / "checkout"
+            checkout.mkdir()
+            sentinel = base / "checkout-startup-ran"
+            (checkout / "sitecustomize.py").write_text(
+                f"from pathlib import Path\nPath({str(sentinel)!r}).touch()\n", encoding="utf-8",
+            )
+            hooks = json.loads((installed / "hooks/hooks.json").read_text(encoding="utf-8"))
+            command = hooks["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+            for payload, expects_denial in cases:
+                with self.subTest(payload=payload):
+                    encoded = json.dumps(payload) if isinstance(payload, dict) else payload
+                    result = subprocess.run(
+                        command, shell=True, cwd=checkout,
+                        env={"PATH": str(Path(sys.executable).parent) + os.pathsep + os.defpath,
+                             "PLUGIN_ROOT": str(installed), "PYTHONPATH": str(checkout)},
+                        input=encoded, text=True, capture_output=True, timeout=10,
+                    )
+                    self.assertFalse(sentinel.exists(), result.stderr)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(result.stderr, "")
+                    if expects_denial:
+                        self.assertEqual(
+                            json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "deny",
+                        )
+                    else:
+                        self.assertEqual(result.stdout, "")
+
     def load_hook(self):
         return load_module(Path(__file__).resolve().parents[1] / HOOK_PATH, "config_write_guard")
 
