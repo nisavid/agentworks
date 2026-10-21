@@ -117,3 +117,9 @@ evidence and are not retained as project truth.
 This correction does not claim installation on an operator machine. Existing
 cached plugins require an update or reinstall. Repository-scan status writeback
 is separate from code verification.
+
+The runtime snapshot also includes the canonical create-layer payload binding
+correction merged in PR #221. Refreshing the bundle preserves that correction
+for installed plugins: reviewed changes and canonical metadata determine the
+document validated and written. Checkout code remains outside the installed
+startup boundary. Canonical and bundled engine bytes must continue to match.

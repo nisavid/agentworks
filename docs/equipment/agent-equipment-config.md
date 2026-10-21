@@ -462,6 +462,12 @@ or create payload, authority evidence, validation result, virtual post-change
 effective Config, audit preview, refusal codes, durability classification, and
 rollback stance.
 
+For `create-layer`, apply reconstructs the complete document from the reviewed
+changes, source identity, source category, and registered schema versions. The
+supplied create payload must match that document, including value types and
+canonical metadata. Extra authority, policy, or other metadata refuses with
+`validation_failed`; only the reconstructed document can be written.
+
 Apply a reviewed plan from a file:
 
 ```bash

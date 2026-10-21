@@ -135,6 +135,15 @@ Apply is all-or-nothing. If any source precondition, authority gate, schema
 check, semantic validation, safety status, ownership boundary, or
 secret-boundary check fails, no writes occur.
 
+For `create-layer`, the reviewed changes determine the new document together
+with the selected source identity, source category, and registered fragment
+versions. Apply reconstructs that document and requires the supplied
+`create_payload` to match it, including value types and the complete canonical
+metadata. Undeclared fields or extra authority, policy, or other metadata fail
+validation. Validation and the atomic write use the reconstructed document.
+When fragments are inferred, declared fragment-version namespace keys select
+registered schemas; version values always come from those schemas.
+
 The first model does not define multi-source partial success. A later
 implementation issue may define multi-source plans only if it preserves
 all-or-nothing semantics or defines an explicit safe-continuation contract.
