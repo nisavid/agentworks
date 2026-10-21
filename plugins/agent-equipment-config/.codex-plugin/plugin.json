@@ -1,6 +1,6 @@
 {
   "name": "agent-equipment-config",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Use Agent Equipment Config from Codex with routing guidance, MCP access, and a local-write guard hook.",
   "author": {
     "name": "Agentworks",
@@ -22,7 +22,7 @@
     "displayName": "Agent Equipment Config",
     "developerName": "Agentworks",
     "shortDescription": "Route Agent Equipment Config work through Agentworks docs, MCP, and guards.",
-    "longDescription": "Agent Equipment Config helps Codex inspect effective Config layers, plan migrations, and apply reviewed local Config writes through the Agentworks runtime. The plugin bundles a routing skill, an AGENTWORKS_ROOT-based MCP launcher, and a PreToolUse guard for local-write MCP tools.",
+    "longDescription": "Agent Equipment Config helps Codex inspect effective Config layers, plan migrations, and apply reviewed local Config writes through the Agentworks runtime. The plugin bundles a routing skill, a packaged Config runtime and an AGENTWORKS_ROOT-based data-checkout launcher, and a PreToolUse guard for local-write MCP tools.",
     "category": "Productivity",
     "websiteURL": "https://github.com/nisavid/agentworks",
     "privacyPolicyURL": "https://github.com/nisavid/agentworks",

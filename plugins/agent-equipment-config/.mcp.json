@@ -3,6 +3,8 @@
     "cwd": ".",
     "command": "python3.14",
     "args": [
+      "-I",
+      "-S",
       "./mcp/agent_equipment_config_launcher.py"
     ],
     "env_vars": [

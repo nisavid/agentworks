@@ -44,11 +44,12 @@ bundle.
 - The Codex plugin manifest points to bundled skills, MCP config, and hooks
   with plugin-root-confined paths.
 - The bundled MCP config uses the local launcher, passes through only
-  `AGENTWORKS_ROOT`, and keeps prompt approval for local-write tools.
+  `AGENTWORKS_ROOT`, uses Python `-I -S`, and keeps prompt approval for local-write tools.
 - The plugin-local launcher prefers a valid `AGENTWORKS_ROOT`, then checks the
   working directory and its parents for the server, inventory, and `agentworks`
-  marketplace markers. Either path must use a trusted checkout. It changes
-  directory to the resolved checkout root and fails closed if no match exists.
+  marketplace markers. It selects the data working directory, then executes
+  only the installed runtime snapshot with `-I -S`. Missing bundles fail closed;
+  modified checkout Python files cannot change the executable server.
 - The `PreToolUse` guard hook ignores unrelated tools and denies Config
   local-write MCP calls missing `apply_authority = "operator"`.
 - The routing skill is thin and links to the runtime guide, integration guide,
@@ -102,7 +103,11 @@ bundle.
     tests.test_agent_equipment_config_mcp_server.AgentEquipmentConfigMcpServerTests.test_server_calls_read_only_config_tool
   ```
 
-The Codex plugin launcher delegates to the existing standalone MCP server.
+The Codex plugin launcher executes a packaged snapshot of the canonical MCP
+server and Config engine. The plugin tests copy an installation before changing
+checkout code, then check initialization, tool listing, relative Config paths,
+ancestor discovery, symlink aliases, and refusal when a bundle file is missing.
+The integrity validator rejects stale snapshots and symlinked bundle paths.
 
 ## Validation Evidence
 

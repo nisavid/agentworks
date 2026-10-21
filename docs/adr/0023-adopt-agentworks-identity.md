@@ -39,8 +39,9 @@ Use Agentworks names for current producers and consumers:
 
 Current source accepts these identifiers without old-name aliases. The
 launcher checks a valid `AGENTWORKS_ROOT`, then the current directory and its
-parents for the trusted checkout shape. It does not use or forward the old
-root environment variable. Obsolete marketplace markers, stock schemas, and
+parents for the data checkout shape. Executable code comes from the installed
+plugin snapshot; checkout discovery grants no code-loading authority. It does
+not use or forward the old root environment variable. Obsolete marketplace markers, stock schemas, and
 authoring-plan schemas are refused.
 
 Update consumer configuration and prepare new plans through the owning

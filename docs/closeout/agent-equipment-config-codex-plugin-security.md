@@ -73,3 +73,43 @@ Validation commands completed for the security-relevant surface:
 - `python3.14 tools/harness_capability_profiles.py validate --json`
 - `python3.14 tools/validate_armory_integrity.py --final-closeout --json`
 - `git diff --check`
+
+
+## Installed runtime provenance correction
+
+The historical review above did not bind the installed plugin to executable
+server bytes. Marker-valid checkout code could replace the server after plugin
+installation. Security Cloud finding `csf_e454d541d2d1852ee17c28f8`, occurrence
+`occ_e97d6bdcc70fd1253a2798b3`, identified this gap.
+
+The plugin now packages the canonical Config engine and stdio wrapper under
+`mcp/runtime/tools/` with an empty package initializer. Both launcher startup
+and child execution use Python `-I -S`. The selected checkout supplies only the
+data working directory; the executable path resolves from the installed
+launcher. Missing runtime files fail closed without a checkout fallback.
+
+`tools/build_agent_equipment_config_plugin.py` refreshes the snapshot, and
+repository integrity validation checks byte parity, initializer content,
+symlink-free bundle paths, installation arguments, and stock component paths.
+This preserves one canonical implementation while binding installed executable
+behavior to the plugin installation. Runtime updates require updating or
+reinstalling the plugin.
+
+The subprocess regression copies the plugin before changing checkout server,
+engine, package initializer, and import-shadow files. It exercises environment
+selection, ancestor discovery, symlink aliases, initialization, tool listing,
+and a read-only Config request using a relative layer path. A separate test
+removes each bundled file and verifies refusal without checkout execution.
+Existing approval, write guard, and runtime mutation contracts remain in place.
+
+Security verification uses the Codex Security finding-fix workflow and a fresh
+read-only bypass/regression review. This narrower action covers the executable
+boundary and its complete stdlib-only import closure; a new repository-wide scan
+would add unrelated scope. The canonical engine and wrapper are copied without
+behavior changes. Portable test and review results belong in the PR and tracking
+issue. Instance-specific logs and temporary reproducer directories are scratch
+evidence and are not retained as project truth.
+
+This correction does not claim installation on an operator machine. Existing
+cached plugins require an update or reinstall. Repository-scan status writeback
+is separate from code verification.
