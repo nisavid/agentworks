@@ -2870,6 +2870,11 @@ def authoring_plan_namespaces(plan: dict[str, Any]) -> list[str]:
         create_payload = payload.get("create_payload", {})
         if isinstance(create_payload, dict):
             namespaces.update(key for key in create_payload if key != "agent_equipment_config")
+            if plan.get("plan_kind") == "create-layer":
+                metadata = create_payload.get("agent_equipment_config", {})
+                versions = metadata.get("fragment_versions", {}) if isinstance(metadata, dict) else {}
+                if isinstance(versions, dict):
+                    namespaces.update(versions)
     return sorted(namespaces)
 
 
@@ -3230,13 +3235,23 @@ def config_apply_create_layer_plan(
     if not isinstance(create_payload, dict):
         schema_errors.append({"path": "change_payload.create_payload", "detail": "required object"})
         create_payload = {}
+    changes, change_errors = authoring_patch_changes_from_plan(plan)
+    schema_errors = [*schema_errors, *change_errors]
     try:
-        planned_layer = layer_from_create_payload(destination, create_payload, len(layers))
+        canonical_payload = create_layer_payload(
+            plan["source_identity"]["name"], plan["source_category"], fragments, changes,
+        )
+        planned_layer = layer_from_create_payload(destination, canonical_payload, len(layers))
+        # JSON comparison distinguishes boolean, integer, and float values that
+        # Python container equality would otherwise consider interchangeable.
+        if json.dumps(create_payload, sort_keys=True) != json.dumps(canonical_payload, sort_keys=True):
+            schema_errors.append({
+                "path": "change_payload.create_payload",
+                "detail": "does not match reviewed changes and canonical layer metadata",
+            })
     except (KeyError, ValueError, TypeError):
         schema_errors.append({"path": "change_payload.create_payload", "detail": "invalid layer metadata"})
         planned_layer = None
-    changes, change_errors = authoring_patch_changes_from_plan(plan)
-    schema_errors = [*schema_errors, *change_errors]
     change_codes = authoring_change_refusal_codes(changes) if changes else []
     authority_evidence = authoring_authority_evidence(layers, plan_authority=apply_authority, target_layer=planned_layer)
     if planned_layer is None:
@@ -3294,7 +3309,7 @@ def config_apply_create_layer_plan(
     return write_authoring_apply_result(
         plan,
         destination,
-        render_toml_document(create_payload),
+        render_toml_document(canonical_payload),
         authority_evidence=authority_evidence,
         validation_result=validation_result,
         virtual_effective=virtual_effective,

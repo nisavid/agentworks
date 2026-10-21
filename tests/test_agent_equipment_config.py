@@ -5,6 +5,7 @@ import tempfile
 import textwrap
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from tools import agent_equipment_config
 
@@ -3875,6 +3876,126 @@ class AgentEquipmentConfigTests(unittest.TestCase):
         self.assertIn('name = "repository policy"', applied_text)
         self.assertIn("[issue_tracker_ops]", applied_text)
         self.assertEqual(payload["audit_records"][-1]["source_artifact_durability"], "durable project evidence")
+
+    def test_create_layer_apply_refuses_payload_not_described_by_reviewed_changes(self):
+        mutations = [
+            (("issue_tracker_ops", "external_disclosure"), "allowed"),
+            (("issue_tracker_ops", "policy_profile_status"), "authoritative"),
+            (("issue_tracker_ops", "tracker"), {"retry_limit": True}),
+            (("agent_equipment_config", "authority"), {"config_authoring_plan": "usable"}),
+            (("agent_equipment_config", "policy"), {"issue_tracker_ops": {"mode": {"non_overridable": True}}}),
+            (("agent_equipment_config", "unknown"), "unreviewed"),
+            (("agent_equipment_config", "layer", "unknown"), "unreviewed"),
+            (("agent_equipment_config", "layer", "trusted"), False),
+            (("agent_equipment_config", "layer", "trusted"), 1),
+            (("agent_equipment_config", "fragment_versions", "issue_tracker_ops"), 3.0),
+            (("agent_equipment_config", "fragment_versions", "unknown"), 1),
+            (("other_equipment",), {"unreviewed": True}),
+        ]
+        for surface in ("cli", "cli_explicit_fragments", "mcp"):
+            for path, value in mutations:
+                with self.subTest(surface=surface, path=path, value=value), tempfile.TemporaryDirectory() as tmpdir:
+                    destination = Path(tmpdir) / "agent-equipment.toml"
+                    plan = agent_equipment_config.create_layer_plan(
+                        [],
+                        [agent_equipment_config.issue_tracker_ops_fragment()],
+                        destination=destination,
+                        layer_name="repository policy",
+                        source_category="committed durable config",
+                        changes=[
+                            {"path": "issue_tracker_ops.mode", "value": "dry-run"},
+                            {"path": "issue_tracker_ops.external_disclosure", "value": "blocked"},
+                            {"path": "issue_tracker_ops.tracker", "value": {"retry_limit": 1}},
+                        ],
+                        plan_authority="operator",
+                    )
+                    self.assertEqual(plan["refusal_codes"], [])
+                    payload = plan["change_payload"]["create_payload"]
+                    for part in path[:-1]:
+                        payload = payload[part]
+                    payload[path[-1]] = value
+
+                    if surface.startswith("cli"):
+                        stdout = io.StringIO()
+                        arguments = ["config", "apply", "--plan", "-", "--apply-authority", "operator"]
+                        if surface == "cli_explicit_fragments":
+                            arguments.append("--issue-tracker-ops")
+                        exit_code = agent_equipment_config.run(
+                            arguments,
+                            stdin=io.StringIO(json.dumps(plan)),
+                            stdout=stdout,
+                        )
+                        result = json.loads(stdout.getvalue())
+                        self.assertEqual(exit_code, 1)
+                    else:
+                        response = agent_equipment_config.call_mcp_tool(
+                            "config.apply", {"plan": plan, "apply_authority": "operator"},
+                        )
+                        result = response["structuredContent"]["result"]
+                    self.assertFalse(result["applied"])
+                    self.assertIn("validation_failed", result["refusal_codes"])
+                    self.assertIn("partial_write_blocked", result["refusal_codes"])
+                    self.assertFalse(destination.exists())
+                    self.assertEqual(list(Path(tmpdir).iterdir()), [])
+
+    def test_create_layer_apply_refuses_missing_or_changed_reviewed_change(self):
+        for change_mutation in ("empty", "different_value", "missing_payload_field"):
+            with self.subTest(mutation=change_mutation), tempfile.TemporaryDirectory() as tmpdir:
+                destination = Path(tmpdir) / "agent-equipment.toml"
+                plan = agent_equipment_config.create_layer_plan(
+                    [], [agent_equipment_config.issue_tracker_ops_fragment()], destination=destination,
+                    layer_name="repository policy", source_category="committed durable config",
+                    changes=[
+                        {"path": "issue_tracker_ops.mode", "value": "dry-run"},
+                        {"path": "issue_tracker_ops.external_disclosure", "value": "blocked"},
+                        {"path": "issue_tracker_ops.tracker", "value": {"type": "github"}},
+                    ],
+                    plan_authority="operator",
+                )
+                if change_mutation == "empty":
+                    plan["change_payload"]["changes"] = []
+                elif change_mutation == "different_value":
+                    plan["change_payload"]["changes"][1]["after"] = "allowed"
+                else:
+                    del plan["change_payload"]["create_payload"]["issue_tracker_ops"]["tracker"]
+                result = agent_equipment_config.config_apply_plan(plan, [], [], apply_authority="operator")
+
+                self.assertFalse(result["applied"])
+                self.assertIn("validation_failed", result["refusal_codes"])
+                self.assertFalse(destination.exists())
+
+    def test_create_layer_apply_preserves_nested_values_and_explicit_fragment_selection(self):
+        fragment = agent_equipment_config.SchemaFragment(
+            namespace="other_equipment", version=7, fields={},
+        )
+        fragments = [fragment, agent_equipment_config.issue_tracker_ops_fragment()]
+        tracker = {"literal.dot": {"enabled": True, "retry_limit": 1, "ratio": 1.0}, "tags": ["café", "quoted\"value"]}
+        with mock.patch.dict(agent_equipment_config.MCP_FRAGMENT_BUILDERS, {"other_equipment": lambda: fragment}):
+            for infer_fragments in (False, True):
+                with self.subTest(infer_fragments=infer_fragments), tempfile.TemporaryDirectory() as tmpdir:
+                    destination = Path(tmpdir) / "agent-equipment.toml"
+                    plan = agent_equipment_config.create_layer_plan(
+                        [], fragments, destination=destination,
+                        layer_name="user/operator local overrides", source_category="local-only operator config",
+                        changes=[
+                            {"path": "issue_tracker_ops.mode", "value": "dry-run"},
+                            {"path": "issue_tracker_ops.external_disclosure", "value": "blocked"},
+                            {"path": "issue_tracker_ops.tracker", "value": tracker},
+                        ],
+                        plan_authority="operator",
+                    )
+                    payload = plan["change_payload"]["create_payload"]
+                    payload["issue_tracker_ops"] = dict(reversed(list(payload["issue_tracker_ops"].items())))
+                    result = agent_equipment_config.config_apply_plan(
+                        plan, [], [] if infer_fragments else fragments, apply_authority="operator",
+                    )
+                    self.assertTrue(result["applied"], result["refusal_codes"])
+                    created = agent_equipment_config.load_toml(destination)
+
+                    self.assertEqual(created["issue_tracker_ops"]["tracker"], tracker)
+                    self.assertIs(type(created["issue_tracker_ops"]["tracker"]["literal.dot"]["retry_limit"]), int)
+                    self.assertIs(type(created["issue_tracker_ops"]["tracker"]["literal.dot"]["ratio"]), float)
+                    self.assertEqual(created["agent_equipment_config"]["fragment_versions"]["other_equipment"], 7)
 
     def test_cli_config_apply_refuses_obsolete_authoring_plan_schema_without_writing(self):
         with tempfile.TemporaryDirectory() as tmpdir:
