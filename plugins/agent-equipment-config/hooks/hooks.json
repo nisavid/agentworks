@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3.14 -P \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py\"",
+            "command": "python3.14 -I -S \"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/hooks/config_write_guard.py\"",
             "statusMessage": "Checking Agent Equipment Config local-write authority"
           }
         ]

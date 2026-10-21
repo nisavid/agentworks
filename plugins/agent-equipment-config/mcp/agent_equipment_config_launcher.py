@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 REPO_SERVER = Path("tools/agent_equipment_config_mcp_server.py")
+BUNDLED_SERVER = Path("runtime/tools/agent_equipment_config_mcp_server.py")
 REPO_MARKER = Path("inventory/equipment.toml")
 MARKETPLACE_MARKER = Path(".agents/plugins/marketplace.json")
 SERVER_ENV_VAR_NAMES = ("AGENTWORKS_ROOT",)
@@ -77,11 +78,11 @@ def launch(argv: list[str] | None = None) -> int:
         )
         return 2
 
-    server = root / REPO_SERVER
-    if not server.is_file():
+    server = Path(__file__).resolve().parent / BUNDLED_SERVER
+    if not all((server.parent / name).is_file() for name in ("__init__.py", "agent_equipment_config.py", server.name)):
         print(
-            "Agent Equipment Config MCP launcher could not find "
-            f"{REPO_SERVER} in the resolved Agentworks checkout.",
+            "Agent Equipment Config MCP launcher could not find the complete runtime bundle near "
+            f"{BUNDLED_SERVER} in the installed plugin. Reinstall the plugin.",
             file=sys.stderr,
         )
         return 2
@@ -91,7 +92,7 @@ def launch(argv: list[str] | None = None) -> int:
     try:
         os.execve(
             python_executable,
-            [python_executable, str(server), *_argv],
+            [python_executable, "-I", "-S", str(server), *_argv],
             server_environment(),
         )
     except OSError as error:

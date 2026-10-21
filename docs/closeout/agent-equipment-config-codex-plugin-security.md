@@ -16,13 +16,14 @@ working directory resolves to a checkout containing these markers:
 - `inventory/equipment.toml`
 - `.agents/plugins/marketplace.json`
 
-The MCP launcher changes directory to the resolved checkout before executing
-`tools/agent_equipment_config_mcp_server.py` with the absolute path of the
-current Python interpreter.
+The MCP launcher changes directory to the resolved data checkout before executing
+the installed `mcp/runtime/tools/agent_equipment_config_mcp_server.py` with the
+absolute path of the current Python interpreter and `-I -S`. Checkout markers
+select data; the installed runtime supplies executable code.
 
 ## Controls
 
-- `.mcp.json` uses a direct local server map, `python3.14 -P`, plugin-local
+- `.mcp.json` uses a direct local server map, `python3.14 -I -S`, plugin-local
   launcher args, `env_vars = ["AGENTWORKS_ROOT"]`, default prompt approval,
   and prompt overrides for `config.apply` and `migrate.config_apply`.
 - No static secrets, HTTP MCP endpoint, broad server environment pass-through,
@@ -40,11 +41,11 @@ current Python interpreter.
   cannot change the program after validation. Semantic plugin changes require
   reviewing and updating those programs.
 - Behavior probes execute only those validator-owned programs with isolated
-  Python (`-I -c`), an empty environment, and time limits. Guard output remains
+  Python (`-I -S -c`), an empty environment, and time limits. Guard output remains
   bounded. They never import or execute Python from the checkout under review,
   including after a candidate file changes between validation and probing.
-- The shipped launcher and guard commands use `-P` to exclude their script
-  directories from import search. Validation rejects additional entries in the
+- The shipped launcher and guard commands use `-I -S` to exclude ambient import paths
+  and site startup code. Validation rejects additional entries in the
   plugin's `mcp` and `hooks` runtime directories; tests exercise both shipped
   commands with standard-library shadow modules in those directories.
 - Codex hook trust and MCP approval prompts remain host policy surfaces.
@@ -95,3 +96,63 @@ Validation commands completed for the security-relevant surface:
 - `python3.14 tools/harness_capability_profiles.py validate --json`
 - `python3.14 tools/validate_agentworks_integrity.py --final-closeout --json`
 - `git diff --check`
+
+
+## Installed runtime provenance correction
+
+The historical review above did not bind the installed plugin to executable
+server bytes. Marker-valid checkout code could replace the server after plugin
+installation. Security Cloud finding `csf_e454d541d2d1852ee17c28f8`, occurrence
+`occ_e97d6bdcc70fd1253a2798b3`, identified this gap.
+
+The plugin now packages the canonical Config engine and stdio wrapper under
+`mcp/runtime/tools/` with an empty package initializer. Launcher startup,
+child execution, and the write guard use Python `-I -S`. The selected checkout supplies only the
+data working directory; the executable path resolves from the installed
+launcher. Missing runtime files fail closed without a checkout fallback.
+
+`tools/build_agent_equipment_config_plugin.py` refreshes the snapshot, and
+repository integrity validation checks byte parity, initializer content,
+symlink-free bundle paths, installation arguments, and stock component paths.
+This preserves one canonical implementation while binding installed executable
+behavior to the plugin installation. Runtime updates require updating or
+reinstalling the plugin.
+
+The subprocess regression copies the plugin before changing checkout server,
+engine, package initializer, and import-shadow files. It exercises environment
+selection, ancestor discovery, symlink aliases, initialization, tool listing,
+and a read-only Config request using a relative layer path. A separate test
+removes each bundled file and verifies refusal without checkout execution.
+Existing approval, write guard, and runtime mutation contracts remain in place.
+
+The installed hook command is also exercised with inherited `PYTHONPATH`
+pointing at checkout startup code. That code must not execute; normal denial,
+operator allowance, migration denial, and malformed-input handling must remain.
+
+Security verification uses the Codex Security finding-fix workflow and a fresh
+read-only bypass/regression review. This narrower action covers the executable
+boundary and its complete stdlib-only import closure; a new repository-wide scan
+would add unrelated scope. The canonical engine and wrapper are copied without
+behavior changes. Portable test and review results belong in the PR and tracking
+issue. Instance-specific logs and temporary reproducer directories are scratch
+evidence and are not retained as project truth.
+
+This correction does not claim installation on an operator machine. Existing
+cached plugins require an update or reinstall. Repository-scan status writeback
+is separate from code verification.
+
+The runtime snapshot also includes the canonical create-layer payload binding
+correction merged in PR #221. Refreshing the bundle preserves that correction
+for installed plugins: reviewed changes and canonical metadata determine the
+document validated and written. Checkout code remains outside the installed
+startup boundary. Canonical and bundled engine bytes must continue to match.
+
+
+The snapshot checks also inventory `mcp/runtime/` and `mcp/runtime/tools/`.
+They reject extra files, packages, and directories: an unexpected module beside
+`tools/` could otherwise shadow a standard-library import after the server
+inserts its runtime path. Normal `__pycache__` directories are ignored; symlinked
+caches and files with that name are rejected. Both builder modes refuse extras
+without deleting them. Regression tests exercise rejection in both checks and
+preserve the normal-cache control. Bytecode caches remain inside the installed
+plugin trust boundary; source parity does not attest arbitrary cache contents.
