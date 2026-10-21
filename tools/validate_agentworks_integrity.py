@@ -8016,12 +8016,15 @@ def plugin_runtime_file_results(root: Path) -> list[CheckResult]:
             }
             try:
                 with os.scandir(path) as entries:
-                    unexpected = any(item.name not in reviewed_names for item in entries)
+                    unexpected = sorted(item.name for item in entries if item.name not in reviewed_names)
             except OSError as error:
                 ok, detail = False, f"runtime directory unreadable: {error}"
             else:
                 ok = not unexpected
-                detail = "runtime directory must contain only reviewed files"
+                detail = (
+                    "runtime directory must contain only reviewed files; unexpected: "
+                    + ", ".join(unexpected)
+                )
         if not ok:
             results.append(
                 CheckResult(

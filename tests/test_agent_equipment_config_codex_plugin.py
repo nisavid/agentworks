@@ -603,6 +603,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                 [sys.executable, *config["args"]],
                 cwd=plugin_root,
                 env={"AGENTWORKS_ROOT": str(root)},
+                stdin=subprocess.DEVNULL,
                 capture_output=True,
                 text=True,
                 timeout=5,
@@ -652,7 +653,7 @@ class AgentEquipmentConfigCodexPluginValidationTests(unittest.TestCase):
                     CheckResult(
                         f"agent_equipment_config_codex_plugin:runtime_files:{directory}",
                         False,
-                        "runtime directory must contain only reviewed files",
+                        "runtime directory must contain only reviewed files; unexpected: " + relative.split("/")[1],
                         str(PLUGIN_ROOT / directory),
                     ),
                     results,
